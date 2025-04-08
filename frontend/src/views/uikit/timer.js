@@ -78,7 +78,7 @@ const formatTime = (seconds) => {
 
 // Update the tab title dynamically
 watchEffect(() => {
-    document.title = isRunning.value ? `${formatTime(timer.value)} - Time Tracking` : 'Time Tracking';
+    document.title = isRunning.value ? `${formatTime(timer.value)} - ImbusFlow` : 'ImbusFlow';
 });
 
 export const useTimer = () => {
