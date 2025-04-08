@@ -83,6 +83,11 @@ const routes = [
     ]
   },
   {
+    path: '/EmployeeLogin',
+    name: 'EmployeeLogin',
+    component: EmployeeLogin,
+  },
+  {
     path: '/:pathMatch(.*)*', // This will match all paths not defined above
     name: 'NotFound',
     component: () => import('@/views/pages/NotFound.vue')
