@@ -21,6 +21,7 @@ const deleteEmployeeDialog = ref(false);
 const disableEmployeeDialog = ref(false);
 const resetPasswordDialog = ref(false); // Dialog for password reset
 const sendEmailDialog = ref(false); // Dialog for sending email
+const deleteEmployeesDialog = ref(false); // Dialog for deleting selected employees
 const employee = ref({});
 const submitted = ref(false);
 const searchQuery = ref(''); // Search bar query
@@ -42,7 +43,7 @@ const equipes = ref([]); // Store the list of equipes
 const selectedEquipe = ref(null); // Selected equipe for the dropdown
 
 const isValidEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex to validate email syntax
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // Improved regex for email validation
   return emailRegex.test(email);
 };
 
@@ -333,6 +334,11 @@ if (!newPassword.value) {
 toast.add({ severity: 'warn', summary: 'Warning', detail: 'Please enter a new password', life: 3000 });
 return;
 }
+if (!isValidEmail(emailForReset.value)) {
+  console.log('Email being validated:', emailForReset.value); // Debugging
+  toast.add({ severity: 'warn', summary: 'Invalid Email', detail: 'Please enter a valid email address', life: 3000 });
+  return;
+}
 try {
 const response = await axios.post('http://localhost:3000/send-email', {
 email: emailForReset.value,
@@ -423,67 +429,27 @@ deleteEmployeeDialog.value = true; // Open the delete confirmation dialog
 };
 // Open send email dialog
 const openSendEmailDialog = (employeeId) => {
-selectedEmployeeId.value = employeeId;
+  selectedEmployeeId.value = employeeId;
+  const employee = taches.value.find(emp => emp.idEmployee === employeeId);
+  emailForReset.value = employee?.emailEmployee || ''; // Ensure the email is set correctly
   emailSubject.value = '';
   emailMessage.value = '';
   sendEmailDialog.value = true;
 };
 
-const confirmDeleteSelected = () => {
-    deleteProjectsDialog.value = true;
-    deleteSelectedProjects(); // Call the function to delete selected projects
-};
-const exportCSV = () => {
-    dt.value.exportCSV();
-};
-
-// Delete selected projects
-const deleteSelectedProjects = async () => {
-    try {
-        const deletePromises = selectedProjects.value.map((proj) => deleteProjetMutation({ id:
-proj.idProjet }));
-        await Promise.all(deletePromises);
-        await refetchProjects();
-        toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Selected projects deleted successfully',
-            life: 3000
-        });
-    } catch (error) {
-        console.error('Error deleting projects:', error);
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error.message || 'Failed to delete selected projects',
-            life: 3000
-        });
-    } finally {
-        deleteProjectsDialog.value = false;
-        selectedProjects.value = [];
-    }
-};
-
-// Hide all dialogs
-const hideDialog = () => {
-  addEmployeeDialog.value = false;
-  editEmployeeDialog.value = false;
-  deleteEmployeeDialog.value = false;
-  disableEmployeeDialog.value = false;
-  resetPasswordDialog.value = false;
-  sendEmailDialog.value = false;
-  submitted.value = false;
-};
-
-// Confirm delete selected employees
-const confirmDeleteSelectedEmployees = async () => {
-  console.log('Selected Employees:', selectedEmployees.value); // Debugging
+const confirmDeleteSelectedEmployees = () => {
   if (!selectedEmployees.value.length) {
     toast.add({ severity: 'warn', summary: 'Warning', detail: 'No employees selected', life: 3000 });
     return;
   }
 
+  deleteEmployeesDialog.value = true; // Open the confirmation dialog
+};
+
+const deleteSelectedEmployees = async () => {
   try {
+    loading.value = true;
+
     const deletePromises = selectedEmployees.value.map(emp => {
       const mutation = `
         mutation DeleteEmployee($id: String!) {
@@ -498,14 +464,33 @@ const confirmDeleteSelectedEmployees = async () => {
     });
 
     await Promise.all(deletePromises);
+
     toast.add({ severity: 'success', summary: 'Success', detail: 'Selected employees deleted successfully', life: 3000 });
     selectedEmployees.value = []; // Clear the selection
+    deleteEmployeesDialog.value = false; // Close the dialog
     fetchTaches(); // Refresh the employee list
   } catch (error) {
     console.error('Error deleting employees:', error);
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete selected employees', life:
-3000 });
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete selected employees', life: 3000 });
+  } finally {
+    loading.value = false;
   }
+};
+
+const exportCSV = () => {
+    dt.value.exportCSV();
+};
+
+// Hide all dialogs
+const hideDialog = () => {
+  addEmployeeDialog.value = false;
+  editEmployeeDialog.value = false;
+  deleteEmployeeDialog.value = false;
+  disableEmployeeDialog.value = false;
+  resetPasswordDialog.value = false;
+  sendEmailDialog.value = false;
+  deleteEmployeesDialog.value = false;
+  submitted.value = false;
 };
 
 onMounted(() => {
@@ -902,7 +887,6 @@ dialog-responsive" :style="{ width: '30%' }">
     </Dialog>
 
     <!-- Delete Employee Dialog -->
-    <!-- Delete Employee Dialog -->
     <Dialog v-model:visible="deleteEmployeeDialog" header="Confirm" modal class="p-dialog
 responsive" :style="{ width: '30%' }">
       <div class="confirmation-content">
@@ -911,10 +895,8 @@ responsive" :style="{ width: '30%' }">
       </div>
 
       <template #footer>
-        <Button label="No" icon="pi pi-times" @click="deleteEmployeeDialog = false" class="p-button
-text" />
-        <Button label="Yes" icon="pi pi-check" @click="deleteEmployee" :loading="loading" class="p
-button-danger" />
+        <Button label="No" icon="pi pi-times" @click="deleteEmployeeDialog = false" class="p-button-text" />
+        <Button label="Yes" icon="pi pi-check" @click="deleteEmployee" :loading="loading" class="p-button-danger" />
       </template>
     </Dialog>
 
@@ -965,6 +947,19 @@ button-danger" />
         <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="disableDialogVisible =
 false" />
         <Button label="Save" icon="pi pi-check" class="p-button" @click="setDisabledUntil" />
+      </template>
+    </Dialog>
+
+    <!-- Delete Employees Dialog -->
+    <Dialog v-model:visible="deleteEmployeesDialog" header="Confirm" modal class="p-dialog-responsive" :style="{ width: '30%' }">
+      <div class="confirmation-content">
+        <i class="pi pi-exclamation-triangle" style="font-size: 2rem"></i>
+        <span>Are you sure you want to delete the selected employees?</span>
+      </div>
+
+      <template #footer>
+        <Button label="No" icon="pi pi-times" @click="deleteEmployeesDialog = false" class="p-button-text" />
+        <Button label="Yes" icon="pi pi-check" @click="deleteSelectedEmployees" :loading="loading" class="p-button-danger" />
       </template>
     </Dialog>
   </div>
