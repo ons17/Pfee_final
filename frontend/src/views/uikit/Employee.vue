@@ -41,6 +41,16 @@ const filters = ref({
 const equipes = ref([]); // Store the list of equipes
 const selectedEquipe = ref(null); // Selected equipe for the dropdown
 
+const isValidEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex to validate email syntax
+  return emailRegex.test(email);
+};
+
+const isStrongPassword = (password) => {
+  const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  return strongPasswordRegex.test(password);
+};
+
 // Fetch employees
 const fetchTaches = async () => {
   try {
@@ -87,7 +97,10 @@ const fetchEquipes = async () => {
     `;
     const response = await axios.post('http://localhost:3000/graphql', { query });
     if (response.data?.data?.equipes) {
-      equipes.value = response.data.data.equipes;
+      equipes.value = [
+        { idEquipe: null, nom_equipe: 'No Equipe Assigned' }, // Add "No Equipe Assigned" option
+        ...response.data.data.equipes,
+      ];
     } else {
       throw new Error('Failed to fetch equipes');
     }
@@ -112,8 +125,24 @@ addEmployeeDialog.value = true; // Open the dialog
 // Save the new employee
 const saveEmployee = async () => {
   submitted.value = true;
+
   if (!employee.value.nomEmployee || !employee.value.emailEmployee || !employee.value.role || !employee.value.passwordEmployee) {
     toast.add({ severity: 'warn', summary: 'Warning', detail: 'Please fill in all fields', life: 3000 });
+    return;
+  }
+
+  if (!isValidEmail(employee.value.emailEmployee)) {
+    toast.add({ severity: 'warn', summary: 'Invalid Email', detail: 'Please enter a valid email address', life: 3000 });
+    return;
+  }
+
+  if (!isStrongPassword(employee.value.passwordEmployee)) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Weak Password',
+      detail: 'Password must be at least 8 characters long and include uppercase, lowercase, numbers, and special characters.',
+      life: 5000,
+    });
     return;
   }
 
@@ -175,17 +204,19 @@ const updateEmployee = async () => {
         $nomEmployee: String,
         $emailEmployee: String,
         $role: String,
-        $idEquipe: String
+        $idEquipe: String,
+        $disabledUntil: String
       ) {
         updateEmployee(
           id: $id,
           nomEmployee: $nomEmployee,
           emailEmployee: $emailEmployee,
           role: $role,
-          idEquipe: $idEquipe
+          idEquipe: $idEquipe,
+          disabledUntil: $disabledUntil
         ) {
           idEmployee
-          idEquipe
+          disabledUntil
         }
       }
     `;
@@ -196,9 +227,8 @@ const updateEmployee = async () => {
       emailEmployee: employee.value.emailEmployee,
       role: employee.value.role,
       idEquipe: employee.value.idEquipe || null, // Send null if no equipe is assigned
+      disabledUntil: employee.value.disabledUntil ? employee.value.disabledUntil.toISOString() : null, // Ensure ISO format
     };
-
-    console.log('Update Variables:', variables); // Debugging
 
     const response = await axios.post('http://localhost:3000/graphql', { query: mutation, variables });
 
@@ -318,7 +348,10 @@ toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to send passwor
 // Open edit dialog
 const openEdit = (emp) => {
   console.log('Editing Employee:', emp); // Debugging
-  employee.value = { ...emp }; // Populate the employee object with the selected employee's data
+  employee.value = {
+    ...emp,
+    disabledUntil: emp.disabledUntil ? new Date(emp.disabledUntil) : null, // Parse date if it exists
+  }; // Populate the employee object with the selected employee's data
   submitted.value = false; // Reset the submitted state
   editEmployeeDialog.value = true; // Open the edit dialog
 };
@@ -485,6 +518,11 @@ const sendEmail = async () => {
     return;
   }
 
+  if (!isValidEmail(emailForReset.value)) {
+    toast.add({ severity: 'warn', summary: 'Invalid Email', detail: 'Please enter a valid email address', life: 3000 });
+    return;
+  }
+
   try {
     const mutation = `
       mutation SendEmailToEmployee($id: String!, $subject: String!, $message: String!) {
@@ -517,20 +555,21 @@ const sendEmail = async () => {
 
 // Computed property to evaluate password strength
 const passwordStrength = computed(() => {
-  if (!employee.value.passwordEmployee) return '';
+  if (!employee.value.passwordEmployee) return 'Weak';
   const password = employee.value.passwordEmployee;
 
-  // Weak: Less than 6 characters
-  if (password.length < 6) return 'Weak';
+  const hasLowercase = /[a-z]/.test(password);
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasNumber = /\d/.test(password);
+  const hasSpecialChar = /[@$!%*?&]/.test(password);
 
-  // Medium: At least 6 characters, includes letters and numbers
-  const hasLetters = /[a-zA-Z]/.test(password);
-  const hasNumbers = /\d/.test(password);
-  if (hasLetters && hasNumbers) return 'Medium';
+  if (password.length >= 8 && hasLowercase && hasUppercase && hasNumber && hasSpecialChar) {
+    return 'Strong';
+  }
 
-  // Strong: At least 8 characters, includes letters, numbers, and special characters
-  const hasSpecialChars = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-  if (password.length >= 8 && hasLetters && hasNumbers && hasSpecialChars) return 'Strong';
+  if (password.length >= 6 && hasLowercase && hasUppercase && (hasNumber || hasSpecialChar)) {
+    return 'Medium';
+  }
 
   return 'Weak';
 });
@@ -586,11 +625,15 @@ const getEquipeName = (idEquipe) => {
 
 // Handle adding equipe
 const handleAddEquipe = () => {
-  if (selectedEquipe.value) {
-    employee.value.idEquipe = selectedEquipe.value;
-    selectedEquipe.value = null; // Reset the dropdown
-    toast.add({ severity: 'success', summary: 'Equipe Added', detail: 'Equipe assigned to employee', life: 3000 });
-  }
+  employee.value.idEquipe = selectedEquipe.value; // Set the selected equipe (or null for "No Equipe Assigned")
+  selectedEquipe.value = null; // Reset the dropdown
+  const equipeName = getEquipeName(employee.value.idEquipe);
+  toast.add({
+    severity: 'success',
+    summary: 'Equipe Updated',
+    detail: equipeName === 'No Equipe Assigned' ? 'No equipe assigned to employee' : `Equipe "${equipeName}" assigned to employee`,
+    life: 3000,
+  });
 };
 
 // Handle removing equipe
@@ -663,7 +706,7 @@ mr-2" />
         </Column>
         <Column field="idEquipe" header="Team">
           <template #body="{ data }">
-            {{ getEquipeName(data.idEquipe) || 'No Equipe Assigned' }}
+            {{ getEquipeName(data.idEquipe) }}
           </template>
         </Column>
         <Column header="Actions" headerStyle="width: 14rem">
@@ -703,6 +746,9 @@ mr-2" />
             class="w-full"
           />
           <small v-if="submitted && !employee.passwordEmployee" class="p-error">Password is required.</small>
+          <small :style="{ color: passwordStrengthColor }">
+            Password Strength: {{ passwordStrength }}
+          </small>
         </div>
 
         <!-- Equipe Management Section -->
@@ -790,6 +836,18 @@ mr-2" />
               />
             </div>
           </div>
+        </div>
+
+        <div class="field">
+          <label for="disabledUntil">Disabled Until</label>
+          <Calendar
+            id="disabledUntil"
+            v-model="employee.disabledUntil"
+            :showIcon="true"
+            class="w-full"
+            placeholder="Select a date"
+            dateFormat="yy-mm-dd"
+          />
         </div>
       </div>
 
