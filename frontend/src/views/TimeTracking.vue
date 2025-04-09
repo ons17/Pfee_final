@@ -7,6 +7,7 @@ import { SUIVIS_DE_TEMP, CREATE_SUIVI, STOP_ACTIVE_SUIVI, DELETE_SUIVI, GET_PROJ
 import { useTimer } from '@/views/uikit/timer';
 import debounce from 'lodash-es/debounce';
 import { useRouter } from 'vue-router';
+import { validatePassword } from '@/utils/authUtils';
 
 const DataTable = defineAsyncComponent(() => import('primevue/datatable'));
 const Dialog = defineAsyncComponent(() => import('primevue/dialog'));
@@ -292,14 +293,20 @@ const deleteEntry = async () => {
     try {
         isDeletingLoading.value = true;
 
-        // Retrieve the stored password from localStorage
-        const storedPassword = localStorage.getItem('password');
-        if (password.value !== storedPassword) {
+        // Validate the password
+        const isPasswordValid = validatePassword(password.value);
+        if (!isPasswordValid) {
             showError('Invalid password. Please try again.');
             return;
         }
 
-        // Proceed with deletion if the password is valid
+        // Ensure the logged-in employee is the owner of the entry
+        if (activeEntry.value.employee !== EMPLOYEE_NAME) {
+            showError('You can only delete your own time entries.');
+            return;
+        }
+
+        // Proceed with deletion if the password and ownership are valid
         await deleteTimeEntry({ id: activeEntry.value.id });
         showSuccess('Entry deleted successfully');
         await refetchTimeEntries();

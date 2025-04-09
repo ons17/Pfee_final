@@ -11,7 +11,15 @@ import Calendar from 'primevue/calendar';
 import Password from 'primevue/password';
 import Dropdown from 'primevue/dropdown';
 import Chip from 'primevue/chip';
+import Textarea from 'primevue/textarea';
+import ProgressSpinner from 'primevue/progressspinner';
+import IconField from 'primevue/iconfield';
+import InputIcon from 'primevue/inputicon';
 import axios from 'axios';
+
+// Import utility functions
+import { isAdmin, validatePassword } from '@/utils/authUtils';
+
 const toast = useToast();
 const dt = ref();
 const taches = ref([]);
@@ -19,31 +27,32 @@ const addEmployeeDialog = ref(false);
 const editEmployeeDialog = ref(false);
 const deleteEmployeeDialog = ref(false);
 const disableEmployeeDialog = ref(false);
-const resetPasswordDialog = ref(false); // Dialog for password reset
-const sendEmailDialog = ref(false); // Dialog for sending email
-const deleteEmployeesDialog = ref(false); // Dialog for deleting selected employees
+const resetPasswordDialog = ref(false);
+const sendEmailDialog = ref(false);
+const deleteEmployeesDialog = ref(false);
 const employee = ref({});
 const submitted = ref(false);
-const searchQuery = ref(''); // Search bar query
+const searchQuery = ref('');
 const employeeToDelete = ref(null);
 const disabledUntil = ref(null);
 const newPassword = ref('');
-const emailForReset = ref(''); // Email to be used for reset
-const emailSubject = ref(''); // Email subject
-const emailMessage = ref(''); // Email message
-const selectedEmployeeId = ref(null); // Selected employee ID for sending email
-const disableDialogVisible = ref(false); // Dialog visibility for setting disabled until
-const selectedDisabledUntil = ref(null); // Selected date for disabling employee
-const selectedEmployees = ref([]); // Array to store selected employees
-const loading = ref(false); // Loading state
+const emailForReset = ref('');
+const emailSubject = ref('');
+const emailMessage = ref('');
+const selectedEmployeeId = ref(null);
+const disableDialogVisible = ref(false);
+const selectedDisabledUntil = ref(null);
+const selectedEmployees = ref([]);
+const loading = ref(false);
 const filters = ref({
   global: { value: '' }
-}); // Filters for DataTable
-const equipes = ref([]); // Store the list of equipes
-const selectedEquipe = ref(null); // Selected equipe for the dropdown
+});
+const equipes = ref([]);
+const selectedEquipe = ref(null);
+const adminPassword = ref('');
 
 const isValidEmail = (email) => {
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // Improved regex for email validation
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return emailRegex.test(email);
 };
 
@@ -74,7 +83,7 @@ const fetchTaches = async () => {
     if (response.data?.data?.employees?.employees) {
       taches.value = response.data.data.employees.employees.map(emp => ({
         ...emp,
-        disabledUntil: emp.disabledUntil ? new Date(emp.disabledUntil) : null, // Parse date or set null
+        disabledUntil: emp.disabledUntil ? new Date(emp.disabledUntil) : null,
       }));
     } else {
       throw new Error('Invalid response structure');
@@ -99,7 +108,7 @@ const fetchEquipes = async () => {
     const response = await axios.post('http://localhost:3000/graphql', { query });
     if (response.data?.data?.equipes) {
       equipes.value = [
-        { idEquipe: null, nom_equipe: 'No Equipe Assigned' }, // Add "No Equipe Assigned" option
+        { idEquipe: null, nom_equipe: 'No Equipe Assigned' },
         ...response.data.data.equipes,
       ];
     } else {
@@ -113,17 +122,17 @@ const fetchEquipes = async () => {
 
 // Filter employees based on search query
 const filteredEmployees = computed(() => {
-return taches.value.filter(emp =>
-emp.nomEmployee.toLowerCase().includes(searchQuery.value.toLowerCase())
-);
+  return taches.value.filter(emp =>
+    emp.nomEmployee.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
 });
-// Open the "Add Employee" dialog
+
 const openNew = () => {
-employee.value = {}; // Reset the employee object
-submitted.value = false; // Reset the submitted state
-addEmployeeDialog.value = true; // Open the dialog
+  employee.value = {};
+  submitted.value = false;
+  addEmployeeDialog.value = true;
 };
-// Save the new employee
+
 const saveEmployee = async () => {
   submitted.value = true;
 
@@ -188,11 +197,10 @@ const saveEmployee = async () => {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to save employee', life: 3000 });
   }
 };
-// Update the employee
+
 const updateEmployee = async () => {
   submitted.value = true;
 
-  // Validate required fields
   if (!employee.value.nomEmployee || !employee.value.emailEmployee || !employee.value.role) {
     toast.add({ severity: 'warn', summary: 'Warning', detail: 'Please fill in all fields', life: 3000 });
     return;
@@ -227,8 +235,8 @@ const updateEmployee = async () => {
       nomEmployee: employee.value.nomEmployee,
       emailEmployee: employee.value.emailEmployee,
       role: employee.value.role,
-      idEquipe: employee.value.idEquipe || null, // Send null if no equipe is assigned
-      disabledUntil: employee.value.disabledUntil ? employee.value.disabledUntil.toISOString() : null, // Ensure ISO format
+      idEquipe: employee.value.idEquipe || null,
+      disabledUntil: employee.value.disabledUntil ? employee.value.disabledUntil.toISOString() : null,
     };
 
     const response = await axios.post('http://localhost:3000/graphql', { query: mutation, variables });
@@ -238,16 +246,30 @@ const updateEmployee = async () => {
     }
 
     toast.add({ severity: 'success', summary: 'Success', detail: 'Employee updated successfully', life: 3000 });
-    editEmployeeDialog.value = false; // Close the dialog
-    fetchTaches(); // Refresh the employee list
+    editEmployeeDialog.value = false;
+    fetchTaches();
   } catch (error) {
     console.error('Error updating employee:', error);
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to update employee', life: 3000 });
   }
 };
 
-// Delete the employee
 const deleteEmployee = async () => {
+  if (!isAdmin()) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Only admins can delete employees.', life: 3000 });
+    return;
+  }
+
+  if (!adminPassword.value) {
+    toast.add({ severity: 'warn', summary: 'Warning', detail: 'Please enter your password.', life: 3000 });
+    return;
+  }
+
+  if (!validatePassword(adminPassword.value)) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Invalid password. Please try again.', life: 3000 });
+    return;
+  }
+
   try {
     const mutation = `
       mutation DeleteEmployee($id: String!) {
@@ -270,18 +292,16 @@ const deleteEmployee = async () => {
       throw new Error(response.data.errors[0].message);
     }
 
-    toast.add({ severity: 'success', summary: 'Success', detail: 'Employee deleted successfully', life:
-3000 });
-    deleteEmployeeDialog.value = false; // Close the dialog
-    fetchTaches(); // Refresh the employee list
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Employee deleted successfully', life: 3000 });
+    deleteEmployeeDialog.value = false;
+    adminPassword.value = '';
+    fetchTaches();
   } catch (error) {
     const errorMessage = error.response?.data?.errors?.[0]?.message || 'Failed to delete employee';
     toast.add({ severity: 'error', summary: 'Error', detail: errorMessage, life: 3000 });
   }
 };
 
-
-// Disable the employee
 const disableEmployee = async () => {
   if (!disabledUntil.value) {
     toast.add({ severity: 'warn', summary: 'Warning', detail: 'Please specify a disable date', life: 3000 });
@@ -310,63 +330,55 @@ const disableEmployee = async () => {
       throw new Error(response.data.errors[0].message);
     }
 
-    toast.add({ severity: 'success', summary: 'Success', detail: 'Employee disabled successfully', life:
-3000 });
-    disableEmployeeDialog.value = false; // Close the dialog
-    fetchTaches(); // Refresh the employee list
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Employee disabled successfully', life: 3000 });
+    disableEmployeeDialog.value = false;
+    fetchTaches();
   } catch (error) {
     const errorMessage = error.response?.data?.errors?.[0]?.message || 'Failed to disable employee';
     toast.add({ severity: 'error', summary: 'Error', detail: errorMessage, life: 3000 });
   }
 };
 
-
-// Open reset password dialog
 const openResetPasswordDialog = (emp) => {
   employee.value = emp;
-  emailForReset.value = emp.emailEmployee; // Set the email for reset
-newPassword.value = ''; // Reset the new password field
-resetPasswordDialog.value = true; // Open the reset password dialog
+  emailForReset.value = emp.emailEmployee;
+  newPassword.value = '';
+  resetPasswordDialog.value = true;
 };
-// Send reset password email (mutation)
+
 const sendResetPasswordEmail = async () => {
-if (!newPassword.value) {
-toast.add({ severity: 'warn', summary: 'Warning', detail: 'Please enter a new password', life: 3000 });
-return;
-}
-if (!isValidEmail(emailForReset.value)) {
-  console.log('Email being validated:', emailForReset.value); // Debugging
-  toast.add({ severity: 'warn', summary: 'Invalid Email', detail: 'Please enter a valid email address', life: 3000 });
-  return;
-}
-try {
-const response = await axios.post('http://localhost:3000/send-email', {
-email: emailForReset.value,
-password: newPassword.value,
-});
-toast.add({ severity: 'success', summary: 'Success', detail: 'Password reset email sent', life: 3000 });
-resetPasswordDialog.value = false;
-} catch (error) {
-toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to send password reset email', life:
-3000 });
-}
+  if (!newPassword.value) {
+    toast.add({ severity: 'warn', summary: 'Warning', detail: 'Please enter a new password', life: 3000 });
+    return;
+  }
+  if (!isValidEmail(emailForReset.value)) {
+    toast.add({ severity: 'warn', summary: 'Invalid Email', detail: 'Please enter a valid email address', life: 3000 });
+    return;
+  }
+  try {
+    const response = await axios.post('http://localhost:3000/send-email', {
+      email: emailForReset.value,
+      password: newPassword.value,
+    });
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Password reset email sent', life: 3000 });
+    resetPasswordDialog.value = false;
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to send password reset email', life: 3000 });
+  }
 };
-// Open edit dialog
+
 const openEdit = (emp) => {
-  console.log('Editing Employee:', emp); // Debugging
   employee.value = {
     ...emp,
-    disabledUntil: emp.disabledUntil ? new Date(emp.disabledUntil) : null, // Parse date if it exists
-  }; // Populate the employee object with the selected employee's data
-  submitted.value = false; // Reset the submitted state
-  editEmployeeDialog.value = true; // Open the edit dialog
+    disabledUntil: emp.disabledUntil ? new Date(emp.disabledUntil) : null,
+  };
+  submitted.value = false;
+  editEmployeeDialog.value = true;
 };
 
-
-// Open disable dialog
 const openDisableDialog = (employee) => {
   selectedEmployeeId.value = employee.idEmployee;
-  selectedDisabledUntil.value = null; // Reset the date
+  selectedDisabledUntil.value = null;
   disableDialogVisible.value = true;
 };
 
@@ -388,10 +400,8 @@ const setDisabledUntil = async () => {
 
     const variables = {
       id: selectedEmployeeId.value,
-      disabledUntil: selectedDisabledUntil.value.toISOString(), // Ensure ISO format
+      disabledUntil: selectedDisabledUntil.value.toISOString(),
     };
-
-    console.log('Mutation Variables:', variables); // Debugging
 
     const response = await axios.post('http://localhost:3000/graphql', {
       query: mutation,
@@ -410,8 +420,7 @@ const setDisabledUntil = async () => {
     });
     
     disableDialogVisible.value = false;
-    await fetchTaches(); // Refresh the data
-
+    await fetchTaches();
   } catch (error) {
     console.error('Error setting Disabled Until:', error);
     toast.add({ 
@@ -422,16 +431,17 @@ const setDisabledUntil = async () => {
     });
   }
 };
-// Confirm delete employee
+
 const confirmDeleteEmployee = (emp) => {
-employeeToDelete.value = emp; // Store the employee to be deleted
-deleteEmployeeDialog.value = true; // Open the delete confirmation dialog
+  employeeToDelete.value = emp;
+  adminPassword.value = '';
+  deleteEmployeeDialog.value = true;
 };
-// Open send email dialog
+
 const openSendEmailDialog = (employeeId) => {
   selectedEmployeeId.value = employeeId;
   const employee = taches.value.find(emp => emp.idEmployee === employeeId);
-  emailForReset.value = employee?.emailEmployee || ''; // Ensure the email is set correctly
+  emailForReset.value = employee?.emailEmployee || '';
   emailSubject.value = '';
   emailMessage.value = '';
   sendEmailDialog.value = true;
@@ -443,10 +453,26 @@ const confirmDeleteSelectedEmployees = () => {
     return;
   }
 
-  deleteEmployeesDialog.value = true; // Open the confirmation dialog
+  adminPassword.value = '';
+  deleteEmployeesDialog.value = true;
 };
 
 const deleteSelectedEmployees = async () => {
+  if (!isAdmin()) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Only admins can delete employees.', life: 3000 });
+    return;
+  }
+
+  if (!adminPassword.value) {
+    toast.add({ severity: 'warn', summary: 'Warning', detail: 'Please enter your password.', life: 3000 });
+    return;
+  }
+
+  if (!validatePassword(adminPassword.value)) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Invalid password. Please try again.', life: 3000 });
+    return;
+  }
+
   try {
     loading.value = true;
 
@@ -466,9 +492,10 @@ const deleteSelectedEmployees = async () => {
     await Promise.all(deletePromises);
 
     toast.add({ severity: 'success', summary: 'Success', detail: 'Selected employees deleted successfully', life: 3000 });
-    selectedEmployees.value = []; // Clear the selection
-    deleteEmployeesDialog.value = false; // Close the dialog
-    fetchTaches(); // Refresh the employee list
+    selectedEmployees.value = [];
+    deleteEmployeesDialog.value = false;
+    adminPassword.value = '';
+    fetchTaches();
   } catch (error) {
     console.error('Error deleting employees:', error);
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete selected employees', life: 3000 });
@@ -478,10 +505,9 @@ const deleteSelectedEmployees = async () => {
 };
 
 const exportCSV = () => {
-    dt.value.exportCSV();
+  dt.value.exportCSV();
 };
 
-// Hide all dialogs
 const hideDialog = () => {
   addEmployeeDialog.value = false;
   editEmployeeDialog.value = false;
@@ -493,10 +519,6 @@ const hideDialog = () => {
   submitted.value = false;
 };
 
-onMounted(() => {
-  fetchTaches();
-  fetchEquipes();
-});
 const sendEmail = async () => {
   if (!emailSubject.value || !emailMessage.value) {
     toast.add({ severity: 'warn', summary: 'Warning', detail: 'Please fill in both subject and message', life: 3000 });
@@ -529,8 +551,7 @@ const sendEmail = async () => {
       throw new Error(response.data.errors[0].message);
     }
 
-    // Close the dialog and show success message
-    sendEmailDialog.value = false; // Close the dialog
+    sendEmailDialog.value = false;
     toast.add({ severity: 'success', summary: 'Success', detail: 'Email sent successfully', life: 3000 });
   } catch (error) {
     console.error('Error sending email:', error);
@@ -538,7 +559,6 @@ const sendEmail = async () => {
   }
 };
 
-// Computed property to evaluate password strength
 const passwordStrength = computed(() => {
   if (!employee.value.passwordEmployee) return 'Weak';
   const password = employee.value.passwordEmployee;
@@ -559,7 +579,6 @@ const passwordStrength = computed(() => {
   return 'Weak';
 });
 
-// Function to determine the color of the password strength
 const passwordStrengthColor = computed(() => {
   switch (passwordStrength.value) {
     case 'Weak':
@@ -573,7 +592,6 @@ const passwordStrengthColor = computed(() => {
   }
 });
 
-// Computed property for password strength class
 const passwordStrengthClass = computed(() => {
   switch (passwordStrength.value) {
     case 'Weak':
@@ -587,7 +605,6 @@ const passwordStrengthClass = computed(() => {
   }
 });
 
-// Computed property for password strength width
 const passwordStrengthWidth = computed(() => {
   switch (passwordStrength.value) {
     case 'Weak':
@@ -601,17 +618,15 @@ const passwordStrengthWidth = computed(() => {
   }
 });
 
-// Get equipe name by ID
 const getEquipeName = (idEquipe) => {
-  if (!idEquipe) return 'No Equipe Assigned'; // Handle null or undefined idEquipe
+  if (!idEquipe) return 'No Equipe Assigned';
   const equipe = equipes.value.find(e => e.idEquipe === idEquipe);
   return equipe ? equipe.nom_equipe : 'No Equipe Assigned';
 };
 
-// Handle adding equipe
 const handleAddEquipe = () => {
-  employee.value.idEquipe = selectedEquipe.value; // Set the selected equipe (or null for "No Equipe Assigned")
-  selectedEquipe.value = null; // Reset the dropdown
+  employee.value.idEquipe = selectedEquipe.value;
+  selectedEquipe.value = null;
   const equipeName = getEquipeName(employee.value.idEquipe);
   toast.add({
     severity: 'success',
@@ -621,11 +636,15 @@ const handleAddEquipe = () => {
   });
 };
 
-// Handle removing equipe
 const handleRemoveEquipe = () => {
-  employee.value.idEquipe = null; // Remove the team
+  employee.value.idEquipe = null;
   toast.add({ severity: 'info', summary: 'Team Removed', detail: 'Team unassigned from employee', life: 3000 });
 };
+
+onMounted(() => {
+  fetchTaches();
+  fetchEquipes();
+});
 </script>
 
 <template>
@@ -674,8 +693,7 @@ const handleRemoveEquipe = () => {
               <InputIcon>
                 <i class="pi pi-search" />
               </InputIcon>
-              <InputText v-model="searchQuery" placeholder="Search by name..." class="p-inputtext-sm p
-mr-2" />
+              <InputText v-model="searchQuery" placeholder="Search by name..." class="p-inputtext-sm p-mr-2" />
             </IconField>
           </div>
         </template>
@@ -697,7 +715,7 @@ mr-2" />
         <Column header="Actions" headerStyle="width: 14rem">
           <template #body="{ data }">
             <Button icon="pi pi-pencil" class="mr-2" severity="warning" outlined @click="openEdit(data)" />
-            <Button icon="pi pi-trash"  class="mr-2" severity="danger" outlined @click="confirmDeleteEmployee(data)" />
+            <Button icon="pi pi-trash" class="mr-2" severity="danger" outlined @click="confirmDeleteEmployee(data)" />
             <Button icon="pi pi-envelope" class="mr-2" severity="info" outlined @click="openSendEmailDialog(data.idEmployee)" />
             <Button icon="pi pi-calendar" class="mr-2" severity="secondary" outlined @click="openDisableDialog(data)" />
           </template>
@@ -843,8 +861,7 @@ mr-2" />
     </Dialog>
 
     <!-- Reset Password Dialog -->
-    <Dialog v-model:visible="resetPasswordDialog" header="Reset Password" modal class="p-dialog
-responsive" :style="{ width: '30%' }">
+    <Dialog v-model:visible="resetPasswordDialog" header="Reset Password" modal class="p-dialog-responsive" :style="{ width: '30%' }">
       <div class="p-fluid">
         <div class="field">
           <label for="email">Email</label>
@@ -852,21 +869,18 @@ responsive" :style="{ width: '30%' }">
         </div>
         <div class="field">
           <label for="newPassword">New Password</label>
-          <InputText id="newPassword" v-model="newPassword" required type="password" class="p
-inputtext-lg" />
+          <InputText id="newPassword" v-model="newPassword" required type="password" class="p-inputtext-lg" />
         </div>
       </div>
 
       <template #footer>
         <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
-        <Button label="Send" icon="pi pi-check" class="p-button-text"
-@click="sendResetPasswordEmail" />
+        <Button label="Send" icon="pi pi-check" class="p-button-text" @click="sendResetPasswordEmail" />
       </template>
     </Dialog>
 
     <!-- Disable Employee Dialog -->
-    <Dialog v-model:visible="disableEmployeeDialog" header="Disable Employee" modal class="p
-dialog-responsive" :style="{ width: '30%' }">
+    <Dialog v-model:visible="disableEmployeeDialog" header="Disable Employee" modal class="p-dialog-responsive" :style="{ width: '30%' }">
       <div class="p-fluid">
         <div class="field">
           <label for="disabledUntil">Disable Until</label>
@@ -881,17 +895,24 @@ dialog-responsive" :style="{ width: '30%' }">
 
       <template #footer>
         <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
-        <Button label="Disable" icon="pi pi-check" class="p-button-danger" @click="disableEmployee"
-/>
+        <Button label="Disable" icon="pi pi-check" class="p-button-danger" @click="disableEmployee" />
       </template>
     </Dialog>
 
     <!-- Delete Employee Dialog -->
-    <Dialog v-model:visible="deleteEmployeeDialog" header="Confirm" modal class="p-dialog
-responsive" :style="{ width: '30%' }">
+    <Dialog v-model:visible="deleteEmployeeDialog" header="Confirm" modal class="p-dialog-responsive" :style="{ width: '30%' }">
       <div class="confirmation-content">
         <i class="pi pi-exclamation-triangle" style="font-size: 2rem"></i>
         <span>Are you sure you want to delete <b>{{ employeeToDelete?.nomEmployee }}</b>?</span>
+        <div class="field mt-3">
+          <label for="adminPassword">Admin Password</label>
+          <Password
+            id="adminPassword"
+            v-model="adminPassword"
+            toggleMask
+            class="w-full"
+          />
+        </div>
       </div>
 
       <template #footer>
@@ -901,34 +922,33 @@ responsive" :style="{ width: '30%' }">
     </Dialog>
 
     <!-- Send Email Dialog -->
-<Dialog v-model:visible="sendEmailDialog" header="Send Email" :modal="true" :style="{ width: '500px' }">
-  <div class="field">
-    <label for="subject" class="font-bold block mb-2">Subject</label>
-    <InputText
-      id="subject"
-      v-model="emailSubject"
-      class="w-full"
-      placeholder="Enter email subject"
-    />
-  </div>
+    <Dialog v-model:visible="sendEmailDialog" header="Send Email" :modal="true" :style="{ width: '500px' }">
+      <div class="field">
+        <label for="subject" class="font-bold block mb-2">Subject</label>
+        <InputText
+          id="subject"
+          v-model="emailSubject"
+          class="w-full"
+          placeholder="Enter email subject"
+        />
+      </div>
 
-  <div class="field">
-    <label for="message" class="font-bold block mb-2">Message</label>
-    <Textarea
-      id="message"
-      v-model="emailMessage"
-      class="w-full"
-      rows="5"
-      placeholder="Enter email message"
-    />
-  </div>
+      <div class="field">
+        <label for="message" class="font-bold block mb-2">Message</label>
+        <Textarea
+          id="message"
+          v-model="emailMessage"
+          class="w-full"
+          rows="5"
+          placeholder="Enter email message"
+        />
+      </div>
 
-<template #footer>
-  <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="sendEmailDialog = false" />
-  <Button label="Send" icon="pi pi-send" class="p-button" @click="sendEmail" />
-</template>
-</Dialog>
-
+      <template #footer>
+        <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="sendEmailDialog = false" />
+        <Button label="Send" icon="pi pi-send" class="p-button" @click="sendEmail" />
+      </template>
+    </Dialog>
 
     <!-- Set Disabled Until Dialog -->
     <Dialog v-model:visible="disableDialogVisible" header="Set Disabled Until" :modal="true" :style="{ width: '400px' }">
@@ -944,8 +964,7 @@ responsive" :style="{ width: '30%' }">
         />
       </div>
       <template #footer>
-        <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="disableDialogVisible =
-false" />
+        <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="disableDialogVisible = false" />
         <Button label="Save" icon="pi pi-check" class="p-button" @click="setDisabledUntil" />
       </template>
     </Dialog>
@@ -955,6 +974,15 @@ false" />
       <div class="confirmation-content">
         <i class="pi pi-exclamation-triangle" style="font-size: 2rem"></i>
         <span>Are you sure you want to delete the selected employees?</span>
+        <div class="field mt-3">
+          <label for="adminPassword">Admin Password</label>
+          <Password
+            id="adminPassword"
+            v-model="adminPassword"
+            toggleMask
+            class="w-full"
+          />
+        </div>
       </div>
 
       <template #footer>
