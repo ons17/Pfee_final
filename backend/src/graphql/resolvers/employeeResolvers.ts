@@ -7,8 +7,17 @@ import jwt from 'jsonwebtoken';
 const fetchEmployees = async (pool: sql.ConnectionPool) => {
   try {
     const result = await pool.request().query(`
-      SELECT idEmployee, nom_employee, email_employee, role, idEquipe, disabledUntil, password_employee
-      FROM Employee
+      SELECT 
+        e.idEmployee, 
+        e.nom_employee, 
+        e.email_employee, 
+        e.role, 
+        e.idEquipe, 
+        e.disabledUntil, 
+        e.password_employee,
+        eq.nom_equipe AS equipeName
+      FROM Employee e
+      LEFT JOIN Equipe eq ON e.idEquipe = eq.idEquipe
     `);
 
     return result.recordset;
@@ -32,8 +41,9 @@ export const employeeResolvers = {
             passwordEmployee: emp.password_employee,
             idEquipe: emp.idEquipe,
             role: emp.role,
-            disabledUntil: emp.disabledUntil ? new Date(emp.disabledUntil).toISOString() : null, // Convert to ISO string
-          }))
+            disabledUntil: emp.disabledUntil ? new Date(emp.disabledUntil).toISOString() : null,
+            equipe: emp.equipeName ? { idEquipe: emp.idEquipe, nomEquipe: emp.equipeName } : null, // Include team details
+          })),
         };
       } catch (error) {
         console.error('Error fetching employees:', error);
@@ -46,9 +56,18 @@ export const employeeResolvers = {
         const result = await pool.request()
           .input('id', sql.UniqueIdentifier, id)
           .query(`
-            SELECT idEmployee, nom_employee, email_employee, idEquipe, role, disabledUntil, password_employee
-            FROM Employee
-            WHERE idEmployee = @id;
+            SELECT 
+              e.idEmployee, 
+              e.nom_employee, 
+              e.email_employee, 
+              e.role, 
+              e.idEquipe, 
+              e.disabledUntil, 
+              e.password_employee,
+              eq.nom_equipe AS equipeName
+            FROM Employee e
+            LEFT JOIN Equipe eq ON e.idEquipe = eq.idEquipe
+            WHERE e.idEmployee = @id;
           `);
 
         if (result.recordset.length === 0) throw new Error("Employee not found");
@@ -61,7 +80,8 @@ export const employeeResolvers = {
           passwordEmployee: employee.password_employee,
           idEquipe: employee.idEquipe,
           role: employee.role,
-          disabledUntil: employee.disabledUntil ? new Date(employee.disabledUntil).toISOString() : null, // Convert to ISO string
+          disabledUntil: employee.disabledUntil ? new Date(employee.disabledUntil).toISOString() : null,
+          equipe: employee.equipeName ? { idEquipe: employee.idEquipe, nomEquipe: employee.equipeName } : null, // Include team details
         };
       } catch (error) {
         console.error("Error fetching employee:", error);
@@ -76,24 +96,33 @@ export const employeeResolvers = {
     ) => {
       try {
         let query = `
-          SELECT idEmployee, nom_employee, email_employee, idEquipe, role, disabledUntil, password_employee
-          FROM Employee
+          SELECT 
+            e.idEmployee, 
+            e.nom_employee, 
+            e.email_employee, 
+            e.role, 
+            e.idEquipe, 
+            e.disabledUntil, 
+            e.password_employee,
+            eq.nom_equipe AS equipeName
+          FROM Employee e
+          LEFT JOIN Equipe eq ON e.idEquipe = eq.idEquipe
         `;
         const conditions: string[] = [];
         const inputs: any[] = [];
 
         if (filters?.nomEmployee) {
-          conditions.push("nom_employee LIKE @nomEmployee");
+          conditions.push("e.nom_employee LIKE @nomEmployee");
           inputs.push({ name: "nomEmployee", type: sql.VarChar, value: `%${filters.nomEmployee}%` });
         }
 
         if (filters?.emailEmployee) {
-          conditions.push("email_employee LIKE @emailEmployee");
+          conditions.push("e.email_employee LIKE @emailEmployee");
           inputs.push({ name: "emailEmployee", type: sql.VarChar, value: `%${filters.emailEmployee}%` });
         }
 
         if ((filters as any)?.passwordEmployee) {
-          conditions.push("password_employee = @passwordEmployee");
+          conditions.push("e.password_employee = @passwordEmployee");
           inputs.push({ name: "passwordEmployee", type: sql.VarChar, value: (filters as any).passwordEmployee });
         }
 
@@ -114,7 +143,8 @@ export const employeeResolvers = {
             passwordEmployee: employee.password_employee,
             idEquipe: employee.idEquipe,
             role: employee.role,
-            disabledUntil: employee.disabledUntil
+            disabledUntil: employee.disabledUntil,
+            equipe: employee.equipeName ? { idEquipe: employee.idEquipe, nomEquipe: employee.equipeName } : null, // Include team details
           })),
         };
       } catch (error) {
@@ -144,14 +174,14 @@ export const employeeResolvers = {
           .query(`
             SELECT idEmployee FROM Employee WHERE email_employee = @email;
           `);
-    
+
         if (existingEmployee.recordset.length > 0) {
           throw new Error(`An employee with the email "${emailEmployee}" already exists.`);
         }
-    
+
         // Generate a unique ID for the employee
         const idEmployee = uuidv4();
-    
+
         // Insert the employee into the database
         await pool.request()
           .input('id', sql.UniqueIdentifier, idEmployee)
@@ -165,7 +195,7 @@ export const employeeResolvers = {
             INSERT INTO Employee (idEmployee, nom_employee, email_employee, password_employee, idEquipe, role, disabledUntil)
             VALUES (@id, @nom, @email, @password, @equipe, @role, @disabledUntil);
           `);
-    
+
         // Return the created employee details
         return {
           idEmployee,
@@ -174,7 +204,7 @@ export const employeeResolvers = {
           passwordEmployee, // Return the plain password
           idEquipe,
           role,
-          disabledUntil: disabledUntil ? new Date(disabledUntil).toISOString() : null
+          disabledUntil: disabledUntil ? new Date(disabledUntil).toISOString() : null,
         };
       } catch (error) {
         console.error("Error creating employee:", error);
@@ -183,9 +213,9 @@ export const employeeResolvers = {
         } else {
           throw new Error("Error creating employee");
         }
-
       }
     },
+
     updateEmployee: async (
       _: any,
       { id, nomEmployee, emailEmployee, role, idEquipe, disabledUntil }: { id: string; nomEmployee?: string; emailEmployee?: string; role?: string; idEquipe?: string; disabledUntil?: string },
@@ -197,7 +227,7 @@ export const employeeResolvers = {
           .input('nomEmployee', sql.VarChar, nomEmployee || null)
           .input('emailEmployee', sql.VarChar, emailEmployee || null)
           .input('role', sql.VarChar, role || null)
-          .input('idEquipe', sql.UniqueIdentifier, idEquipe || null)
+          .input('idEquipe', sql.UniqueIdentifier, idEquipe || null) // Allow null for "No Equipe Assigned"
           .input('disabledUntil', sql.DateTime, disabledUntil ? new Date(disabledUntil) : null);
 
         await request.query(`
@@ -206,7 +236,7 @@ export const employeeResolvers = {
             nom_employee = COALESCE(@nomEmployee, nom_employee),
             email_employee = COALESCE(@emailEmployee, email_employee),
             role = COALESCE(@role, role),
-            idEquipe = COALESCE(@idEquipe, idEquipe),
+            idEquipe = @idEquipe, -- Explicitly set to null if "No Equipe Assigned"
             disabledUntil = @disabledUntil
           WHERE idEmployee = @id;
         `);
@@ -214,9 +244,17 @@ export const employeeResolvers = {
         const updatedEmployee = await pool.request()
           .input('id', sql.UniqueIdentifier, id)
           .query(`
-            SELECT idEmployee, nom_employee, email_employee, role, idEquipe, disabledUntil
-            FROM Employee
-            WHERE idEmployee = @id;
+            SELECT 
+              e.idEmployee, 
+              e.nom_employee, 
+              e.email_employee, 
+              e.role, 
+              e.idEquipe, 
+              e.disabledUntil, 
+              eq.nom_equipe AS equipeName
+            FROM Employee e
+            LEFT JOIN Equipe eq ON e.idEquipe = eq.idEquipe
+            WHERE e.idEmployee = @id;
           `);
 
         if (updatedEmployee.recordset.length === 0) {
@@ -231,6 +269,7 @@ export const employeeResolvers = {
           role: employee.role,
           idEquipe: employee.idEquipe,
           disabledUntil: employee.disabledUntil ? employee.disabledUntil.toISOString() : null,
+          equipe: employee.equipeName ? { idEquipe: employee.idEquipe, nomEquipe: employee.equipeName } : null,
         };
       } catch (error) {
         console.error("Error updating employee:", error);
