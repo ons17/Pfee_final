@@ -27,6 +27,7 @@ const login = async () => {
               idAdministrateur
               nom_administrateur
               email_administrateur
+              role
             }
           }
         }

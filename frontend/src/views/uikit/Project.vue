@@ -6,6 +6,7 @@ import { useToast } from 'primevue/usetoast';
 import ProgressSpinner from 'primevue/progressspinner';
 import { GET_TEAMS, GET_PROJECTS, CREATE_PROJECT, UPDATE_PROJECT, DELETE_PROJECT } from '@/graphql';
 import { ADD_TEAM_TO_PROJECT, REMOVE_TEAM_FROM_PROJECT } from '@/graphql';
+import { isAdmin, validatePassword } from '@/utils/authUtils'; // Import utility functions
 
 const toast = useToast();
 const dt = ref();
@@ -24,7 +25,7 @@ const teamToRemove = ref({ id: null, name: '' });
 const addingTeam = ref(false);
 const removingTeam = ref(false);
 const dropdownKey = ref(0);
-const adminPassword = ref(''); // Add this at the top of the script
+const adminPassword = ref('');
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS }
@@ -331,13 +332,19 @@ const confirmDeleteProject = (proj) => {
 };
 
 const deleteProject = async () => {
-    if (!adminPassword.value) {
-        toast.add({ severity: 'warn', summary: 'Warning', detail: 'Please enter your password', life: 3000 });
+    console.log('isAdmin:', isAdmin()); // Debug log to check if the user is recognized as an admin
+
+    if (!isAdmin()) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Only admins can delete projects.', life: 3000 });
         return;
     }
 
-    const storedPassword = localStorage.getItem('password'); // Retrieve the admin password from localStorage
-    if (adminPassword.value !== storedPassword) {
+    if (!adminPassword.value) {
+        toast.add({ severity: 'warn', summary: 'Warning', detail: 'Please enter your password.', life: 3000 });
+        return;
+    }
+
+    if (!validatePassword(adminPassword.value)) {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Invalid password. Please try again.', life: 3000 });
         return;
     }
@@ -349,18 +356,18 @@ const deleteProject = async () => {
             toast.add({
                 severity: 'success',
                 summary: 'Success',
-                detail: data.deleteProjet.message || 'Project deleted successfully',
+                detail: 'Project deleted successfully.',
                 life: 3000
             });
         } else {
-            throw new Error(data?.deleteProjet?.message || 'Failed to delete project');
+            throw new Error(data?.deleteProjet?.message || 'Failed to delete project.');
         }
     } catch (error) {
         console.error('Error deleting project:', error);
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: error.message || 'Failed to delete project',
+            detail: error.message || 'Failed to delete project.',
             life: 3000
         });
     } finally {

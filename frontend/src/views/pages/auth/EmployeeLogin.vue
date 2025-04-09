@@ -27,7 +27,6 @@ const login = async () => {
               idEmployee
               nomEmployee
               emailEmployee
-              role
             }
           }
         }
