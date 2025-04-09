@@ -604,7 +604,7 @@ watch([isRunning, timer], ([newIsRunning, newTimer]) => {
                     </div>
                 </template>
                 <template #content>
-                    <ProgressBar :value="(totalWeekMinutes / WEEKLY_GOAL_MINUTES) * 100" class="weekly-progress-bar" />
+                    <ProgressBar :value="((totalWeekMinutes / WEEKLY_GOAL_MINUTES) * 100).toFixed(2)" class="weekly-progress-bar" />
                     <div class="week-days">
                         <div v-for="day in weeklyHours" :key="day.date" class="day-card" :class="{ 'active-day': isToday(day.date) }">
                             <h4>{{ formatDate(day.date, 'EEE') }}</h4>

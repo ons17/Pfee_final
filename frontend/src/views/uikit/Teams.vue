@@ -7,6 +7,7 @@ import ProgressSpinner from 'primevue/progressspinner';
 import { GET_TEAMS, CREATE_TEAM, UPDATE_TEAM, DELETE_TEAM } from '@/graphql';
 import { GET_PROJECTS } from '@/graphql';
 import { ADD_TEAM_TO_PROJECT, REMOVE_TEAM_FROM_PROJECT } from '@/graphql';
+import { isAdmin, validatePassword } from '@/utils/authUtils';
 
 const toast = useToast();
 const dt = ref();
@@ -25,6 +26,7 @@ const addingProject = ref(false);
 const removingProject = ref(false);
 const projectToRemove = ref({ id: null, name: '' });
 const dropdownKey = ref(0);
+const adminPassword = ref('');
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS }
@@ -255,6 +257,21 @@ const confirmDeleteTeam = (t) => {
 };
 
 const deleteTeam = async () => {
+    if (!isAdmin()) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Only admins can delete teams.', life: 3000 });
+        return;
+    }
+
+    if (!adminPassword.value) {
+        toast.add({ severity: 'warn', summary: 'Warning', detail: 'Please enter your password.', life: 3000 });
+        return;
+    }
+
+    if (!validatePassword(adminPassword.value)) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Invalid password. Please try again.', life: 3000 });
+        return;
+    }
+
     try {
         const { data } = await deleteTeamMutation({ id: team.value.idEquipe });
         if (data?.deleteEquipe?.success) {
@@ -262,17 +279,23 @@ const deleteTeam = async () => {
             toast.add({
                 severity: 'success',
                 summary: 'Success',
-                detail: data.deleteEquipe.message || 'Team deleted',
+                detail: 'Team deleted successfully.',
                 life: 3000
             });
         } else {
-            throw new Error(data?.deleteEquipe?.message || 'Failed to delete team');
+            throw new Error(data?.deleteEquipe?.message || 'Failed to delete team.');
         }
     } catch (error) {
-        handleError(error, 'Failed to delete team');
+        console.error('Error deleting team:', error);
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.message || 'Failed to delete team.',
+            life: 3000
+        });
     } finally {
         deleteTeamDialog.value = false;
-        team.value = {};
+        adminPassword.value = ''; // Clear the password field
     }
 };
 
@@ -542,12 +565,18 @@ const handleRemoveProject = async (projectId) => {
         </Dialog>
 
         <Dialog v-model:visible="deleteTeamDialog" :style="{ width: '450px' }" header="Confirm Deletion" :modal="true">
-            <div class="flex align-items-center gap-3">
-                <i class="pi pi-exclamation-triangle text-3xl text-red-500" />
-                <span v-if="team">
-                    Are you sure you want to delete team <b>{{ team.nom_equipe }}</b
-                    >?
-                </span>
+            <div class="flex flex-col gap-4">
+                <div class="field">
+                    <label for="adminPassword" class="font-bold block mb-2">Admin Password *</label>
+                    <InputText id="adminPassword" v-model.trim="adminPassword" type="password" required :class="{ 'p-invalid': !adminPassword }" class="w-full" />
+                </div>
+                <div class="flex align-items-center gap-3">
+                    <i class="pi pi-exclamation-triangle text-3xl text-red-500" />
+                    <span v-if="team">
+                        Are you sure you want to delete team <b>{{ team.nom_equipe }}</b
+                        >?
+                    </span>
+                </div>
             </div>
             <template #footer>
                 <Button label="No" icon="pi pi-times" @click="deleteTeamDialog = false" class="p-button-text" />
