@@ -1,4 +1,4 @@
-import sql from 'mssql';
+import * as sql from 'mssql';
 import { v4 as uuidv4 } from 'uuid';
 
 export const equipeResolvers = {
@@ -79,7 +79,7 @@ export const equipeResolvers = {
           `);
 
         if (result.recordset.length === 0) {
-          throw new Error('Team not found');
+          throw new Error('Team not found'); // Update this error message
         }
 
         const team = result.recordset[0];
@@ -100,7 +100,7 @@ export const equipeResolvers = {
         return team;
       } catch (error) {
         console.error(`Error fetching team ${id}:`, error);
-        throw new Error('Failed to fetch team');
+        throw error; // Re-throw the original error
       }
     },
   },
@@ -140,7 +140,7 @@ export const equipeResolvers = {
         await pool.request()
           .input('idEquipe', sql.UniqueIdentifier, idEquipe)
           .input('nom_equipe', sql.VarChar, nom_equipe)
-          .input('description_equipe', sql.VarChar, description_equipe || '')
+          .input('description_equipe', sql.VarChar, description_equipe || '') // Default to empty string
           .query(`
             INSERT INTO Equipe (idEquipe, nom_equipe, description_equipe)
             VALUES (@idEquipe, @nom_equipe, @description_equipe);
@@ -149,7 +149,7 @@ export const equipeResolvers = {
         return {
           idEquipe,
           nom_equipe,
-          description_equipe,
+          description_equipe: description_equipe || '', // Ensure default value is returned
         };
       } catch (error) {
         console.error("Error creating equipe:", error);

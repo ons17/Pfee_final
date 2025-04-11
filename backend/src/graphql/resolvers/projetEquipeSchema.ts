@@ -1,4 +1,4 @@
-import sql from 'mssql';
+import * as sql from 'mssql';
 import { projetResolvers } from './projetResolvers';
 
 export const projetEquipeSchema = {
@@ -123,7 +123,7 @@ export const projetEquipeSchema = {
         return result.recordset;
       } catch (error) {
         console.error('Error fetching project-equipe relationships:', error);
-        throw error;
+        throw new Error(`Error fetching project-equipe relationships: ${error}`);
       }
     }
   }

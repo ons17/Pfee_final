@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import sql from 'mssql';
+import * as sql from 'mssql';
 
 export const projetResolvers = {
   Query: {
@@ -124,7 +124,7 @@ export const projetResolvers = {
           `);
 
         if (result.recordset.length === 0) {
-          throw new Error('Projet not found');
+          throw new Error('Projet not found'); // Update this error message
         }
 
         const project = result.recordset[0];
@@ -144,7 +144,7 @@ export const projetResolvers = {
         return project;
       } catch (error) {
         console.error('Error fetching project:', error);
-        throw new Error('Error fetching project');
+        throw error; // Re-throw the original error
       }
     },
   },
@@ -177,14 +177,17 @@ export const projetResolvers = {
             VALUES (@idProjet, @nom_projet, @description_projet, @date_debut_projet, @date_fin_projet, @statut_projet);
           `);
 
-        return {
+        const project: any = {
           idProjet,
           nom_projet,
           description_projet,
-          date_debut_projet: date_debut_projet || null,
-          date_fin_projet: date_fin_projet || null,
           statut_projet: statut_projet || null,
         };
+
+        if (date_debut_projet) project.date_debut_projet = date_debut_projet;
+        if (date_fin_projet) project.date_fin_projet = date_fin_projet;
+
+        return project;
       } catch (error) {
         console.error('Error creating project:', error);
         throw new Error('Error creating project');

@@ -1,4 +1,4 @@
-import sql from "mssql";
+import * as sql from "mssql";
 import { v4 as uuidv4 } from "uuid";
 import { GraphQLScalarType, Kind } from 'graphql';
 import { UserInputError, ApolloError } from 'apollo-server-express';
@@ -8,33 +8,25 @@ const DateTimeISO = new GraphQLScalarType({
   name: 'DateTimeISO',
   description: 'ISO 8601 date with validation',
   parseValue(value: unknown) {
-    try {
-      if (typeof value !== 'string' && typeof value !== 'number' && !(value instanceof Date)) {
-        throw new UserInputError('Invalid date format. Value must be a string, number, or Date.');
-      }
-      
-      const date = new Date(value);
-      if (isNaN(date.getTime())) {
-        throw new UserInputError('Invalid date format. Use ISO 8601 (e.g., "2024-03-31")');
-      }
-      return date.toISOString();
-    } catch (error) {
-      throw new UserInputError(`Date validation failed: ${error}`);
+    if (typeof value !== 'string' && typeof value !== 'number' && !(value instanceof Date)) {
+      throw new UserInputError('Invalid date format. Value must be a string, number, or Date.');
     }
+
+    const date = new Date(value);
+    if (isNaN(date.getTime())) {
+      throw new UserInputError('Invalid date format. Use ISO 8601 (e.g., "2024-03-31")');
+    }
+    return date.toISOString();
   },
   parseLiteral(ast) {
-    try {
-      if (ast.kind !== Kind.STRING) {
-        throw new UserInputError('Query error: Date must be a string');
-      }
-      const date = new Date(ast.value);
-      if (isNaN(date.getTime())) {
-        throw new UserInputError('Invalid date format');
-      }
-      return date.toISOString();
-    } catch (error) {
-      throw new UserInputError(`Date literal validation failed: ${error}`);
+    if (ast.kind !== Kind.STRING) {
+      throw new UserInputError('Query error: Date must be a string');
     }
+    const date = new Date(ast.value);
+    if (isNaN(date.getTime())) {
+      throw new UserInputError('Invalid date format');
+    }
+    return date.toISOString();
   },
   serialize(value) {
     return value;
@@ -45,7 +37,7 @@ const DateTimeISO = new GraphQLScalarType({
 const handleDatabaseError = (error: unknown, operation: string) => {
   console.error(`Database error during ${operation}:`, error);
   throw new ApolloError(`Failed to ${operation}`, 'DATABASE_ERROR', {
-    originalError: error,
+    originalError: error instanceof Error ? error : new Error(String(error)),
     operation
   });
 };
@@ -71,7 +63,7 @@ interface SuiviDeTempResult {
 const mapSuiviResult = (row: SuiviDeTempResult) => ({
   idsuivi: row.idsuivi,
   heure_debut_suivi: row.heure_debut_suivi,
-  heure_fin_suivi: row.heure_fin_suivi,
+  heure_fin_suivi: row.heure_fin_suivi ?? null,
   duree_suivi: row.duree_suivi,
   employee: {
     idEmployee: row.idEmployee,
@@ -82,7 +74,7 @@ const mapSuiviResult = (row: SuiviDeTempResult) => ({
     idTache: row.idTache,
     titreTache: row.titre_tache,
     statutTache: row.statut_tache,
-    idProjet: row.idProjet, // Include idProjet
+    idProjet: row.idProjet,
     projet: row.idProjet ? {
       idProjet: row.idProjet,
       nom_projet: row.nom_projet || 'N/A',
@@ -101,7 +93,7 @@ export const suiviDeTempsResolvers = {
           SELECT 
             s.idsuivi, s.heure_debut_suivi, s.heure_fin_suivi, s.duree_suivi,
             s.idEmployee, s.idTache, e.nom_employee, e.email_employee,
-            t.titre_tache, t.statut_tache, t.idProjet, -- Include idProjet
+            t.titre_tache, t.statut_tache, t.idProjet,
             COALESCE(p.nom_projet, 'N/A') AS nom_projet, p.statut_projet
           FROM SuiviDeTemp s
           LEFT JOIN Employee e ON s.idEmployee = e.idEmployee
@@ -156,7 +148,6 @@ export const suiviDeTempsResolvers = {
       }
     },
 
-    // Get active time entry for an employee
     getActiveSuivi: async (_: any, { employeeId }: { employeeId: string }, { pool }: { pool: sql.ConnectionPool }) => {
       try {
         const result = await pool.request()
@@ -203,7 +194,6 @@ export const suiviDeTempsResolvers = {
   },
 
   Mutation: {
-    // Create new time entry
     createSuiviDeTemp: async (
       _: any, 
       { input }: { input: { idEmployee: string; idTache: string; heure_debut_suivi: string } }, 
@@ -213,41 +203,34 @@ export const suiviDeTempsResolvers = {
       
       try {
         await transaction.begin();
-
-        // Input validation
+    
         if (!input.idEmployee || !input.idTache || !input.heure_debut_suivi) {
           throw new UserInputError('Missing required fields');
         }
-
+    
         const startDate = new Date(input.heure_debut_suivi);
         if (isNaN(startDate.getTime())) {
-          throw new UserInputError("Invalid start time format");
+          throw new UserInputError('Invalid start time format');
         }
-
-        // Check employee exists
-        const employeeRequest = new sql.Request(transaction);
-        const employeeCheck = await employeeRequest
+    
+        const employeeCheck = await new sql.Request(transaction)
           .input('checkEmpId', sql.UniqueIdentifier, input.idEmployee)
           .query('SELECT 1 FROM Employee WHERE idEmployee = @checkEmpId');
         
         if (employeeCheck.recordset.length === 0) {
           throw new UserInputError(`Employee with ID ${input.idEmployee} does not exist`);
         }
-
-        // Check task exists
-        const taskRequest = new sql.Request(transaction);
-        const taskCheck = await taskRequest
+    
+        const taskCheck = await new sql.Request(transaction)
           .input('checkTaskId', sql.UniqueIdentifier, input.idTache)
           .query('SELECT 1 FROM Tache WHERE idTache = @checkTaskId');
         
         if (taskCheck.recordset.length === 0) {
           throw new UserInputError(`Task with ID ${input.idTache} does not exist`);
         }
-
-        // Create new entry
-        const createRequest = new sql.Request(transaction);
+    
         const idsuivi = uuidv4();
-        await createRequest
+        await new sql.Request(transaction)
           .input("newSuiviId", sql.UniqueIdentifier, idsuivi)
           .input("startTime", sql.DateTime2, startDate)
           .input("empId", sql.UniqueIdentifier, input.idEmployee)
@@ -259,26 +242,25 @@ export const suiviDeTempsResolvers = {
               @newSuiviId, @startTime, @empId, @taskId
             )
           `);
-
-        // Return created entry
-        const resultRequest = new sql.Request(transaction);
-        const result = await resultRequest
+    
+        const result = await new sql.Request(transaction)
           .input('resultSuiviId', sql.UniqueIdentifier, idsuivi)
           .query<SuiviDeTempResult>(`
             SELECT 
               s.idsuivi, s.heure_debut_suivi, s.heure_fin_suivi, s.duree_suivi,
               s.idEmployee, s.idTache, e.nom_employee, e.email_employee,
-              t.titre_tache, t.statut_tache, t.idProjet, -- Include idProjet
+              t.titre_tache, t.statut_tache, t.idProjet,
               COALESCE(p.nom_projet, 'N/A') AS nom_projet, p.statut_projet
             FROM SuiviDeTemp s
             LEFT JOIN Employee e ON s.idEmployee = e.idEmployee
             LEFT JOIN Tache t ON s.idTache = t.idTache
             LEFT JOIN Projet p ON t.idProjet = p.idProjet
+            WHERE s.idsuivi = @resultSuiviId
           `);
-
+    
         await transaction.commit();
         return mapSuiviResult(result.recordset[0]);
-
+    
       } catch (error) {
         try {
           await transaction.rollback();
@@ -291,22 +273,18 @@ export const suiviDeTempsResolvers = {
       }
     },
 
-    // Stop active time entry
     stopActiveSuivi: async (_: any, { idEmployee }: { idEmployee: string }, { pool }: { pool: sql.ConnectionPool }) => {
       const transaction = new sql.Transaction(pool);
       
       try {
         await transaction.begin();
 
-        // Find active entry with new request
-        const findRequest = new sql.Request(transaction);
-        const activeEntry = await findRequest
-          .input("findEmpId", sql.UniqueIdentifier, idEmployee)
-          .query<{ idsuivi: string; heure_debut_suivi: string }>(`
-            SELECT TOP 1 idsuivi, heure_debut_suivi 
-            FROM SuiviDeTemp 
-            WHERE idEmployee = @findEmpId 
-              AND heure_fin_suivi IS NULL
+        const activeEntry = await new sql.Request(transaction)
+          .input('findEmpId', sql.UniqueIdentifier, idEmployee)
+          .query(`
+            SELECT TOP 1 idsuivi, heure_debut_suivi
+            FROM SuiviDeTemp
+            WHERE idEmployee = @findEmpId AND heure_fin_suivi IS NULL
             ORDER BY heure_debut_suivi DESC
           `);
     
@@ -314,51 +292,46 @@ export const suiviDeTempsResolvers = {
           await transaction.commit();
           return {
             success: false,
-            message: "No active time entry found",
-            suivi: null
+            message: 'No active time entry found',
+            suivi: null,
           };
         }
     
-        // Calculate duration and update with new request
-        const updateRequest = new sql.Request(transaction);
         const idsuivi = activeEntry.recordset[0].idsuivi;
         const endTime = new Date();
         const startTime = new Date(activeEntry.recordset[0].heure_debut_suivi);
         const duration = Math.floor((endTime.getTime() - startTime.getTime()) / 60000);
     
-        await updateRequest
-          .input("updateSuiviId", sql.UniqueIdentifier, idsuivi)
-          .input("endTime", sql.DateTime2, endTime)
-          .input("duration", sql.Int, duration)
+        await new sql.Request(transaction)
+          .input('updateSuiviId', sql.UniqueIdentifier, idsuivi)
+          .input('endTime', sql.DateTime2, endTime)
+          .input('duration', sql.Int, duration)
           .query(`
             UPDATE SuiviDeTemp
-            SET heure_fin_suivi = @endTime, 
-                duree_suivi = @duration
+            SET heure_fin_suivi = @endTime, duree_suivi = @duration
             WHERE idsuivi = @updateSuiviId
           `);
     
-        // Return updated entry with new request
-        const resultRequest = new sql.Request(transaction);
-        const result = await resultRequest
+        const result = await new sql.Request(transaction)
           .input('resultSuiviId', sql.UniqueIdentifier, idsuivi)
           .query<SuiviDeTempResult>(`
             SELECT 
               s.idsuivi, s.heure_debut_suivi, s.heure_fin_suivi, s.duree_suivi,
               s.idEmployee, s.idTache, e.nom_employee, e.email_employee,
-              t.titre_tache, t.statut_tache, t.idProjet, -- Include idProjet
+              t.titre_tache, t.statut_tache, t.idProjet,
               COALESCE(p.nom_projet, 'N/A') AS nom_projet, p.statut_projet
             FROM SuiviDeTemp s
             LEFT JOIN Employee e ON s.idEmployee = e.idEmployee
             LEFT JOIN Tache t ON s.idTache = t.idTache
             LEFT JOIN Projet p ON t.idProjet = p.idProjet
+            WHERE s.idsuivi = @resultSuiviId
           `);
     
         await transaction.commit();
-    
         return {
           success: true,
-          message: "Time entry stopped successfully",
-          suivi: mapSuiviResult(result.recordset[0])
+          message: 'Time entry stopped successfully',
+          suivi: mapSuiviResult(result.recordset[0]),
         };
       } catch (error) {
         try {
@@ -370,26 +343,23 @@ export const suiviDeTempsResolvers = {
       }
     },
 
-    // Delete time entry
     deleteSuiviDeTemp: async (_: any, { id }: { id: string }, { pool }: { pool: sql.ConnectionPool }) => {
       const transaction = new sql.Transaction(pool);
       
       try {
         await transaction.begin();
 
-        // Verify entry exists with new request
-        const checkRequest = new sql.Request(transaction);
-        const entryCheck = await checkRequest
+        const entryCheck = await new sql.Request(transaction)
           .input('checkSuiviId', sql.UniqueIdentifier, id)
           .query('SELECT 1 FROM SuiviDeTemp WHERE idsuivi = @checkSuiviId');
         
         if (entryCheck.recordset.length === 0) {
-          throw new UserInputError("Time entry not found");
+          throw new UserInputError("Suivi introuvable", {
+            invalidArgs: { id },
+          });
         }
     
-        // Delete entry with new request
-        const deleteRequest = new sql.Request(transaction);
-        await deleteRequest
+        await new sql.Request(transaction)
           .input("deleteSuiviId", sql.UniqueIdentifier, id)
           .query(`
             DELETE FROM SuiviDeTemp
