@@ -41,6 +41,7 @@ const { timer, isRunning, startTimer, stopTimer, formatTime, pauseTimer, resumeT
 const weekViewDate = ref(new Date());
 const selectedProject = ref(null);
 const selectedTask = ref(null);
+const description = ref(''); // Add description state
 const loading = ref(false);
 const showDeleteDialog = ref(false);
 const activeEntry = ref(null);
@@ -106,22 +107,23 @@ const filteredTasks = computed(() => {
 });
 
 const timeEntries = computed(() => {
-    if (!timeEntriesResult.value?.suivisDeTemp) return [];
+  if (!timeEntriesResult.value?.suivisDeTemp) return [];
 
-    const projectMap = projects.value.reduce((acc, project) => {
-        acc[project.id] = project.name;
-        return acc;
-    }, {});
+  const projectMap = projects.value.reduce((acc, project) => {
+    acc[project.id] = project.name;
+    return acc;
+  }, {});
 
-    return timeEntriesResult.value.suivisDeTemp.map((entry) => ({
-        id: entry.idsuivi,
-        task: entry.tache?.titreTache || 'N/A',
-        project: projectMap[entry.tache?.idProjet] || 'N/A',
-        startTime: entry.heure_debut_suivi,
-        endTime: entry.heure_fin_suivi,
-        duration: entry.duree_suivi,
-        employee: entry.employee?.nomEmployee || 'N/A'
-    }));
+  return timeEntriesResult.value.suivisDeTemp.map((entry) => ({
+    id: entry.idsuivi,
+    task: entry.tache?.titreTache || 'N/A',
+    project: projectMap[entry.tache?.idProjet] || 'N/A',
+    startTime: entry.heure_debut_suivi,
+    endTime: entry.heure_fin_suivi,
+    duration: entry.duree_suivi,
+    employee: entry.employee?.nomEmployee || 'N/A',
+    description: entry.description || 'N/A' // Ensure description is included
+  }));
 });
 
 const totalWeekHours = computed(() => {
@@ -188,7 +190,8 @@ const startTracking = async () => {
             input: {
                 heure_debut_suivi: new Date().toISOString(),
                 idEmployee: EMPLOYEE_ID,
-                idTache: selectedTask.value.id
+                idTache: selectedTask.value.id,
+                description: description.value // Pass description
             }
         });
 
@@ -209,7 +212,8 @@ const stopTracking = async () => {
     try {
         loading.value = true;
         const { data } = await stopActiveTracking({
-            idEmployee: EMPLOYEE_ID
+            idEmployee: EMPLOYEE_ID,
+            description: description.value // Pass the description
         });
 
         if (data?.stopActiveSuivi?.success) {
@@ -319,8 +323,8 @@ const deleteEntry = async () => {
 };
 
 const exportToCSV = () => {
-    const headers = ['Task', 'Project', 'Start Time', 'End Time', 'Duration'];
-    const rows = timeEntries.value.map((entry) => [entry.task, entry.project, formatDateTime(entry.startTime), entry.endTime ? formatDateTime(entry.endTime) : 'Active', formatDuration(entry.duration)]);
+    const headers = ['Task', 'Project', 'Start Time', 'End Time', 'Duration', 'Description'];
+    const rows = timeEntries.value.map((entry) => [entry.task, entry.project, formatDateTime(entry.startTime), entry.endTime ? formatDateTime(entry.endTime) : 'Active', formatDuration(entry.duration), entry.description]);
 
     const csvContent = [headers, ...rows].map((row) => row.join(',')).join('\n');
 
@@ -556,6 +560,14 @@ watch([isRunning, timer], ([newIsRunning, newTimer]) => {
                                     class="dropdown"
                                 />
                             </div>
+
+                            <div class="input-group">
+                                <label class="control-label">Description</label>
+                                <InputText
+                                    v-model="description"
+                                    placeholder="Add a description"
+                                />
+                            </div>
                         </div>
 
                         <div class="timer-group">
@@ -667,6 +679,11 @@ watch([isRunning, timer], ([newIsRunning, newTimer]) => {
                                 </Tag>
                             </template>
                         </Column>
+                        <Column field="description" header="Description">
+                            <template #body="{ data }">
+                                <span>{{ data.description }}</span>
+                            </template>
+                        </Column>
                         <Column header="Actions" class="actions-column">
                             <template #body="{ data }">
                                 <Button icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" @click="confirmDelete(data)" :disabled="!data.endTime" />
@@ -765,6 +782,12 @@ watch([isRunning, timer], ([newIsRunning, newTimer]) => {
 }
 
 .dropdown-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
