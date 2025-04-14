@@ -39,6 +39,7 @@ declare module 'vue' {
     RevenueStreamWidget: typeof import('./src/components/dashboard/RevenueStreamWidget.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Select: typeof import('primevue/select')['default']
     SelectButton: typeof import('primevue/selectbutton')['default']
     StatsWidget: typeof import('./src/components/dashboard/StatsWidget.vue')['default']
     Tag: typeof import('primevue/tag')['default']
