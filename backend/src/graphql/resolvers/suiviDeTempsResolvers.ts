@@ -440,8 +440,10 @@ export const suiviDeTempsResolvers = {
 
 export const tacheResolvers = {
   Tache: {
-    projet: async (parent: { idProjet: string }, _: any, { pool }: { pool: sql.ConnectionPool }) => {
-      if (!parent.idProjet) return null;
+    projet: async (parent: { idProjet?: string }, args: any, { pool }: { pool: sql.ConnectionPool }) => {
+      if (!parent.idProjet) {
+        return null; // Return null instead of throwing an error
+      }
 
       try {
         const result = await pool.request()
@@ -460,7 +462,7 @@ export const tacheResolvers = {
           description_projet: result.recordset[0].description_projet,
           date_debut_projet: result.recordset[0].date_debut_projet,
           date_fin_projet: result.recordset[0].date_fin_projet,
-          statut_projet: result.recordset[0].statut_projet
+          statut_projet: result.recordset[0].statut_projet,
         };
       } catch (error) {
         console.error("Error fetching project:", error);

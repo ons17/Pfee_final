@@ -1,5 +1,6 @@
 import express, { Application, Request, Response } from 'express';
 import { ApolloServer } from 'apollo-server-express';
+import jwt from 'jsonwebtoken';
 import { authMiddleware, createApolloContext } from './middleware/auth';
 import { typeDefs } from './graphql/schema';
 import { resolvers } from './graphql/resolvers';
@@ -29,10 +30,10 @@ app.use(authMiddleware); // Authentication middleware
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ req }) => ({
-    ...createApolloContext({ req }),
-    pool: getPool(),
-  }),
+  context: ({ req }) => {
+    const token = req.headers.authorization || '';
+    return { pool: getPool(), token };
+  },
 });
 
 async function startServer() {
