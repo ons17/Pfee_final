@@ -53,7 +53,10 @@ export const employeeResolvers = {
             WHERE e.idEmployee = @id
           `);
 
-        if (result.recordset.length === 0) throw new Error("Employee not found");
+        if (result.recordset.length === 0) {
+          throw new Error("Employee not found"); // Update error message
+        }
+
         const emp = result.recordset[0];
         return {
           idEmployee: emp.idEmployee,
@@ -67,7 +70,7 @@ export const employeeResolvers = {
         };
       } catch (error) {
         console.error("Error fetching employee:", error);
-        throw new Error("Error fetching employee");
+        throw error; // Re-throw the error to preserve the original message
       }
     },
 
@@ -264,32 +267,31 @@ export const employeeResolvers = {
       try {
         const result = await pool.request()
           .input('email', sql.VarChar, email)
-          .query(`SELECT idEmployee, nom_employee, email_employee, password_employee, role FROM Employee WHERE email_employee = @email`);
+          .query(`SELECT * FROM Employee WHERE email_employee = @email`);
 
         if (result.recordset.length === 0) {
           throw new Error('Invalid email or password');
         }
 
-        const emp = result.recordset[0];
+        const employee = result.recordset[0];
+        const isPasswordValid = await bcrypt.compare(password, employee.password_employee);
 
-        // Compare the provided password with the hashed password
-        const isPasswordValid = await bcrypt.compare(password, emp.password_employee);
         if (!isPasswordValid) {
           throw new Error('Invalid email or password');
         }
 
-        const token = jwt.sign({ idEmployee: emp.idEmployee, email: emp.email_employee, role: emp.role }, 'your_secret_key', { expiresIn: '1d' });
+        const token = jwt.sign({ email: employee.email_employee }, 'your_secret_key', { expiresIn: '1h' });
 
         return {
           success: true,
           message: 'Login successful',
           token,
           employee: {
-            idEmployee: emp.idEmployee,
-            nomEmployee: emp.nom_employee,
-            emailEmployee: emp.email_employee,
-            role: emp.role
-          }
+            idEmployee: employee.idEmployee,
+            nomEmployee: employee.nom_employee,
+            emailEmployee: employee.email_employee,
+            role: employee.role,
+          },
         };
       } catch (error) {
         console.error('Error logging in employee:', error);
@@ -300,17 +302,17 @@ export const employeeResolvers = {
     resetPassword: async (_: any, { token, newPassword }: { token: string; newPassword: string }, { pool }: { pool: sql.ConnectionPool }) => {
       try {
         const decoded = jwt.verify(token, 'your_secret_key') as { email: string };
-        const hashedPassword = await bcrypt.hash(newPassword, 10); // Ensure the password is hashed
+        const email = decoded.email;
 
         await pool.request()
-          .input('email', sql.VarChar, decoded.email)
-          .input('password', sql.VarChar, hashedPassword) // Save the hashed password
+          .input('email', sql.VarChar, email)
+          .input('password', sql.VarChar, await bcrypt.hash(newPassword, 10))
           .query(`UPDATE Employee SET password_employee = @password WHERE email_employee = @email`);
 
         return { success: true, message: 'Password reset successfully' };
       } catch (error) {
         console.error('Error resetting password:', error);
-        return { success: false, message: 'Invalid or expired token' };
+        throw new Error('Invalid or expired token'); // Ensure an error is thrown
       }
     }
   }

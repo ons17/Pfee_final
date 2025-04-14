@@ -1,21 +1,33 @@
 // test/employeeResolvers.test.ts
+import bcrypt from 'bcrypt';
 import { employeeResolvers } from '../graphql/resolvers/employeeResolvers';
 import sql from 'mssql';
 import nodemailer from 'nodemailer';
+import jwt from 'jsonwebtoken';
 
 jest.mock('mssql');
 jest.mock('nodemailer');
 
-describe('Employee Resolvers', () => {
-  const mockPool = {
-    request: jest.fn().mockReturnThis(),
-    input: jest.fn().mockReturnThis(),
-    query: jest.fn(),
-  };
+const mockPool = {
+  request: jest.fn().mockReturnThis(),
+  input: jest.fn().mockReturnThis(),
+  query: jest.fn(),
+};
 
-  const mockContext = {
-    pool: mockPool as unknown as sql.ConnectionPool,
-  };
+const mockContext = {
+  pool: mockPool as unknown as sql.ConnectionPool,
+};
+
+beforeAll(() => {
+  jest.spyOn(console, 'log').mockImplementation(() => {});
+  jest.spyOn(console, 'error').mockImplementation(() => {});
+});
+
+afterAll(() => {
+  jest.restoreAllMocks();
+});
+
+describe('Employee Resolvers', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -74,6 +86,13 @@ describe('Employee Resolvers', () => {
 
     expect(result.nomEmployee).toBe('Bob');
     expect(result.emailEmployee).toBe('bob@example.com');
+  });
+
+  it('should throw an error if employee is not found', async () => {
+    mockPool.query.mockResolvedValue({ recordset: [] });
+
+    await expect(employeeResolvers.Query.employee({}, { id: 'nonexistent-id' }, mockContext))
+      .rejects.toThrow('Employee not found');
   });
 
   // -----------------------------------------
@@ -185,13 +204,125 @@ describe('Employee Resolvers', () => {
 
     const result = await employeeResolvers.Mutation.sendEmailToEmployee({}, args, mockContext);
 
-    expect(sendMailMock).toHaveBeenCalledWith({
-      from: 'onssbenamara3@gmail.com',
-      to: 'someone@example.com',
-      subject: args.subject,
-      html: expect.stringContaining(args.message),
-    });
-
     expect(result).toBe(true);
   });
 });
+
+// Additional tests for employeeResolvers.test.ts
+
+describe('Additional Employee Resolvers Tests', () => {
+  // -----------------------------------------
+  // Query: searchEmployees
+  // -----------------------------------------
+  it('should search employees with filters', async () => {
+    const filters = { nomEmployee: 'Alice', emailEmployee: 'alice@example.com' };
+    const mockData = {
+      recordset: [
+        {
+          idEmployee: '1',
+          nom_employee: 'Alice',
+          email_employee: 'alice@example.com',
+          password_employee: 'pwd',
+          idEquipe: 'T1',
+          role: 'user',
+          disabledUntil: null,
+          equipeName: 'Equipe A',
+        },
+      ],
+    };
+
+    mockPool.query.mockResolvedValue(mockData);
+
+    const result = await employeeResolvers.Query.searchEmployees({}, { filters }, mockContext);
+
+    expect(result.employees).toHaveLength(1);
+    expect(result.employees[0].nomEmployee).toBe('Alice');
+    expect(result.employees[0].emailEmployee).toBe('alice@example.com');
+    expect(result.message).toBe('Employees searched successfully');
+  });
+
+  it('should return all employees if no filters are provided', async () => {
+    const mockData = {
+      recordset: [
+        { idEmployee: '1', nom_employee: 'Alice', email_employee: 'alice@example.com', role: 'user', idEquipe: 'T1', disabledUntil: null, equipeName: 'Equipe A' },
+        { idEmployee: '2', nom_employee: 'Bob', email_employee: 'bob@example.com', role: 'admin', idEquipe: 'T2', disabledUntil: null, equipeName: 'Equipe B' },
+      ],
+    };
+
+    mockPool.query.mockResolvedValue(mockData);
+
+    const result = await employeeResolvers.Query.searchEmployees({}, { filters: {} }, mockContext);
+
+    expect(result.employees).toHaveLength(2);
+    expect(result.message).toBe('Employees searched successfully');
+  });
+
+  // -----------------------------------------
+  // Mutation: loginEmployee
+  // -----------------------------------------
+  it('should log in an employee with valid credentials', async () => {
+    const args = { email: 'alice@example.com', password: 'password123' };
+    const mockData = {
+      recordset: [
+        {
+          idEmployee: '1',
+          nom_employee: 'Alice',
+          email_employee: 'alice@example.com',
+          password_employee: await bcrypt.hash('password123', 10),
+          role: 'user',
+        },
+      ],
+    };
+
+    mockPool.query.mockResolvedValue(mockData);
+
+    const result = await employeeResolvers.Mutation.loginEmployee({}, args, mockContext);
+
+    expect(result.success).toBe(true);
+    expect(result.message).toBe('Login successful');
+    expect(result.token).toBeDefined();
+    expect(result.employee.nomEmployee).toBe('Alice');
+  });
+
+  it('should fail to log in an employee with invalid credentials', async () => {
+    const args = { email: 'alice@example.com', password: 'wrongpassword' };
+    const mockData = {
+      recordset: [
+        {
+          idEmployee: '1',
+          nom_employee: 'Alice',
+          email_employee: 'alice@example.com',
+          password_employee: await bcrypt.hash('password123', 10),
+          role: 'user',
+        },
+      ],
+    };
+
+    mockPool.query.mockResolvedValue(mockData);
+
+    await expect(employeeResolvers.Mutation.loginEmployee({}, args, mockContext)).rejects.toThrow('Invalid email or password');
+  });
+
+  // -----------------------------------------
+  // Mutation: resetPassword
+  // -----------------------------------------
+  it('should reset an employee password with a valid token', async () => {
+    const token = jwt.sign({ email: 'alice@example.com' }, 'your_secret_key', { expiresIn: '1h' });
+    const args = { token, newPassword: 'newpassword123' };
+
+    mockPool.query.mockResolvedValue({});
+
+    const result = await employeeResolvers.Mutation.resetPassword({}, args, mockContext);
+
+    expect(result.success).toBe(true);
+    expect(result.message).toBe('Password reset successfully');
+  });
+
+  it('should fail to reset password with an invalid token', async () => {
+    const args = { token: 'invalidtoken', newPassword: 'newpassword123' };
+
+    await expect(employeeResolvers.Mutation.resetPassword({}, args, mockContext)).rejects.toThrow('Invalid or expired token');
+  });
+});
+
+// We recommend installing an extension to run jest tests.

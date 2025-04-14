@@ -112,16 +112,16 @@ describe('suiviDeTempsResolvers - Complete Coverage', () => {
         { pool: mockPool as unknown as sql.ConnectionPool }
       );
 
-      // Because our mapSuiviResult uses "row.heure_fin_suivi ?? null"
       expect(result).toEqual([{
         idsuivi: '1',
         heure_debut_suivi: '2024-03-31T08:00:00.000Z',
         heure_fin_suivi: null,
         duree_suivi: 120,
+        description: null, // Include description
         employee: {
           idEmployee: 'emp1',
           nomEmployee: 'John Doe',
-          emailEmployee: 'john@example.com'
+          emailEmployee: 'john@example.com',
         },
         tache: {
           idTache: 'task1',
@@ -131,9 +131,9 @@ describe('suiviDeTempsResolvers - Complete Coverage', () => {
           projet: {
             idProjet: 'proj1',
             nom_projet: 'Project 1',
-            statutProjet: 'Active'
-          }
-        }
+            statutProjet: 'Active',
+          },
+        },
       }]);
     });
 
@@ -209,64 +209,51 @@ describe('suiviDeTempsResolvers - Complete Coverage', () => {
   // MUTATION: createSuiviDeTemp
   // -------------------------------
   describe('Mutation: createSuiviDeTemp', () => {
-    const validInput = {
-      idEmployee: 'emp1',
-      idTache: 'task1',
-      heure_debut_suivi: '2024-03-31T08:00:00.000Z'
-    };
-
-    const mockCreatedRow = {
-      idsuivi: '1',
-      heure_debut_suivi: '2024-03-31T08:00:00.000Z',
-      heure_fin_suivi: null,
-      duree_suivi: null,
-      idEmployee: 'emp1',
-      idTache: 'task1',
-      nom_employee: 'John Doe',
-      email_employee: 'john@example.com',
-      titre_tache: 'Task 1',
-      statut_tache: 'In Progress',
-      idProjet: 'proj1',
-      nom_projet: 'Project 1',
-      statut_projet: 'Active'
-    };
-
     it('should create a new time entry successfully', async () => {
-      // Simulate chain for transaction requests:
-      // 1. Employee check
-      const employeeRequestMock = {
-        input: jest.fn().mockReturnThis(),
-        query: jest.fn().mockResolvedValueOnce({ recordset: [{ exists: true }] })
-      };
-      // 2. Task check
-      const taskRequestMock = {
-        input: jest.fn().mockReturnThis(),
-        query: jest.fn().mockResolvedValueOnce({ recordset: [{ exists: true }] })
-      };
-      // 3. Insertion
-      const createRequestMock = {
-        input: jest.fn().mockReturnThis(),
-        query: jest.fn().mockResolvedValueOnce({ rowsAffected: [1] })
-      };
-      // 4. Retrieval of inserted row
-      const resultRequestMock = {
-        input: jest.fn().mockReturnThis(),
-        query: jest.fn().mockResolvedValueOnce({ recordset: [mockCreatedRow] })
+      const validInput = {
+        idEmployee: 'emp1',
+        idTache: 'task1',
+        heure_debut_suivi: '2024-03-31T08:00:00.000Z',
       };
 
-      // Configure transaction mocks
+      const mockCreatedRow = {
+        idsuivi: '1',
+        heure_debut_suivi: '2024-03-31T08:00:00.000Z',
+        heure_fin_suivi: null,
+        duree_suivi: null,
+        description: null, // Include description
+        idEmployee: 'emp1',
+        idTache: 'task1',
+        nom_employee: 'John Doe',
+        email_employee: 'john@example.com',
+        titre_tache: 'Task 1',
+        statut_tache: 'In Progress',
+        idProjet: 'proj1',
+        nom_projet: 'Project 1',
+        statut_projet: 'Active',
+      };
+
+      // Simulate transaction and database behavior
       mockTransaction.begin.mockResolvedValue(undefined);
       mockTransaction.commit.mockResolvedValue(undefined);
 
-      // Simulate successive new sql.Request(transaction) calls:
       (sql.Request as unknown as jest.Mock)
-        .mockImplementationOnce(() => employeeRequestMock)  // employeeCheck
-        .mockImplementationOnce(() => taskRequestMock)      // taskCheck
-        .mockImplementationOnce(() => createRequestMock)      // insertion
-        .mockImplementationOnce(() => resultRequestMock);     // retrieval
-
-      // Force uuidv4 to return '1'
-      (uuidv4 as jest.Mock).mockReturnValue('1');
+        .mockImplementationOnce(() => ({
+          input: jest.fn().mockReturnThis(),
+          query: jest.fn().mockResolvedValueOnce({ recordset: [{ exists: true }] }), // Employee check
+        }))
+        .mockImplementationOnce(() => ({
+          input: jest.fn().mockReturnThis(),
+          query: jest.fn().mockResolvedValueOnce({ recordset: [{ exists: true }] }), // Task check
+        }))
+        .mockImplementationOnce(() => ({
+          input: jest.fn().mockReturnThis(),
+          query: jest.fn().mockResolvedValueOnce({ rowsAffected: [1] }), // Insert
+        }))
+        .mockImplementationOnce(() => ({
+          input: jest.fn().mockReturnThis(),
+          query: jest.fn().mockResolvedValueOnce({ recordset: [mockCreatedRow] }), // Fetch inserted row
+        }));
 
       const result = await suiviDeTempsResolvers.Mutation.createSuiviDeTemp(
         null,
@@ -281,10 +268,11 @@ describe('suiviDeTempsResolvers - Complete Coverage', () => {
         heure_debut_suivi: '2024-03-31T08:00:00.000Z',
         heure_fin_suivi: null,
         duree_suivi: null,
+        description: null, // Include description
         employee: {
           idEmployee: 'emp1',
           nomEmployee: 'John Doe',
-          emailEmployee: 'john@example.com'
+          emailEmployee: 'john@example.com',
         },
         tache: {
           idTache: 'task1',
@@ -294,9 +282,9 @@ describe('suiviDeTempsResolvers - Complete Coverage', () => {
           projet: {
             idProjet: 'proj1',
             nom_projet: 'Project 1',
-            statutProjet: 'Active'
-          }
-        }
+            statutProjet: 'Active',
+          },
+        },
       });
     });
 
@@ -483,7 +471,7 @@ describe('suiviDeTempsResolvers - Complete Coverage', () => {
     it('should return null if project not found', async () => {
       mockPool.request.mockReturnValueOnce({
         input: jest.fn().mockReturnThis(),
-        query: jest.fn().mockResolvedValueOnce({ recordset: [] })
+        query: jest.fn().mockResolvedValueOnce({ recordset: [] }), // Simulate no project found
       });
       
       const parent = { idProjet: 'proj1' };
@@ -500,6 +488,34 @@ describe('suiviDeTempsResolvers - Complete Coverage', () => {
       const parent = { idProjet: 'proj1' };
       await expect(Tache.projet(parent, {}, { pool: mockPool as unknown as sql.ConnectionPool }))
         .rejects.toThrow(ApolloError);
+    });
+
+    it('should handle valid idProjet', async () => {
+      const mockProjet = {
+        idProjet: 'proj1',
+        nom_projet: 'Project 1',
+        description_projet: 'Desc',
+        date_debut_projet: '2024-01-01',
+        date_fin_projet: '2024-12-31',
+        statut_projet: 'Active',
+      };
+
+      mockPool.request.mockReturnValueOnce({
+        input: jest.fn().mockReturnThis(),
+        query: jest.fn().mockResolvedValueOnce({ recordset: [mockProjet] }),
+      });
+
+      const parent = { idProjet: 'proj1' };
+      const result = await tacheResolvers.Tache.projet(parent, {}, { pool: mockPool as unknown as sql.ConnectionPool });
+
+      expect(result).toEqual({
+        idProjet: 'proj1',
+        nom_projet: 'Project 1',
+        description_projet: 'Desc',
+        date_debut_projet: '2024-01-01',
+        date_fin_projet: '2024-12-31',
+        statut_projet: 'Active',
+      });
     });
   });
 });

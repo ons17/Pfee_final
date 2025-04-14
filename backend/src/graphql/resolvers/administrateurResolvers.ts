@@ -51,37 +51,39 @@ export const adminResolvers = {
   },
   Mutation: {
     loginAdministrateur: async (_: any, { email_administrateur, password_administrateur }: any, { pool }: { pool: sql.ConnectionPool }) => {
-      if (email_administrateur !== ADMIN_EMAIL || password_administrateur !== ADMIN_PASSWORD) {
-        return { success: false, message: "Accès refusé", administrateur: null, token: null };
-      }
-
       try {
-        let result = await pool.request()
-          .input("email", sql.VarChar, ADMIN_EMAIL)
+        const result = await pool.request()
+          .input("email", sql.VarChar, email_administrateur)
           .query("SELECT * FROM Administrateur WHERE email_administrateur = @email");
 
         if (result.recordset.length === 0) {
-          const id = crypto.randomUUID();
-          const defaultName = "Admin"; // Default name for the admin
-          await pool.request()
-            .input("id", sql.UniqueIdentifier, id)
-            .input("nom", sql.VarChar, defaultName)
-            .input("email", sql.VarChar, ADMIN_EMAIL)
-            .input("password", sql.VarChar, await bcrypt.hash(ADMIN_PASSWORD, 10))
-            .query("INSERT INTO Administrateur (idAdministrateur, nom_administrateur, email_administrateur, password_administrateur, role) VALUES (@id, @nom, @email, @password, 'ADMIN')");
-          
-          result = await pool.request()
-            .input("email", sql.VarChar, ADMIN_EMAIL)
-            .query("SELECT * FROM Administrateur WHERE email_administrateur = @email");
+          return { success: false, message: "Email ou mot de passe incorrect", administrateur: null, token: null };
         }
 
         const admin = result.recordset[0];
-        admin.nom_administrateur = admin.nom_administrateur || "Admin"; // Ensure the name is set
-        admin.role = "ADMIN"; // Explicitly set the role
+        const isPasswordValid = await bcrypt.compare(password_administrateur, admin.password_administrateur);
+
+        if (!isPasswordValid) {
+          return { success: false, message: "Email ou mot de passe incorrect", administrateur: null, token: null };
+        }
+
+        if (admin.role !== 'ADMIN') {
+          throw new Error("Access denied");
+        }
 
         const token = generateToken(admin);
 
-        return { success: true, message: "Connexion réussie", administrateur: admin, token };
+        return {
+          success: true,
+          message: "Connexion réussie",
+          administrateur: {
+            idAdministrateur: admin.idAdministrateur,
+            nom_administrateur: admin.nom_administrateur,
+            email_administrateur: admin.email_administrateur,
+            role: admin.role,
+          },
+          token,
+        };
       } catch (error) {
         console.error('Erreur lors de la connexion administrateur:', error);
         return { success: false, message: "Erreur interne", administrateur: null, token: null };
@@ -127,6 +129,66 @@ export const adminResolvers = {
       } catch (error) {
         console.error("Erreur d'authentification Google:", error);
         return { success: false, message: "Erreur d'authentification", administrateur: null, token: null };
+      }
+    },
+
+    createAdministrateur: async (_: any, { nom_administrateur, email_administrateur, password_administrateur, role }: any, { pool }: { pool: sql.ConnectionPool }) => {
+      try {
+        const hashedPassword = await bcrypt.hash(password_administrateur, 10);
+        const id = crypto.randomUUID();
+
+        await pool.request()
+          .input('id', sql.UniqueIdentifier, id)
+          .input('nom', sql.VarChar, nom_administrateur)
+          .input('email', sql.VarChar, email_administrateur)
+          .input('password', sql.VarChar, hashedPassword)
+          .input('role', sql.VarChar, role)
+          .query(`
+            INSERT INTO Administrateur (idAdministrateur, nom_administrateur, email_administrateur, password_administrateur, role)
+            VALUES (@id, @nom, @email, @password, @role)
+          `);
+
+        return {
+          success: true,
+          message: 'Administrateur ajouté avec succès',
+          administrateur: {
+            idAdministrateur: id,
+            nom_administrateur,
+            email_administrateur,
+            role,
+          },
+        };
+      } catch (error) {
+        console.error('Erreur lors de la création de l\'administrateur:', error);
+        return { success: false, message: 'Erreur interne', administrateur: null };
+      }
+    },
+
+    createEmployee: async (_: any, { input }: any, { pool, user }: { pool: sql.ConnectionPool; user: any }) => {
+      if (user.role !== 'ADMIN') {
+        throw new Error('Access denied. Only admins can create employees.');
+      }
+
+      try {
+        const { nomEmployee, emailEmployee, passwordEmployee, role } = input;
+        const hashedPassword = await bcrypt.hash(passwordEmployee, 10);
+        const id = crypto.randomUUID();
+
+        await pool.request()
+          .input('id', sql.UniqueIdentifier, id)
+          .input('nom', sql.VarChar, nomEmployee)
+          .input('email', sql.VarChar, emailEmployee)
+          .input('password', sql.VarChar, hashedPassword)
+          .input('role', sql.VarChar, role)
+          .query(`
+            INSERT INTO Employee (idEmployee, nom_employee, email_employee, password_employee, role)
+            VALUES (@id, @nom, @email, @password, @role)
+          `);
+
+        return { success: true, message: 'Employee created successfully' };
+      } catch (error) {
+        console.error('Error creating employee:', error);
+        return { success: false, message: 'Failed to create employee' };
       }
     },
   }

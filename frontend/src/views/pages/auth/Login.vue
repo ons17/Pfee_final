@@ -37,10 +37,9 @@ const login = async () => {
     const { success, message, token, administrateur } = response.data.data.loginAdministrateur;
 
     if (success) {
-      // Store token, administrateur details, and password in localStorage
-      localStorage.setItem('token', token); // Save token
-      localStorage.setItem('administrateur', JSON.stringify(administrateur)); // Save administrateur details
-      localStorage.setItem('password', password.value); // Save the password for validation during delete operations
+      // Store token and admin details in localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('administrateur', JSON.stringify(administrateur));
 
       // Redirect to Dashboard
       router.push({ name: 'Dashboard' });
@@ -52,7 +51,6 @@ const login = async () => {
     console.error(error);
   }
 };
-
 
 // Handle Google Login
 const handleGoogleLogin = async (response) => {

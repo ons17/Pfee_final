@@ -15,73 +15,78 @@ const routes = [
     path: '/dashboard',
     name: 'EmployeeDashboard',
     component: EmployeeDashboard,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }, // Protect this route
   },
   {
     path: '/',
-    redirect: '/login' // Redirect root path to the Login page
+    redirect: '/login', // Redirect root path to the Login page
   },
   {
-    path: '/app', // Use a base path for all protected routes
+    path: '/app',
     component: AppLayout,
+    meta: { requiresAuth: true }, // Protect all child routes
     children: [
       {
         path: '/app',
         name: 'Dashboard',
-        component: () => import('@/views/Dashboard.vue')
+        component: () => import('@/views/Dashboard.vue'),
       },
       {
         path: 'TimeTracking',
         name: 'TimeTracking',
-        component: () => import('@/views/TimeTracking.vue')
+        component: () => import('@/views/TimeTracking.vue'),
       },
       {
         path: 'Project',
         name: 'Project',
-        component: () => import('@/views/uikit/Project.vue')
+        component: () => import('@/views/uikit/Project.vue'),
       },
-      
       {
         path: 'Task',
         name: 'Task',
-        component: () => import('@/views/uikit/Task.vue')
+        component: () => import('@/views/uikit/Task.vue'),
       },
       {
         path: 'Teams',
         name: 'Teams',
-        component: () => import('@/views/uikit/Teams.vue')
+        component: () => import('@/views/uikit/Teams.vue'),
       },
       {
         path: 'Employee',
         name: 'Employee',
-        component: () => import('@/views/uikit/Employee.vue')
+        component: () => import('@/views/uikit/Employee.vue'),
       },
       {
         path: 'Profile',
         name: 'Profile',
-        component: () => import('@/views/Profile.vue')
+        component: () => import('@/views/Profile.vue'),
       },
       {
         path: 'Calendar',
         name: 'Calendar',
-        component: () => import('@/views/pages/Calendar.vue')
+        component: () => import('@/views/pages/Calendar.vue'),
       },
       {
         path: 'Reports',
         name: 'Reports',
-        component: () => import('@/views/pages/Reports.vue')
+        component: () => import('@/views/pages/Reports.vue'),
       },
       {
         path: 'Performance',
         name: 'Performance',
-        component: () => import('@/views/pages/Performance.vue')
+        component: () => import('@/views/pages/Performance.vue'),
       },
       {
         path: 'Notifications',
         name: 'Notifications',
-        component: () => import('@/views/pages/Notifications.vue')
-      }
-    ]
+        component: () => import('@/views/pages/Notifications.vue'),
+      },
+      {
+        path: 'AddAdmin',
+        name: 'AddAdmin',
+        component: () => import('@/views/pages/admin/AddAdmin.vue'),
+      },
+    ],
   },
   {
     path: '/EmployeeLogin',
@@ -96,18 +101,18 @@ const routes = [
   {
     path: '/:pathMatch(.*)*', // This will match all paths not defined above
     name: 'NotFound',
-    component: () => import('@/views/pages/NotFound.vue')
+    component: () => import('@/views/pages/NotFound.vue'),
   },
   {
     path: '/Access-denied',
     name: 'AccessDenied',
-    component: () => import('@/views/pages/auth/Access.vue') // Import your Access.vue component
+    component: () => import('@/views/pages/auth/Access.vue'),
   },
   {
     path: '/Error',
     name: 'Error',
-    component: () => import('@/views/pages/auth/Error.vue') // Import your Error.vue component
-  }
+    component: () => import('@/views/pages/auth/Error.vue'),
+  },
 ];
 
 const router = createRouter({
@@ -115,12 +120,15 @@ const router = createRouter({
   routes,
 });
 
-// Navigation Guard
+// Global Navigation Guard
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token'); // Check if a token exists in localStorage
+
   if (to.meta.requiresAuth && !token) {
-    next({ name: 'EmployeeLogin' });
+    // If the route requires authentication and no token is found, redirect to login
+    next({ name: 'Login' });
   } else {
+    // Otherwise, allow access
     next();
   }
 });

@@ -1,5 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 // Reactive state for profile data
 const profile = ref({
@@ -46,6 +49,17 @@ const toggleContactModal = () => {
     isContactModalOpen.value = !isContactModalOpen.value;
 };
 
+// Logout method
+const logout = () => {
+    // Clear localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('administrateur');
+    localStorage.removeItem('employee');
+
+    // Redirect to login page
+    router.push({ name: 'Login' });
+};
+
 // On mounted, retrieve the user data from localStorage
 onMounted(() => {
     const administrateur = JSON.parse(localStorage.getItem('administrateur'));
@@ -69,22 +83,21 @@ onMounted(() => {
 
 <template>
     <div class="personal-profile-container">
-        <!-- Cover Image -->
-
         <!-- Profile Header -->
         <div class="profile-header">
             <div class="profile-image-container">
                 <img :src="profile.profileImage" alt="" class="profile-image" />
             </div>
             <div class="profile-info">
-               <h1 class="profile-name">{{ profile.name }}</h1>
-                <!--- <p class="profile-email">{{ profile.email }}</p>-->
+                <h1 class="profile-name">{{ profile.name }}</h1>
                 <div class="profile-details">
                     <p><strong>📍 Localisation:</strong> Tunisie</p>
                     <p><strong>💼 Profession:</strong> {{ profile.role }}</p>
                 </div>
 
                 <button @click="toggleContactModal" class="contact-button">Me Contacter</button>
+                <!-- Logout Button -->
+                <button @click="logout" class="logout-button">Se Déconnecter</button>
             </div>
         </div>
 
@@ -203,6 +216,21 @@ onMounted(() => {
 
 .contact-button:hover {
     background-color: #0052a3;
+}
+
+.logout-button {
+    padding: 12px 24px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+}
+
+.logout-button:hover {
+    background-color: #d32f2f;
 }
 
 .skills-section,

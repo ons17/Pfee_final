@@ -32,6 +32,12 @@ const model = ref([
             { label: 'Performance', icon: 'pi pi-fw pi-chart-pie', to: '/app/Performance' },
             { label: 'Notifications', icon: 'pi pi-fw pi-bell', to: '/app/Notifications' }
         ]
+    },
+    {
+        label: 'ADMINISTRATION',
+        items: [
+            { label: 'Add Admin', icon: 'pi pi-fw pi-user-plus', to: '/app/AddAdmin' } // New button
+        ]
     }
 ]);
 </script>
