@@ -16,6 +16,7 @@ export const SUIVIS_DE_TEMP = gql`
             heure_debut_suivi
             heure_fin_suivi
             duree_suivi
+            description
             tache {
                 projet {
         nom_projet
@@ -53,6 +54,7 @@ export const CREATE_SUIVI = gql`
         createSuiviDeTemp(input: $input) {
             idsuivi
             heure_debut_suivi
+            description
             tache {
                 idTache
                 titreTache
@@ -65,20 +67,12 @@ export const CREATE_SUIVI = gql`
         }
     }
 `;
+
 export const UPDATE_SUIVI = gql`
     mutation UpdateSuivi($id: ID!, $input: UpdateSuiviInput!) {
         updateSuiviDeTemp(id: $id, input: $input) {
             idsuivi
-            heure_debut_suivi
-            heure_fin_suivi
-            duree_suivi
-            tache {
-                idTache
-                titreTache
-            }
-            employee {
-                idEmployee
-            }
+            description # Include description
         }
     }
 `;
@@ -90,25 +84,26 @@ export const DELETE_SUIVI = gql`
 `;
 
 export const STOP_ACTIVE_SUIVI = gql`
-    mutation StopActiveSuivi($idEmployee: ID!) {
-        stopActiveSuivi(idEmployee: $idEmployee) {
-            success
-            message
-            suivi {
-                idsuivi
-                heure_debut_suivi
-                heure_fin_suivi
-                duree_suivi
-                employee {
-                    idEmployee
-                    nomEmployee
-                }
-                tache {
-                    idTache
-                    titreTache
-                    idProjet
-                }
-            }
+  mutation StopActiveSuivi($idEmployee: ID!, $description: String) {
+    stopActiveSuivi(idEmployee: $idEmployee, description: $description) {
+      success
+      message
+      suivi {
+        idsuivi
+        heure_debut_suivi
+        heure_fin_suivi
+        duree_suivi
+        description
+        employee {
+          idEmployee
+          nomEmployee
         }
+        tache {
+          idTache
+          titreTache
+          idProjet
+        }
+      }
     }
+  }
 `;

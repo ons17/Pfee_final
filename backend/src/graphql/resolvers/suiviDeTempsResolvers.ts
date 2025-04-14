@@ -48,6 +48,7 @@ interface SuiviDeTempResult {
   heure_debut_suivi: string;
   heure_fin_suivi: string | null;
   duree_suivi: number | null;
+  description?: string;
   idEmployee: string;
   idTache: string;
   nom_employee: string;
@@ -65,6 +66,7 @@ const mapSuiviResult = (row: SuiviDeTempResult) => ({
   heure_debut_suivi: row.heure_debut_suivi,
   heure_fin_suivi: row.heure_fin_suivi ?? null,
   duree_suivi: row.duree_suivi,
+  description: row.description || null, // Ensure this is included
   employee: {
     idEmployee: row.idEmployee,
     nomEmployee: row.nom_employee,
@@ -91,10 +93,20 @@ export const suiviDeTempsResolvers = {
       try {
         let query = `
           SELECT 
-            s.idsuivi, s.heure_debut_suivi, s.heure_fin_suivi, s.duree_suivi,
-            s.idEmployee, s.idTache, e.nom_employee, e.email_employee,
-            t.titre_tache, t.statut_tache, t.idProjet,
-            COALESCE(p.nom_projet, 'N/A') AS nom_projet, p.statut_projet
+            s.idsuivi, 
+            s.heure_debut_suivi, 
+            s.heure_fin_suivi, 
+            s.duree_suivi, 
+            s.description, 
+            s.idEmployee, 
+            s.idTache, 
+            e.nom_employee, 
+            e.email_employee, 
+            t.titre_tache, 
+            t.statut_tache, 
+            t.idProjet, 
+            COALESCE(p.nom_projet, 'N/A') AS nom_projet, 
+            p.statut_projet
           FROM SuiviDeTemp s
           LEFT JOIN Employee e ON s.idEmployee = e.idEmployee
           LEFT JOIN Tache t ON s.idTache = t.idTache
@@ -195,24 +207,24 @@ export const suiviDeTempsResolvers = {
 
   Mutation: {
     createSuiviDeTemp: async (
-      _: any, 
-      { input }: { input: { idEmployee: string; idTache: string; heure_debut_suivi: string } }, 
+      _: any,
+      { input }: { input: { idEmployee: string; idTache: string; heure_debut_suivi: string; description?: string } },
       { pool }: { pool: sql.ConnectionPool }
     ) => {
       const transaction = new sql.Transaction(pool);
-      
+
       try {
         await transaction.begin();
-    
+
         if (!input.idEmployee || !input.idTache || !input.heure_debut_suivi) {
           throw new UserInputError('Missing required fields');
         }
-    
+
         const startDate = new Date(input.heure_debut_suivi);
         if (isNaN(startDate.getTime())) {
           throw new UserInputError('Invalid start time format');
         }
-    
+
         const employeeCheck = await new sql.Request(transaction)
           .input('checkEmpId', sql.UniqueIdentifier, input.idEmployee)
           .query('SELECT 1 FROM Employee WHERE idEmployee = @checkEmpId');
@@ -220,7 +232,7 @@ export const suiviDeTempsResolvers = {
         if (employeeCheck.recordset.length === 0) {
           throw new UserInputError(`Employee with ID ${input.idEmployee} does not exist`);
         }
-    
+
         const taskCheck = await new sql.Request(transaction)
           .input('checkTaskId', sql.UniqueIdentifier, input.idTache)
           .query('SELECT 1 FROM Tache WHERE idTache = @checkTaskId');
@@ -228,54 +240,88 @@ export const suiviDeTempsResolvers = {
         if (taskCheck.recordset.length === 0) {
           throw new UserInputError(`Task with ID ${input.idTache} does not exist`);
         }
-    
+
         const idsuivi = uuidv4();
         await new sql.Request(transaction)
           .input("newSuiviId", sql.UniqueIdentifier, idsuivi)
           .input("startTime", sql.DateTime2, startDate)
           .input("empId", sql.UniqueIdentifier, input.idEmployee)
           .input("taskId", sql.UniqueIdentifier, input.idTache)
+          .input("description", sql.NVarChar, input.description || null) // Handle description
           .query(`
             INSERT INTO SuiviDeTemp (
-              idsuivi, heure_debut_suivi, idEmployee, idTache
+              idsuivi, heure_debut_suivi, idEmployee, idTache, description
             ) VALUES (
-              @newSuiviId, @startTime, @empId, @taskId
+              @newSuiviId, @startTime, @empId, @taskId, @description
             )
           `);
-    
+
         const result = await new sql.Request(transaction)
           .input('resultSuiviId', sql.UniqueIdentifier, idsuivi)
           .query<SuiviDeTempResult>(`
             SELECT 
-              s.idsuivi, s.heure_debut_suivi, s.heure_fin_suivi, s.duree_suivi,
-              s.idEmployee, s.idTache, e.nom_employee, e.email_employee,
-              t.titre_tache, t.statut_tache, t.idProjet,
-              COALESCE(p.nom_projet, 'N/A') AS nom_projet, p.statut_projet
+              s.idsuivi, 
+              s.heure_debut_suivi, 
+              s.heure_fin_suivi, 
+              s.duree_suivi, 
+              s.description, 
+              s.idEmployee, 
+              s.idTache, 
+              e.nom_employee, 
+              e.email_employee, 
+              t.titre_tache, 
+              t.statut_tache, 
+              t.idProjet, 
+              COALESCE(p.nom_projet, 'N/A') AS nom_projet, 
+              p.statut_projet
             FROM SuiviDeTemp s
             LEFT JOIN Employee e ON s.idEmployee = e.idEmployee
             LEFT JOIN Tache t ON s.idTache = t.idTache
             LEFT JOIN Projet p ON t.idProjet = p.idProjet
             WHERE s.idsuivi = @resultSuiviId
           `);
-    
+
         await transaction.commit();
         return mapSuiviResult(result.recordset[0]);
-    
       } catch (error) {
         try {
           await transaction.rollback();
         } catch (rollbackError) {
           console.error('Rollback failed:', rollbackError);
         }
-        
         if (error instanceof UserInputError) throw error;
         handleDatabaseError(error, 'create time entry');
       }
     },
 
-    stopActiveSuivi: async (_: any, { idEmployee }: { idEmployee: string }, { pool }: { pool: sql.ConnectionPool }) => {
+    updateSuiviDeTemp: async (
+      _: any,
+      { id, input }: { id: string; input: { description?: string } },
+      { pool }: { pool: sql.ConnectionPool }
+    ) => {
+      try {
+        await pool.request()
+          .input("id", sql.UniqueIdentifier, id)
+          .input("description", sql.NVarChar, input.description || null)
+          .query(`
+            UPDATE SuiviDeTemp
+            SET description = @description
+            WHERE idsuivi = @id
+          `);
+
+        return true;
+      } catch (error) {
+        throw new ApolloError("Failed to update time entry");
+      }
+    },
+
+    stopActiveSuivi: async (
+      _: any,
+      { idEmployee, description }: { idEmployee: string; description?: string },
+      { pool }: { pool: sql.ConnectionPool }
+    ) => {
       const transaction = new sql.Transaction(pool);
-      
+
       try {
         await transaction.begin();
 
@@ -287,7 +333,7 @@ export const suiviDeTempsResolvers = {
             WHERE idEmployee = @findEmpId AND heure_fin_suivi IS NULL
             ORDER BY heure_debut_suivi DESC
           `);
-    
+
         if (activeEntry.recordset.length === 0) {
           await transaction.commit();
           return {
@@ -296,37 +342,48 @@ export const suiviDeTempsResolvers = {
             suivi: null,
           };
         }
-    
+
         const idsuivi = activeEntry.recordset[0].idsuivi;
         const endTime = new Date();
         const startTime = new Date(activeEntry.recordset[0].heure_debut_suivi);
         const duration = Math.floor((endTime.getTime() - startTime.getTime()) / 60000);
-    
+
         await new sql.Request(transaction)
           .input('updateSuiviId', sql.UniqueIdentifier, idsuivi)
           .input('endTime', sql.DateTime2, endTime)
           .input('duration', sql.Int, duration)
+          .input('description', sql.NVarChar, description || null) // Save the description
           .query(`
             UPDATE SuiviDeTemp
-            SET heure_fin_suivi = @endTime, duree_suivi = @duration
+            SET heure_fin_suivi = @endTime, duree_suivi = @duration, description = @description
             WHERE idsuivi = @updateSuiviId
           `);
-    
+
         const result = await new sql.Request(transaction)
           .input('resultSuiviId', sql.UniqueIdentifier, idsuivi)
           .query<SuiviDeTempResult>(`
             SELECT 
-              s.idsuivi, s.heure_debut_suivi, s.heure_fin_suivi, s.duree_suivi,
-              s.idEmployee, s.idTache, e.nom_employee, e.email_employee,
-              t.titre_tache, t.statut_tache, t.idProjet,
-              COALESCE(p.nom_projet, 'N/A') AS nom_projet, p.statut_projet
+              s.idsuivi, 
+              s.heure_debut_suivi, 
+              s.heure_fin_suivi, 
+              s.duree_suivi, 
+              s.description, 
+              s.idEmployee, 
+              s.idTache, 
+              e.nom_employee, 
+              e.email_employee, 
+              t.titre_tache, 
+              t.statut_tache, 
+              t.idProjet, 
+              COALESCE(p.nom_projet, 'N/A') AS nom_projet, 
+              p.statut_projet
             FROM SuiviDeTemp s
             LEFT JOIN Employee e ON s.idEmployee = e.idEmployee
             LEFT JOIN Tache t ON s.idTache = t.idTache
             LEFT JOIN Projet p ON t.idProjet = p.idProjet
             WHERE s.idsuivi = @resultSuiviId
           `);
-    
+
         await transaction.commit();
         return {
           success: true,

@@ -8,6 +8,7 @@ export const suiviDeTempTypeDefs = gql`
     heure_debut_suivi: DateTimeISO!
     heure_fin_suivi: DateTimeISO
     duree_suivi: Int
+    description: String
     employee: Employee
     tache: Tache
   }
@@ -44,12 +45,14 @@ export const suiviDeTempTypeDefs = gql`
     heure_debut_suivi: DateTimeISO!
     idEmployee: ID!
     idTache: ID!
+    description: String
   }
 
   input UpdateSuiviInput {
     heure_debut_suivi: DateTimeISO
     heure_fin_suivi: DateTimeISO
     duree_suivi: Int
+    description: String
   }
 
   type SuiviStatsResponse {
@@ -79,6 +82,6 @@ export const suiviDeTempTypeDefs = gql`
     createSuiviDeTemp(input: CreateSuiviInput!): SuiviDeTemp!
     updateSuiviDeTemp(id: ID!, input: UpdateSuiviInput!): SuiviDeTemp!
     deleteSuiviDeTemp(id: ID!): Boolean!
-    stopActiveSuivi(idEmployee: ID!): StopSuiviPayload
+    stopActiveSuivi(idEmployee: ID!, description: String): StopSuiviPayload
   }
 `;
