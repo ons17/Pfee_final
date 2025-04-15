@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
+import nodemailer from 'nodemailer';
 
 dotenv.config();
 
@@ -132,35 +133,67 @@ export const adminResolvers = {
       }
     },
 
-    createAdministrateur: async (_: any, { nom_administrateur, email_administrateur, password_administrateur, role }: any, { pool }: { pool: sql.ConnectionPool }) => {
+    createAdministrateur: async (
+      _: any,
+      { nom_administrateur, email_administrateur, password_administrateur, role }: any,
+      { pool }: { pool: sql.ConnectionPool }
+    ) => {
       try {
         const hashedPassword = await bcrypt.hash(password_administrateur, 10);
-        const id = crypto.randomUUID();
 
+        const id = crypto.randomUUID();
         await pool.request()
-          .input('id', sql.UniqueIdentifier, id)
-          .input('nom', sql.VarChar, nom_administrateur)
-          .input('email', sql.VarChar, email_administrateur)
-          .input('password', sql.VarChar, hashedPassword)
-          .input('role', sql.VarChar, role)
+          .input("id", sql.UniqueIdentifier, id)
+          .input("nom", sql.VarChar, nom_administrateur)
+          .input("email", sql.VarChar, email_administrateur)
+          .input("password", sql.VarChar, hashedPassword)
+          .input("role", sql.VarChar, role)
           .query(`
             INSERT INTO Administrateur (idAdministrateur, nom_administrateur, email_administrateur, password_administrateur, role)
             VALUES (@id, @nom, @email, @password, @role)
           `);
 
+        // Generate a reset token
+        const resetToken = jwt.sign({ email: email_administrateur }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
+        const resetUrl = `http://localhost:5173/ResetPassword?token=${resetToken}`;
+
+        // Send email to the new admin
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+          },
+        });
+
+        const emailContent = `
+          <div style="font-family: Arial;">
+            <p>Dear ${nom_administrateur},</p>
+            <p>Your admin account has been created successfully. Below are your login details:</p>
+            <ul>
+              <li><strong>Email:</strong> ${email_administrateur}</li>
+            </ul>
+            <p>Please reset your password using the link below:</p>
+            <a href="${resetUrl}" style="display:inline-block;padding:10px 20px;background:#007bff;color:white;border-radius:5px;text-decoration:none;">Reset Password</a>
+            <p>Best regards,<br>Your Company</p>
+          </div>
+        `;
+
+        await transporter.sendMail({
+          from: process.env.EMAIL_USER,
+          to: email_administrateur,
+          subject: 'Welcome to the Admin Panel - Reset Your Password',
+          html: emailContent,
+        });
+
         return {
           success: true,
-          message: 'Administrateur ajouté avec succès',
-          administrateur: {
-            idAdministrateur: id,
-            nom_administrateur,
-            email_administrateur,
-            role,
-          },
+          message: 'Admin created successfully and email sent',
+          administrateur: { idAdministrateur: id, nom_administrateur, email_administrateur, role },
         };
       } catch (error) {
-        console.error('Erreur lors de la création de l\'administrateur:', error);
-        return { success: false, message: 'Erreur interne', administrateur: null };
+        console.error('Error creating admin:', error);
+        return { success: false, message: 'Failed to create admin', administrateur: null };
       }
     },
 
