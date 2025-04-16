@@ -2,11 +2,11 @@ import sql, { ConnectionPool } from 'mssql';
 
 // SQL Server configuration
 const config = {
-  user: 'sa',
-  password: 'Ons17082001', // Replace with your actual password
+  user: 'SA',
+  password: 'YourPassword123!', // Replace with your actual password
 
   server: 'localhost',
-  database: 'pfe_test',
+  database: 'time_tracking',
   options: {
     encrypt: true, // Use encryption if required
     trustServerCertificate: true, // Change to true for local development
