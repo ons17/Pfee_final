@@ -10,9 +10,10 @@ dotenv.config({ path: '/home/usera/Pfee_final/backend/.env' });
 // Constants for Tunisia (UTC+1)
 const DAILY_WORK_HOURS = 8;
 const WORK_END_HOUR = 17; // 17:00 Tunisia time
-const TOLERANCE_MINUTES = 5; // 5-minute buffer for clock-in/out inaccuracies
+const TOLERANCE_MINUTES = 5; // 5-minute buffer
+const AUTO_STOP_MESSAGE = ' (Arrêt automatique)';
 
-// Email transporter
+// Email transporter configuration
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -23,35 +24,119 @@ const transporter = nodemailer.createTransport({
   logger: true,
 });
 
-// SQL Server config
-const config = {
-  user: process.env.DB_USER || '',
-  password: process.env.DB_PASSWORD || '',
-  server: process.env.DB_SERVER || '',
-  database: process.env.DB_DATABASE || '',
+// Database configuration
+const dbConfig = {
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  server: process.env.DB_SERVER,
+  database: process.env.DB_DATABASE,
   options: {
     encrypt: true,
     trustServerCertificate: true,
   },
+  pool: {
+    max: 10,
+    min: 0,
+    idleTimeoutMillis: 30000
+  }
 };
 
 /**
- * Gets the current date in Tunisia time (UTC+1)
+ * Gets current Tunisia time (UTC+1)
  */
 function getTunisiaDate() {
   const now = new Date();
-  return new Date(now.getTime() + 60 * 60 * 1000); // Add 1 hour for UTC+1
+  return new Date(now.getTime() + 60 * 60 * 1000); // UTC+1 offset
 }
 
 /**
- * Main alert function with Tunisia timezone handling
+ * Auto-stops forgotten timers and sends notifications
+ */
+async function autoStopForgottenTimers(pool: { request: () => { (): any; new(): any; query: { (arg0: string): any; new(): any; }; }; }) {
+  try {
+    const tunisiaNow = getTunisiaDate();
+    const todayDate = tunisiaNow.toISOString().split('T')[0];
+    const workEndTime = new Date(tunisiaNow);
+    workEndTime.setHours(WORK_END_HOUR, 0, 0, 0); // Set to 17:00 Tunisia time
+
+    // Find all active timers from today
+    const activeTimers = await pool.request().query(`
+      SELECT 
+        s.idsuivi,
+        s.heure_debut_suivi,
+        e.idEmployee,
+        e.nom_employee,
+        e.email_employee,
+        s.description
+      FROM SuiviDeTemp s
+      INNER JOIN Employee e ON s.idEmployee = e.idEmployee
+      WHERE s.heure_fin_suivi IS NULL
+        AND CAST(s.heure_debut_suivi AS DATE) = '${todayDate}'
+    `);
+
+    for (const timer of activeTimers.recordset) {
+      const transaction = new sql.Transaction(pool);
+      try {
+        await transaction.begin();
+        
+        const startTime = new Date(timer.heure_debut_suivi);
+        let endTime = new Date(workEndTime);
+        let duration = Math.floor((endTime.getTime() - startTime.getTime()) / 60000);
+
+        // Handle timers started after work hours
+        if (startTime > workEndTime) {
+          duration = 0;
+          endTime = new Date(startTime);
+        }
+
+        // Update timer with auto-stop
+        await new sql.Request(transaction)
+          .input('idsuivi', sql.UniqueIdentifier, timer.idsuivi)
+          .input('endTime', sql.DateTime2, endTime)
+          .input('duration', sql.Int, duration)
+          .query(`
+            UPDATE SuiviDeTemp
+            SET 
+              heure_fin_suivi = @endTime,
+              duree_suivi = @duration,
+              description = CONCAT(COALESCE(description, ''), '${AUTO_STOP_MESSAGE}')
+            WHERE idsuivi = @idsuivi
+          `);
+
+        // Send notification email
+        const message = duration > 0 
+          ? `Bonjour ${timer.nom_employee},\n\nVotre chronomètre démarré à ${startTime.toLocaleTimeString('fr-TN', { hour: '2-digit', minute: '2-digit' })} a été automatiquement arrêté à 17:00.\nDurée enregistrée: ${duration} minutes.` 
+          : `Bonjour ${timer.nom_employee},\n\nVotre chronomètre démarré après 17:00 a été arrêté automatiquement. Aucune durée n'a été enregistrée.`;
+
+        await transporter.sendMail({
+          from: `Time Tracker <${process.env.EMAIL_USER}>`,
+          to: timer.email_employee,
+          subject: 'Chronomètre arrêté automatiquement',
+          text: message,
+          html: `<p>${message.replace(/\n/g, '<br>')}</p>`
+        });
+
+        await transaction.commit();
+        console.log(`[${new Date().toISOString()}] Auto-stopped timer for ${timer.email_employee}`);
+      } catch (error) {
+        await transaction.rollback();
+        console.error(`[${new Date().toISOString()}] Failed to auto-stop timer ${timer.idsuivi}:`, error);
+      }
+    }
+  } catch (error) {
+    console.error(`[${new Date().toISOString()}] Error in autoStopForgottenTimers:`, error);
+  }
+}
+
+/**
+ * Main alert function with daily reports
  */
 async function sendDailyEmailAlerts(pool: { request: () => { (): any; new(): any; query: { (arg0: string): any; new(): any; }; input: { (arg0: string, arg1: any, arg2: any): { (): any; new(): any; input: { (arg0: string, arg1: any, arg2: string): { (): any; new(): any; query: { (arg0: string): any; new(): any; }; input: { (arg0: string, arg1: any, arg2: any): { (): any; new(): any; input: { (arg0: string, arg1: any, arg2: string): { (): any; new(): any; query: { (arg0: string): any; new(): any; }; }; new(): any; }; }; new(): any; }; }; new(): any; }; }; new(): any; }; }; }) {
   try {
     const tunisiaDate = getTunisiaDate();
-    const todayDateStr = tunisiaDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+    const todayDateStr = tunisiaDate.toISOString().split('T')[0];
 
-    // Query employees and their work time for today (Tunisia date)
+    // Query employees' work time
     const result = await pool.request().query(`
       SELECT 
         E.idEmployee, 
@@ -62,14 +147,11 @@ async function sendDailyEmailAlerts(pool: { request: () => { (): any; new(): any
       FROM Employee E
       LEFT JOIN SuiviDeTemp T 
         ON E.idEmployee = T.idEmployee 
-        AND CONVERT(DATE, T.heure_debut_suivi) = '${todayDateStr}'
-  WHERE E.disabledUntil IS NULL -- Only include employees with no disabledUntil date
-      GROUP BY E.idEmployee, E.nom_employee, E.email_employee;
+        AND CAST(T.heure_debut_suivi AS DATE) = '${todayDateStr}'
+      GROUP BY E.idEmployee, E.nom_employee, E.email_employee
     `);
 
-    const employees = result.recordset;
-
-    for (const employee of employees) {
+    for (const employee of result.recordset) {
       const totalMinutes = employee.totalMinutes || 0;
       const totalHours = totalMinutes / 60;
       const lastEndTime = employee.lastEndTime ? new Date(employee.lastEndTime) : null;
@@ -86,54 +168,54 @@ async function sendDailyEmailAlerts(pool: { request: () => { (): any; new(): any
       if (totalMinutes >= (DAILY_WORK_HOURS * 60 - TOLERANCE_MINUTES) && 
           totalMinutes <= (DAILY_WORK_HOURS * 60 + TOLERANCE_MINUTES)) {
         alertType = 'complete';
-        message = `Bonjour ${employee.nom_employee}, vous avez complété vos ${DAILY_WORK_HOURS} heures de travail aujourd'hui.`;
+        message = `Bonjour ${employee.nom_employee}, vous avez complété vos ${DAILY_WORK_HOURS} heures aujourd'hui.`;
       } 
       // Incomplete (<8h)
       else if (totalMinutes < DAILY_WORK_HOURS * 60 - TOLERANCE_MINUTES) {
         alertType = 'incomplete';
         const missingHours = (DAILY_WORK_HOURS - totalHours).toFixed(2);
-        message = `Bonjour ${employee.nom_employee}, il vous manque ${missingHours} heures pour atteindre les ${DAILY_WORK_HOURS} heures requises.`;
+        message = `Bonjour ${employee.nom_employee}, il vous manque ${missingHours} heures (${DAILY_WORK_HOURS} heures requises).`;
       } 
       // Overtime (>8h or worked past 17:00)
       else if (totalMinutes > DAILY_WORK_HOURS * 60 + TOLERANCE_MINUTES || isOvertime) {
         alertType = 'overtime';
-        message = `Bonjour ${employee.nom_employee}, vous avez travaillé ${totalHours.toFixed(2)} heures aujourd'hui (dépassement de ${(totalHours - DAILY_WORK_HOURS).toFixed(2)} heures${isOvertime ? ' ou travail après 17h00' : ''}).`;
+        message = `Bonjour ${employee.nom_employee}, vous avez travaillé ${totalHours.toFixed(2)} heures (dépassement de ${(totalHours - DAILY_WORK_HOURS).toFixed(2)} heures${isOvertime ? ' après 17h00' : ''}).`;
       }
 
-      // Check if alert already sent today
+      // Check existing alerts
       const alertCheck = await pool.request()
-        .input('employeeId', sql.VarChar, employee.idEmployee)
-        .input('alertType', sql.VarChar, alertType)
+        .input('employeeId', sql.UniqueIdentifier, employee.idEmployee)
+        .input('alertType', sql.NVarChar, alertType)
         .query(`
           SELECT COUNT(*) AS alertCount 
           FROM Alert 
           WHERE idEmployee = @employeeId 
             AND alert_type = @alertType 
-            AND CONVERT(DATE, date_creer_alert) = '${todayDateStr}'
+            AND CAST(date_creer_alert AS DATE) = '${todayDateStr}'
         `);
 
       if (alertCheck.recordset[0].alertCount > 0) {
-        console.log(`[${new Date().toISOString()}] Alert already sent for ${employee.nom_employee} (${alertType})`);
+        console.log(`[${new Date().toISOString()}] Alert already sent for ${employee.nom_employee}`);
         continue;
       }
 
-      // Send email if new alert
+      // Send new alert
       if (message) {
         try {
           await transporter.sendMail({
             from: `Time Tracker <${process.env.EMAIL_USER}>`,
             to: employee.email_employee,
-            subject: 'Alerte Temps de Travail',
+            subject: 'Rapport Journalier - Temps de Travail',
             text: message,
-            html: `<p>${message}</p>`,
+            html: `<p>${message}</p>`
           });
 
-          // Record alert in database
+          // Record alert
           await pool.request()
-            .input('idAlert', sql.VarChar, uuidv4())
-            .input('message', sql.Text, message)
-            .input('employeeId', sql.VarChar, employee.idEmployee)
-            .input('alertType', sql.VarChar, alertType)
+            .input('idAlert', sql.UniqueIdentifier, uuidv4())
+            .input('message', sql.NVarChar, message)
+            .input('employeeId', sql.UniqueIdentifier, employee.idEmployee)
+            .input('alertType', sql.NVarChar, alertType)
             .query(`
               INSERT INTO Alert (idAlert, message_alert, date_creer_alert, idEmployee, alert_type)
               VALUES (@idAlert, @message, GETDATE(), @employeeId, @alertType)
@@ -150,22 +232,27 @@ async function sendDailyEmailAlerts(pool: { request: () => { (): any; new(): any
   }
 }
 
-// Main execution
+// Main execution flow
 (async () => {
-  const pool = new sql.ConnectionPool(config);
+  const pool = new sql.ConnectionPool(dbConfig);
   try {
     await pool.connect();
     console.log(`[${new Date().toISOString()}] Connected to SQL Server`);
 
-    // Run daily at 17:05 Tunisia time (16:05 UTC)
-    cron.schedule('5 16 * * *', async () => {
-      console.log(`[${new Date().toISOString()}] Running daily alerts check`);
+    // 1. First auto-stop any forgotten timers
+    //await autoStopForgottenTimers(pool);
+
+    // 2. Schedule daily process
+    cron.schedule('5 16 * * *', async () => { // 16:05 UTC = 17:05 Tunisia
+      console.log(`[${new Date().toISOString()}] Running daily process`);
+      await autoStopForgottenTimers(pool);
       await sendDailyEmailAlerts(pool);
     });
 
-    // Also run immediately for testing (optional)
-    console.log(`[${new Date().toISOString()}] Running initial test`);
-    await sendDailyEmailAlerts(pool);
+    // Initial test run
+    /*console.log(`[${new Date().toISOString()}] Running initial check`);
+    await autoStopForgottenTimers(pool);
+    await sendDailyEmailAlerts(pool);*/
   } catch (error) {
     console.error(`[${new Date().toISOString()}] Startup error:`, error);
     process.exit(1);
