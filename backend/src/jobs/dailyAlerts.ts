@@ -136,7 +136,7 @@ async function sendDailyEmailAlerts(pool: { request: () => { (): any; new(): any
     const tunisiaDate = getTunisiaDate();
     const todayDateStr = tunisiaDate.toISOString().split('T')[0];
 
-    // Query employees' work time
+    // Query employees' work time, filtering only active employees (disabledUntil IS NULL)
     const result = await pool.request().query(`
       SELECT 
         E.idEmployee, 
@@ -148,6 +148,7 @@ async function sendDailyEmailAlerts(pool: { request: () => { (): any; new(): any
       LEFT JOIN SuiviDeTemp T 
         ON E.idEmployee = T.idEmployee 
         AND CAST(T.heure_debut_suivi AS DATE) = '${todayDateStr}'
+      WHERE E.disabledUntil IS NULL
       GROUP BY E.idEmployee, E.nom_employee, E.email_employee
     `);
 
