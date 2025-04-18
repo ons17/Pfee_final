@@ -74,4 +74,7 @@ app.provide(DefaultApolloClient, apolloClient);
 
 // Mount the app
 app.mount('#app');
+localStorage.clear();
+
+
 
