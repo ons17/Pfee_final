@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import Toolbar from 'primevue/toolbar';
 import Button from 'primevue/button';
@@ -20,7 +21,25 @@ import axios from 'axios';
 // Import utility functions
 import { isAdmin, validatePassword } from '@/utils/authUtils';
 
+const router = useRouter();
 const toast = useToast();
+
+// Admin data
+const admin = JSON.parse(localStorage.getItem('administrateur'));
+
+// Redirect if not an admin
+onMounted(() => {
+    if (!admin || admin.role.toLowerCase() !== 'admin') {
+        toast.add({
+            severity: 'error',
+            summary: 'Access Denied',
+            detail: 'This page is only accessible to admins.',
+            life: 3000
+        });
+        router.push({ name: 'Login' }); // Redirect to login or another page
+    }
+});
+
 const dt = ref();
 const taches = ref([]);
 const addEmployeeDialog = ref(false);
