@@ -22,7 +22,7 @@ type Admin = {
   
 };
 
-// JWT Token generation
+// JWT Token generationz
 const generateToken = (admin: Admin) => {
   return jwt.sign(
     { id: admin.idAdministrateur, email: admin.email_administrateur, role: 'ADMIN' },
