@@ -31,6 +31,48 @@ const generateToken = (admin: Admin) => {
   );
 };
 
+export const loginWithGoogle = async (_: any, { googleIdToken }: any, { pool }: { pool: sql.ConnectionPool }) => {
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: googleIdToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const email = payload?.email;
+    const name = payload?.name;
+
+    if (!email) {
+      return { success: false, message: "Invalid Google token", administrateur: null, token: null };
+    }
+
+    let result = await pool.request()
+      .input("email", sql.VarChar, email)
+      .query("SELECT * FROM Administrateur WHERE email_administrateur = @email");
+
+    if (result.recordset.length === 0) {
+      const id = crypto.randomUUID();
+      await pool.request()
+        .input("id", sql.UniqueIdentifier, id)
+        .input("nom", sql.VarChar, name || "Admin")
+        .input("email", sql.VarChar, email)
+        .query("INSERT INTO Administrateur (idAdministrateur, nom_administrateur, email_administrateur, role) VALUES (@id, @nom, @email, 'ADMIN')");
+
+      result = await pool.request()
+        .input("email", sql.VarChar, email)
+        .query("SELECT * FROM Administrateur WHERE email_administrateur = @email");
+    }
+
+    const admin = result.recordset[0];
+    const token = jwt.sign({ id: admin.idAdministrateur, email: admin.email_administrateur }, process.env.JWT_SECRET!, { expiresIn: '1h' });
+
+    return { success: true, message: "Login successful", administrateur: admin, token };
+  } catch (error) {
+    console.error("Google Login Error:", error);
+    return { success: false, message: "Google login failed", administrateur: null, token: null };
+  }
+};
+
 export const adminResolvers = {
   Query: {
     getAdministrateur: async (_: any, { email_administrateur }: any, { pool }: { pool: sql.ConnectionPool }) => {
