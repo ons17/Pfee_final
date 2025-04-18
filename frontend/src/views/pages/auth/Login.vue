@@ -11,7 +11,7 @@ const router = useRouter();
 const errorMessage = ref('');
 
 // API Base URL
-const API_URL = 'http://localhost:3000/graphql'; // Change to your actual backend URL
+const API_URL = 'http://localhost:3000/graphql'; // Replace with your backend URL
 
 // Handle Manual Login
 const login = async () => {
@@ -54,8 +54,6 @@ const login = async () => {
 
 // Handle Google Login
 const handleGoogleLogin = async (response) => {
-  console.log('Google Login Response:', response);
-
   try {
     const googleToken = response.credential;
     const gqlResponse = await axios.post(API_URL, {
@@ -65,15 +63,22 @@ const handleGoogleLogin = async (response) => {
             success
             message
             token
+            administrateur {
+              idAdministrateur
+              nom_administrateur
+              email_administrateur
+              role
+            }
           }
         }
       `,
     });
 
-    const { success, message, token } = gqlResponse.data.data.loginWithGoogle;
+    const { success, message, token, administrateur } = gqlResponse.data.data.loginWithGoogle;
 
     if (success) {
       localStorage.setItem('token', token);
+      localStorage.setItem('administrateur', JSON.stringify(administrateur));
       router.push({ name: 'Dashboard' });
     } else {
       errorMessage.value = message;
