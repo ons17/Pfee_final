@@ -197,7 +197,7 @@ export const adminResolvers = {
 
         // Generate a reset token
         const resetToken = jwt.sign({ email: email_administrateur }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
-        const resetUrl = `http://localhost:5173/ResetPassword?token=${resetToken}`;
+        const resetUrl = `http://localhost:5173/resetPasswordAdmin?token=${resetToken}`;
 
         // Send email to the new admin
         const transporter = nodemailer.createTransport({
@@ -266,5 +266,41 @@ export const adminResolvers = {
         return { success: false, message: 'Failed to create employee' };
       }
     },
+
+    resetPassword: async (_: any, { token, newPassword }: { token: string; newPassword: string }, { pool }: { pool: sql.ConnectionPool }) => {
+      try {
+        if (!process.env.JWT_SECRET) {
+          throw new Error('JWT_SECRET is not defined in environment variables');
+        }
+
+        // Verify the token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET) as jwt.JwtPayload;
+        if (!decoded || typeof decoded.email !== 'string') {
+          throw new Error('Invalid or expired token');
+        }
+
+        const email = decoded.email;
+
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Update the password in the database
+        const result = await pool.request()
+          .input('email', sql.VarChar, email)
+          .input('password', sql.VarChar, hashedPassword)
+          .query(`UPDATE Administrateur SET password_administrateur = @password WHERE email_administrateur = @email`);
+
+        if (result.rowsAffected[0] === 0) {
+          throw new Error('Failed to reset password. Admin not found.');
+        }
+
+        return { success: true, message: 'Password reset successfully' };
+      } catch (error) {
+        console.error('Error resetting password:', error);
+        throw new Error('Invalid or expired token');
+      }
+    }
   }
 };
+
+ 

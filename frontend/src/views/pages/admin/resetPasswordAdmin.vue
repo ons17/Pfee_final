@@ -18,6 +18,8 @@ const resetPassword = async () => {
 
   try {
     const token = route.query.token;
+    console.log('Token:', token); // Debug log
+
     const response = await axios.post('http://localhost:3000/graphql', {
       query: `
         mutation ResetPassword($token: String!, $newPassword: String!) {
@@ -30,17 +32,17 @@ const resetPassword = async () => {
       variables: { token, newPassword: newPassword.value },
     });
 
-    const result = response.data.data.resetPassword;
+    const result = response.data.data?.resetPassword;
 
-    if (result.success) {
+    if (result?.success) {
       successMessage.value = result.message;
       setTimeout(() => router.push({ name: 'Login' }), 3000);
     } else {
-      errorMessage.value = result.message;
+      errorMessage.value = result?.message || 'Failed to reset password.';
     }
   } catch (error) {
-    errorMessage.value = 'Failed to reset password.';
-    console.error(error);
+    console.error('Error resetting password:', error);
+    errorMessage.value = 'Failed to reset password. Please try again.';
   }
 };
 </script>

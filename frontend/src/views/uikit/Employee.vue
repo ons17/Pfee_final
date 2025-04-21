@@ -69,6 +69,7 @@ const filters = ref({
 const equipes = ref([]);
 const selectedEquipe = ref(null);
 const adminPassword = ref('');
+const employees = ref([]);
 
 const isValidEmail = (email) => {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -136,6 +137,61 @@ const fetchEquipes = async () => {
   } catch (error) {
     console.error('Error fetching equipes:', error);
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load equipes', life: 3000 });
+  }
+};
+
+// Fetch employees with isActive status
+const fetchEmployees = async () => {
+  try {
+    const response = await axios.post('http://localhost:3000/graphql', {
+      query: `
+        query {
+          employees {
+            idEmployee
+            nomEmployee
+            emailEmployee
+            isActive
+          }
+        }
+      `,
+    });
+    employees.value = response.data.data.employees;
+  } catch (error) {
+    console.error('Error fetching employees:', error);
+  }
+};
+
+// Toggle employee status
+const toggleEmployeeStatus = async (employee) => {
+  try {
+    const mutation = `
+      mutation ToggleEmployeeStatus($id: String!, $isActive: Boolean!) {
+        toggleEmployeeStatus(id: $id, isActive: $isActive) {
+          success
+          message
+        }
+      }
+    `;
+
+    const variables = {
+      id: employee.idEmployee,
+      isActive: employee.isActive,
+    };
+
+    const response = await axios.post('http://localhost:3000/graphql', {
+      query: mutation,
+      variables,
+    });
+
+    const result = response.data.data?.toggleEmployeeStatus;
+
+    if (result?.success) {
+      console.log(result.message);
+    } else {
+      throw new Error(result?.message || 'Failed to toggle employee status');
+    }
+  } catch (error) {
+    console.error('Error toggling employee status:', error);
   }
 };
 
@@ -660,9 +716,41 @@ const handleRemoveEquipe = () => {
   toast.add({ severity: 'info', summary: 'Team Removed', detail: 'Team unassigned from employee', life: 3000 });
 };
 
+const reactivateEmployee = async (id) => {
+  try {
+    const mutation = `
+      mutation ReactivateEmployee($id: String!) {
+        reactivateEmployee(id: $id) {
+          success
+          message
+        }
+      }
+    `;
+
+    const response = await axios.post('http://localhost:3000/graphql', {
+      query: mutation,
+      variables: { id },
+    });
+
+    const result = response.data.data?.reactivateEmployee;
+
+    if (result?.success) {
+      toast.add({ severity: 'success', summary: 'Success', detail: result.message, life: 3000 });
+      // Rafraîchir la liste des employés
+      fetchTaches();
+    } else {
+      throw new Error(result?.message || 'Failed to reactivate employee');
+    }
+  } catch (error) {
+    console.error('Error reactivating employee:', error);
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message || 'Failed to reactivate employee', life: 3000 });
+  }
+};
+
 onMounted(() => {
   fetchTaches();
   fetchEquipes();
+  fetchEmployees();
 });
 </script>
 
@@ -737,9 +825,20 @@ onMounted(() => {
             <Button icon="pi pi-trash" class="mr-2" severity="danger" outlined @click="confirmDeleteEmployee(data)" />
             <Button icon="pi pi-envelope" class="mr-2" severity="info" outlined @click="openSendEmailDialog(data.idEmployee)" />
             <Button icon="pi pi-calendar" class="mr-2" severity="secondary" outlined @click="openDisableDialog(data)" />
+            <Button
+              v-if="data.disabledUntil"
+              label="Reactivate"
+              icon="pi pi-check"
+              class="p-button-rounded p-button-outlined p-button-success reactivate-button"
+              style="font-weight: bold; padding: 0.5rem 1rem;"
+              @click="reactivateEmployee(data.idEmployee)"
+              v-tooltip="'Reactivate this employee'"
+            />
           </template>
         </Column>
       </DataTable>
+
+      
     </div>
 
     <!-- Add Employee Dialog -->
@@ -1048,6 +1147,14 @@ small {
   display: block;
   margin-top: 0.5rem;
   font-weight: bold;
+}
+
+.reactivate-button {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.reactivate-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 </style>
 

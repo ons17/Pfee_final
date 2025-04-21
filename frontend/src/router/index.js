@@ -3,7 +3,7 @@ import AppLayout from '@/layout/AppLayout.vue';
 import EmployeeLogin from '@/views/pages/auth/EmployeeLogin.vue';
 import EmployeeDashboard from '@/views/pages/EmployeeDashboard.vue';
 import Login from '@/views/pages/auth/Login.vue';
-import ResetPassword from '@/views/pages/auth/ResetPassword.vue';
+import ResetPasswordAdmin from '@/views/pages/admin/resetPasswordAdmin.vue';
 
 const routes = [
   {
@@ -94,9 +94,9 @@ const routes = [
     component: EmployeeLogin,
   },
   {
-    path: '/ResetPassword',
-    name: 'ResetPassword',
-    component: ResetPassword,
+    path: '/resetPasswordAdmin',
+    name: 'ResetPasswordAdmin',
+    component: ResetPasswordAdmin,
   },
   {
     path: '/:pathMatch(.*)*', // This will match all paths not defined above

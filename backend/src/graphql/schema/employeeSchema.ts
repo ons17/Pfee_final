@@ -79,5 +79,6 @@ extend type Mutation {
   acceptInvitation(token: String!): Boolean
   loginEmployee(email: String!, password: String!): LoginResponse!
   resetPassword(token: String!, newPassword: String!): DeleteEmployeeResponse
+  reactivateEmployee(id: String!): MutationResponse!
 }
 `;
