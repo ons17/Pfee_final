@@ -107,3 +107,42 @@ export const STOP_ACTIVE_SUIVI = gql`
     }
   }
 `;
+
+export const PAUSE_SUIVI = gql`
+  mutation PauseSuivi($id: ID!) {
+    pauseSuivi(id: $id) {
+      success
+      message
+      suivi {
+        idsuivi
+        isPaused
+        pausedDuration
+        lastPausedTime
+        heure_debut_suivi
+        tache {
+          idTache
+          titreTache
+        }
+      }
+    }
+  }
+`;
+export const RESUME_SUIVI = gql`
+  mutation ResumeSuivi($id: ID!) {
+    resumeSuivi(id: $id) {
+      success
+      message
+      suivi {
+        idsuivi
+        isPaused
+        pausedDuration
+        lastPausedTime
+        heure_debut_suivi
+        tache {
+          idTache
+          titreTache
+        }
+      }
+    }
+  }
+`;

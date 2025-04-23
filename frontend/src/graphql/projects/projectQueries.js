@@ -29,3 +29,21 @@ export const GET_TEAM_PROJECTS = gql`
         }
     }
 `;
+
+export const GET_PROJECTS_FOR_EMPLOYEE = gql`
+  query GetProjetsForEmployee($idEmploye: ID!) { # Updated type
+    getProjetsForEmployee(idEmploye: $idEmploye) {
+      idProjet
+      nom_projet
+      description_projet
+      date_debut_projet
+      date_fin_projet
+      statut_projet
+      equipes {
+        idEquipe
+        nom_equipe
+        description_equipe
+      }
+    }
+  }
+`;

@@ -14,23 +14,20 @@ import {
   addMonths, 
   addYears, 
   isToday, 
-  differenceInSeconds,
   isSameDay
 } from 'date-fns';
 import { useQuery, useMutation } from '@vue/apollo-composable';
-import { SUIVIS_DE_TEMP, CREATE_SUIVI, STOP_ACTIVE_SUIVI, DELETE_SUIVI, GET_PROJECTS, GET_TACHES, GET_ACTIVE_SUIVI } from '@/graphql';
+import { SUIVIS_DE_TEMP, CREATE_SUIVI, STOP_ACTIVE_SUIVI, DELETE_SUIVI, GET_PROJECTS_FOR_EMPLOYEE, GET_TACHES, GET_ACTIVE_SUIVI } from '@/graphql';
 import { useTimer } from '@/views/uikit/timer';
 import debounce from 'lodash-es/debounce';
 import { useRouter } from 'vue-router';
 import { validatePassword } from '@/utils/authUtils';
 
 const DataTable = defineAsyncComponent(() => import('primevue/datatable'));
-const Dialog = defineAsyncComponent(() => import('primevue/dialog'));
 const Dropdown = defineAsyncComponent(() => import('primevue/dropdown'));
 
 // Constants
 const WEEK_START_DAY = 1; // Monday
-const LOCAL_STORAGE_KEY = 'activeTimeTracking';
 const WEEKLY_GOAL_MINUTES = 40 * 60;
 const FILTER_TYPES = [
   { label: 'Day', value: 'day' },
@@ -55,7 +52,7 @@ if (!EMPLOYEE_ID) {
 
 // Composables
 const toast = useToast();
-const { timer, isRunning, startTimer, stopTimer, formatTime, pauseTimer, resumeTimer } = useTimer();
+const { timer, isRunning, startTimer, stopTimer, formatTime, restoreTimerState } = useTimer();
 
 // Component State
 const currentDate = ref(new Date());
@@ -78,7 +75,7 @@ if (!FILTER_TYPES.some((type) => type.value === filterType.value)) {
 }
 
 // GraphQL Operations
-const { result: projectsResult } = useQuery(GET_PROJECTS);
+const { result: projectsResult } = useQuery(GET_PROJECTS_FOR_EMPLOYEE, { idEmploye: EMPLOYEE_ID });
 const { result: tasksResult } = useQuery(GET_TACHES);
 const { result: activeEntryResult, onResult: onActiveEntryResult } = useQuery(GET_ACTIVE_SUIVI, {
   employeeId: EMPLOYEE_ID,
@@ -125,7 +122,6 @@ const {
   SUIVIS_DE_TEMP,
   () => {
     const { startDate, endDate } = getDateRange();
-    console.log('Fetching entries from:', startDate, 'to:', endDate); // Debugging
     return {
       filters: {
         startDate: startDate.toISOString(),
@@ -149,23 +145,28 @@ const { mutate: deleteTimeEntry } = useMutation(DELETE_SUIVI);
 
 // Computed Properties
 const projects = computed(() => {
-  return (
-    projectsResult.value?.projets?.map((project) => ({
-      id: project.idProjet,
-      name: project.nom_projet,
-      status: project.statut_projet
-    })) || []
-  );
+  if (!projectsResult.value || !projectsResult.value.getProjetsForEmployee) {
+    return [];
+  }
+  return projectsResult.value.getProjetsForEmployee
+    .filter((project) => project.statut_projet === "in_progress")
+    .map((project) => ({
+      id: project.idProjet || null,
+      name: project.nom_projet || "Unnamed Project",
+      status: project.statut_projet || "Unknown Status",
+    }));
 });
 
 const tasks = computed(() => {
   return (
-    tasksResult.value?.taches?.map((task) => ({
-      id: task.idTache,
-      projectId: task.idProjet,
-      title: task.titreTache,
-      status: task.statutTache
-    })) || []
+    tasksResult.value?.taches
+      ?.filter((task) => task.statutTache === "IN_PROGRESS")
+      .map((task) => ({
+        id: task.idTache,
+        projectId: task.idProjet,
+        title: task.titreTache,
+        status: task.statutTache,
+      })) || []
   );
 });
 
@@ -237,8 +238,6 @@ const weeklyHours = computed(() => {
 
   return days;
 });
-
-const isPaused = computed(() => !isRunning.value && timer.value > 0);
 
 // Methods
 const handleFilterChange = () => {
@@ -316,8 +315,9 @@ const startTracking = async () => {
       throw new Error('Invalid response from server');
     }
 
+    activeEntry.value = data.createSuiviDeTemp;
     showSuccess('Tracking started');
-    startTimer();
+    startTimer(data.createSuiviDeTemp.idsuivi);
     await refetchTimeEntries();
   } catch (error) {
     handleGqlError(error, 'start tracking');
@@ -334,7 +334,6 @@ const stopTracking = async () => {
 
     if (data?.stopActiveSuivi?.success) {
       showSuccess(data.stopActiveSuivi.message);
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
       stopTimer();
       timer.value = 0;
       showResumeNotice.value = false;
@@ -344,50 +343,6 @@ const stopTracking = async () => {
     }
   } catch (error) {
     showError('An error occurred while stopping tracking.');
-  } finally {
-    loading.value = false;
-  }
-};
-
-const pauseTimerAction = () => {
-  if (!isRunning.value) {
-    showWarning('Timer is not running');
-    return;
-  }
-  try {
-    loading.value = true;
-    pauseTimer();
-    showSuccess('Timer paused');
-
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({
-      timer: timer.value,
-      isRunning: false,
-      pausedAt: new Date().toISOString()
-    }));
-  } catch (error) {
-    showError('Failed to pause the timer');
-  } finally {
-    loading.value = false;
-  }
-};
-
-const resumeTimerAction = () => {
-  if (isRunning.value) {
-    showWarning('Timer is already running');
-    return;
-  }
-  try {
-    loading.value = true;
-    resumeTimer();
-    showSuccess('Timer resumed');
-
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({
-      timer: timer.value,
-      isRunning: true,
-      pausedAt: null
-    }));
-  } catch (error) {
-    showError('Failed to resume the timer');
   } finally {
     loading.value = false;
   }
@@ -459,7 +414,7 @@ const resumeTracking = (startTime, taskId, projectId) => {
     return;
   }
 
-  const elapsedSeconds = differenceInSeconds(now, start);
+  const elapsedSeconds = Math.floor((now - start) / 1000);
 
   timer.value = elapsedSeconds;
   startTimer();
@@ -480,33 +435,20 @@ const resumeTracking = (startTime, taskId, projectId) => {
   });
 };
 
-// Helpers
-const restoreTimerState = () => {
+const verifyActiveTracking = async () => {
   try {
-    const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (savedState) {
-      const { timer: savedTimer, isRunning: savedIsRunning } = JSON.parse(savedState);
-      if (typeof savedTimer === 'number' && typeof savedIsRunning === 'boolean') {
-        timer.value = savedTimer || 0;
-        if (savedIsRunning) {
-          resumeTimer();
-        }
-      } else {
-        clearTimerState();
-      }
-    }
+    const { data } = await useQuery(GET_ACTIVE_SUIVI, {
+      employeeId: EMPLOYEE_ID,
+    }).refetch();
+
+    return data?.getActiveSuivi || null;
   } catch (error) {
-    console.error('Failed to restore timer state:', error);
-    clearTimerState();
+    console.error('Failed to verify active tracking:', error);
+    return null;
   }
 };
 
-const clearTimerState = () => {
-  localStorage.removeItem(LOCAL_STORAGE_KEY);
-  timer.value = 0;
-  stopTimer();
-};
-
+// Helpers
 const showError = (message) => {
   toast.add({ severity: 'error', summary: 'Error', detail: message, life: 5000 });
 };
@@ -522,7 +464,12 @@ const showSuccess = (message) => {
 const handleGqlError = (error, operation) => {
   console.error(`Error during ${operation}:`, error);
   const message = error.message?.replace('GraphQL error: ', '') || 'An unexpected error occurred';
-  showError(message);
+  toast.add({
+    severity: 'error',
+    summary: 'Error',
+    detail: message,
+    life: 5000
+  });
 };
 
 const formatDate = (date, formatString = 'yyyy-MM-dd') => {
@@ -542,20 +489,23 @@ const formatDuration = (minutes) => {
 
 // Initialize
 onMounted(() => {
-  restoreTimerState();
+  restoreTimerState(verifyActiveTracking);
 
   onActiveEntryResult((result) => {
     if (result.data?.getActiveSuivi) {
-      const activeEntry = result.data.getActiveSuivi;
-      resumeTracking(activeEntry.heureDebutSuivi, activeEntry.tache.idTache, activeEntry.tache.idProjet);
+      activeEntry.value = result.data.getActiveSuivi;
+      resumeTracking(activeEntry.value.heureDebutSuivi, activeEntry.value.tache.idTache, activeEntry.value.tache.idProjet);
     } else {
       stopTimer();
     }
   });
 
-  window.addEventListener('beforeunload', stopTimer);
+  window.addEventListener('beforeunload', () => {
+    if (isRunning.value) {
+      stopTimer();
+    }
+  });
 
-  // Restore description from localStorage on mounted
   const savedDescription = localStorage.getItem('description');
   if (savedDescription) {
     description.value = savedDescription;
@@ -563,7 +513,11 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  window.removeEventListener('beforeunload', stopTimer);
+  window.removeEventListener('beforeunload', () => {
+    if (isRunning.value) {
+      stopTimer();
+    }
+  });
 });
 
 // Watchers
@@ -599,7 +553,6 @@ watch(totalWeekMinutes, (newVal) => {
   }
 });
 
-// Watcher to save description to localStorage
 watch(description, (newDescription) => {
   localStorage.setItem('description', newDescription || '');
 });
@@ -687,37 +640,26 @@ watch(description, (newDescription) => {
                 type="button"
                 :label="isRunning ? 'Stop Tracking' : 'Start Tracking'"
                 :icon="isRunning ? 'pi pi-stop' : 'pi pi-play'"
-                :severity="isRunning ? 'danger' : 'success'"
+                :class="isRunning ? 'p-button-danger' : 'p-button-success'"
                 @click="handleTrackingAction"
-                :disabled="!selectedTask || loading"
+                :disabled="(!selectedTask && !isRunning) || loading"
                 class="track-button"
               />
-              <Button
-                type="button"
-                v-if="isRunning"
-                label="Pause"
-                icon="pi pi-pause"
-                severity="warning"
-                @click="pauseTimerAction"
+              <Button 
+                type="button" 
+                label="Export to CSV" 
+                icon="pi pi-file" 
+                class="p-button-success" 
+                @click="exportToCSV" 
+                :disabled="timeEntries.length === 0"
               />
-              <Button
-                type="button"
-                v-if="!isRunning && timer > 0"
-                label="Resume"
-                icon="pi pi-play"
-                severity="success"
-                @click="resumeTimerAction"
-              />
-              <Button type="button" label="Export to CSV" icon="pi pi-file" class="p-button-success" @click="exportToCSV" />
               <div class="current-timer">
                 <span class="timer-label">Current Session:</span>
                 {{ formatTime(timer) }}
-                <span v-if="!isRunning" class="timer-status-badge">
-                  <Tag severity="warning" value="Paused" />
-                </span>
-                <span v-if="isRunning" class="timer-status-badge">
-                  <Tag severity="success" value="Active" />
-                </span>
+                <Tag 
+                  :severity="isRunning ? 'success' : 'info'" 
+                  :value="isRunning ? 'Active' : 'Ready'" 
+                />
               </div>
             </div>
           </div>
