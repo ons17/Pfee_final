@@ -147,6 +147,52 @@ export const projetResolvers = {
         throw error; // Re-throw the original error
       }
     },
+
+    getProjetsForEmployee: async (
+      _: any,
+      { idEmploye }: { idEmploye: string }, // No change here, as TypeScript uses `string` for GraphQL `ID`
+      { pool }: { pool: sql.ConnectionPool }
+    ) => {
+      try {
+        // Step 1: Get the team (équipe) of the employee
+        const equipeResult = await pool.request()
+          .input('idEmploye', sql.UniqueIdentifier, idEmploye) // Ensure `idEmploye` is treated as a unique identifier
+          .query(`
+            SELECT e.idEquipe, e.nom_equipe, e.description_equipe
+            FROM Employee emp
+            INNER JOIN Equipe e ON emp.idEquipe = e.idEquipe
+            WHERE emp.idEmployee = @idEmploye;
+          `);
+
+        if (equipeResult.recordset.length === 0) {
+          return []; // Return an empty array if the employee does not belong to any team
+        }
+
+        const equipe = equipeResult.recordset[0];
+
+        // Step 2: Get the projects associated with the team
+        const projetsResult = await pool.request()
+          .input('idEquipe', sql.UniqueIdentifier, equipe.idEquipe)
+          .query(`
+            SELECT p.idProjet, p.nom_projet, p.description_projet, p.date_debut_projet, p.date_fin_projet, p.statut_projet
+            FROM Projet p
+            INNER JOIN ProjetEquipe pe ON p.idProjet = pe.idProjet
+            WHERE pe.idEquipe = @idEquipe;
+          `);
+
+        const projets = projetsResult.recordset;
+
+        // Step 3: Attach the team details to each project
+        projets.forEach((projet) => {
+          projet.equipes = [equipe]; // Ensure `equipes` is an array
+        });
+
+        return projets;
+      } catch (error) {
+        console.error('Error fetching projects for employee:', error);
+        throw new Error('Failed to fetch projects for employee');
+      }
+    },
   },
 
   Mutation: {

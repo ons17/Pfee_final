@@ -58,6 +58,9 @@ interface SuiviDeTempResult {
   idProjet?: string;
   nom_projet?: string;
   statut_projet?: string;
+  is_paused: boolean; // New field
+  paused_duration: number; // New field
+  last_paused_time: string | null; // New field
 }
 
 // Maps database row to GraphQL type
@@ -66,24 +69,51 @@ const mapSuiviResult = (row: SuiviDeTempResult) => ({
   heure_debut_suivi: row.heure_debut_suivi,
   heure_fin_suivi: row.heure_fin_suivi ?? null,
   duree_suivi: row.duree_suivi,
-  description: row.description || null, // Ensure this is included
+  description: row.description || null,
   employee: {
     idEmployee: row.idEmployee,
     nomEmployee: row.nom_employee,
-    emailEmployee: row.email_employee
+    emailEmployee: row.email_employee,
   },
   tache: {
     idTache: row.idTache,
     titreTache: row.titre_tache,
     statutTache: row.statut_tache,
     idProjet: row.idProjet,
-    projet: row.idProjet ? {
-      idProjet: row.idProjet,
-      nom_projet: row.nom_projet || 'N/A',
-      statutProjet: row.statut_projet
-    } : null
-  }
+    projet: row.idProjet
+      ? {
+          idProjet: row.idProjet,
+          nom_projet: row.nom_projet || 'N/A',
+          statutProjet: row.statut_projet,
+        }
+      : null,
+  },
+  isPaused: row.is_paused, // New mapping
+  pausedDuration: row.paused_duration, // New mapping
+  lastPausedTime: row.last_paused_time ? row.last_paused_time : null, // New mapping
 });
+
+const fetchSuiviById = async (transaction: sql.Transaction, id: string) => {
+  const result = await new sql.Request(transaction)
+    .input('suiviId', sql.UniqueIdentifier, id)
+    .query<SuiviDeTempResult>(`
+      SELECT 
+        s.*,
+        e.nom_employee, 
+        e.email_employee, 
+        t.titre_tache, 
+        t.statut_tache, 
+        t.idProjet, 
+        p.nom_projet, 
+        p.statut_projet
+      FROM SuiviDeTemp s
+      LEFT JOIN Employee e ON s.idEmployee = e.idEmployee
+      LEFT JOIN Tache t ON s.idTache = t.idTache
+      LEFT JOIN Projet p ON t.idProjet = p.idProjet
+      WHERE s.idsuivi = @suiviId
+    `);
+  return result.recordset[0];
+};
 
 export const suiviDeTempsResolvers = {
   DateTimeISO,
@@ -250,9 +280,9 @@ export const suiviDeTempsResolvers = {
           .input("description", sql.NVarChar, input.description || null) // Handle description
           .query(`
             INSERT INTO SuiviDeTemp (
-              idsuivi, heure_debut_suivi, idEmployee, idTache, description
+              idsuivi, heure_debut_suivi, idEmployee, idTache, description, is_paused, paused_duration
             ) VALUES (
-              @newSuiviId, @startTime, @empId, @taskId, @description
+              @newSuiviId, @startTime, @empId, @taskId, @description, 0, 0
             )
           `);
 
@@ -273,7 +303,10 @@ export const suiviDeTempsResolvers = {
               t.statut_tache, 
               t.idProjet, 
               COALESCE(p.nom_projet, 'N/A') AS nom_projet, 
-              p.statut_projet
+              p.statut_projet,
+              s.is_paused,
+              s.paused_duration,
+              s.last_paused_time
             FROM SuiviDeTemp s
             LEFT JOIN Employee e ON s.idEmployee = e.idEmployee
             LEFT JOIN Tache t ON s.idTache = t.idTache
@@ -321,81 +354,79 @@ export const suiviDeTempsResolvers = {
       { pool }: { pool: sql.ConnectionPool }
     ) => {
       const transaction = new sql.Transaction(pool);
-
       try {
         await transaction.begin();
 
+        // Fetch the active time entry
         const activeEntry = await new sql.Request(transaction)
           .input('findEmpId', sql.UniqueIdentifier, idEmployee)
           .query(`
-            SELECT TOP 1 idsuivi, heure_debut_suivi
+            SELECT TOP 1 
+              idsuivi, 
+              heure_debut_suivi,
+              is_paused,
+              paused_duration,
+              last_paused_time
             FROM SuiviDeTemp
-            WHERE idEmployee = @findEmpId AND heure_fin_suivi IS NULL
+            WHERE idEmployee = @findEmpId 
+              AND heure_fin_suivi IS NULL
             ORDER BY heure_debut_suivi DESC
           `);
 
         if (activeEntry.recordset.length === 0) {
-          await transaction.commit();
           return {
             success: false,
-            message: 'No active time entry found',
+            message: 'No active time entry found.',
             suivi: null,
           };
         }
 
-        const idsuivi = activeEntry.recordset[0].idsuivi;
+        const suivi = activeEntry.recordset[0];
+        const idsuivi = suivi.idsuivi;
+        const startTime = new Date(suivi.heure_debut_suivi);
+        let pausedDuration = suivi.paused_duration;
         const endTime = new Date();
-        const startTime = new Date(activeEntry.recordset[0].heure_debut_suivi);
-        const duration = Math.floor((endTime.getTime() - startTime.getTime()) / 60000);
 
+        // If the entry is paused, calculate the additional paused time
+        if (suivi.is_paused) {
+          const lastPausedTime = new Date(suivi.last_paused_time);
+          const additionalPaused = Math.floor((endTime.getTime() - lastPausedTime.getTime()) / 60000); // Convert to minutes
+          pausedDuration += additionalPaused;
+        }
+
+        // Calculate the total duration and active duration
+        const totalDuration = Math.floor((endTime.getTime() - startTime.getTime()) / 60000); // Convert to minutes
+        const activeDuration = totalDuration - pausedDuration;
+
+        // Update the database
         await new sql.Request(transaction)
           .input('updateSuiviId', sql.UniqueIdentifier, idsuivi)
           .input('endTime', sql.DateTime2, endTime)
-          .input('duration', sql.Int, duration)
-          .input('description', sql.NVarChar, description || null) // Save the description
+          .input('duration', sql.Int, activeDuration)
+          .input('pausedDuration', sql.Int, pausedDuration)
+          .input('description', sql.NVarChar, description || null)
           .query(`
             UPDATE SuiviDeTemp
-            SET heure_fin_suivi = @endTime, duree_suivi = @duration, description = @description
+            SET 
+              heure_fin_suivi = @endTime,
+              duree_suivi = @duration,
+              description = @description,
+              is_paused = 0,
+              paused_duration = @pausedDuration,
+              last_paused_time = NULL
             WHERE idsuivi = @updateSuiviId
           `);
 
-        const result = await new sql.Request(transaction)
-          .input('resultSuiviId', sql.UniqueIdentifier, idsuivi)
-          .query<SuiviDeTempResult>(`
-            SELECT 
-              s.idsuivi, 
-              s.heure_debut_suivi, 
-              s.heure_fin_suivi, 
-              s.duree_suivi, 
-              s.description, 
-              s.idEmployee, 
-              s.idTache, 
-              e.nom_employee, 
-              e.email_employee, 
-              t.titre_tache, 
-              t.statut_tache, 
-              t.idProjet, 
-              COALESCE(p.nom_projet, 'N/A') AS nom_projet, 
-              p.statut_projet
-            FROM SuiviDeTemp s
-            LEFT JOIN Employee e ON s.idEmployee = e.idEmployee
-            LEFT JOIN Tache t ON s.idTache = t.idTache
-            LEFT JOIN Projet p ON t.idProjet = p.idProjet
-            WHERE s.idsuivi = @resultSuiviId
-          `);
-
+        const result = await fetchSuiviById(transaction, idsuivi);
         await transaction.commit();
+
         return {
           success: true,
-          message: 'Time entry stopped successfully',
-          suivi: mapSuiviResult(result.recordset[0]),
+          message: 'Time entry stopped successfully.',
+          suivi: mapSuiviResult(result),
         };
       } catch (error) {
-        try {
-          await transaction.rollback();
-        } catch (rollbackError) {
-          console.error('Rollback failed:', rollbackError);
-        }
+        await transaction.rollback();
         handleDatabaseError(error, 'stop active time entry');
       }
     },
@@ -433,6 +464,147 @@ export const suiviDeTempsResolvers = {
         }
         if (error instanceof UserInputError) throw error;
         handleDatabaseError(error, 'delete time entry');
+      }
+    },
+
+    pauseSuivi: async (_: any, { id }: { id: string }, { pool }: { pool: sql.ConnectionPool }) => {
+      const transaction = new sql.Transaction(pool);
+      try {
+        await transaction.begin();
+
+        // Check if the time entry exists and is active
+        const suiviCheck = await new sql.Request(transaction)
+          .input('suiviId', sql.UniqueIdentifier, id)
+          .query(`
+            SELECT heure_fin_suivi, is_paused 
+            FROM SuiviDeTemp 
+            WHERE idsuivi = @suiviId
+          `);
+
+        if (suiviCheck.recordset.length === 0) {
+          throw new UserInputError('Time entry not found');
+        }
+
+        const suivi = suiviCheck.recordset[0];
+        if (suivi.heure_fin_suivi !== null) {
+          throw new UserInputError('Cannot pause a completed time entry');
+        }
+        if (suivi.is_paused) {
+          throw new UserInputError('Time entry is already paused');
+        }
+
+        // Update the paused state and timestamp
+        await new sql.Request(transaction)
+          .input('suiviId', sql.UniqueIdentifier, id)
+          .input('now', sql.DateTime, new Date())
+          .query(`
+            UPDATE SuiviDeTemp
+            SET is_paused = 1, last_paused_time = @now
+            WHERE idsuivi = @suiviId
+          `);
+
+        const updatedSuivi = await fetchSuiviById(transaction, id);
+        await transaction.commit();
+
+        return {
+          success: true,
+          message: 'Time entry paused successfully',
+          suivi: mapSuiviResult(updatedSuivi),
+        };
+      } catch (error) {
+        await transaction.rollback();
+        handleDatabaseError(error, 'pause time entry');
+      }
+    },
+
+    resumeSuivi: async (_: any, { id }: { id: string }, { pool }: { pool: sql.ConnectionPool }) => {
+      const transaction = new sql.Transaction(pool);
+      try {
+        await transaction.begin();
+
+        // Check if the time entry exists and is paused
+        const suiviCheck = await new sql.Request(transaction)
+          .input('suiviId', sql.UniqueIdentifier, id)
+          .query(`
+            SELECT is_paused, last_paused_time, paused_duration 
+            FROM SuiviDeTemp 
+            WHERE idsuivi = @suiviId
+          `);
+
+        if (suiviCheck.recordset.length === 0) {
+          throw new UserInputError('Time entry not found');
+        }
+
+        const suivi = suiviCheck.recordset[0];
+        if (!suivi.is_paused) {
+          throw new UserInputError('Time entry is not paused');
+        }
+
+        // Calculate the total paused duration in minutes
+        const lastPausedTime = new Date(suivi.last_paused_time);
+        const now = new Date();
+        const additionalPaused = Math.floor((now.getTime() - lastPausedTime.getTime()) / 60000); // Convert to minutes
+
+        const totalPausedDuration = suivi.paused_duration + additionalPaused;
+
+        // Update the database
+        await new sql.Request(transaction)
+          .input('suiviId', sql.UniqueIdentifier, id)
+          .input('pausedDuration', sql.Int, totalPausedDuration)
+          .query(`
+            UPDATE SuiviDeTemp
+            SET is_paused = 0, last_paused_time = NULL, paused_duration = @pausedDuration
+            WHERE idsuivi = @suiviId
+          `);
+
+        const updatedSuivi = await fetchSuiviById(transaction, id);
+        await transaction.commit();
+
+        return {
+          success: true,
+          message: 'Time entry resumed successfully',
+          suivi: mapSuiviResult(updatedSuivi),
+        };
+      } catch (error) {
+        await transaction.rollback();
+        handleDatabaseError(error, 'resume time entry');
+      }
+    },
+
+    forceResumeAllPaused: async (_: any, __: any, { pool }: { pool: sql.ConnectionPool }) => {
+      try {
+        const now = new Date();
+    
+        const result = await pool.request()
+          .input('now', sql.DateTime, now)
+          .query(`
+            UPDATE SuiviDeTemp
+            SET 
+              is_paused = 0,
+              last_paused_time = NULL,
+              paused_duration = paused_duration + DATEDIFF(MINUTE, last_paused_time, @now)
+            OUTPUT INSERTED.idsuivi
+            WHERE is_paused = 1 AND heure_fin_suivi IS NULL;
+          `);
+    
+        const resumedCount = result.recordset.length;
+    
+        await pool.request()
+          .input('now', sql.DateTime, now)
+          .query(`
+            UPDATE PauseHistory
+            SET resume_time = @now
+            WHERE resume_time IS NULL
+              AND idsuivi IN (SELECT idsuivi FROM SuiviDeTemp WHERE is_paused = 0);
+          `);
+    
+        return {
+          success: true,
+          resumedCount,
+          message: `${resumedCount} paused entries were successfully resumed.`
+        };
+      } catch (error) {
+        handleDatabaseError(error, 'force resume all paused entries');
       }
     }
   }

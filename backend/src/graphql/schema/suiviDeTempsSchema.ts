@@ -11,6 +11,9 @@ export const suiviDeTempTypeDefs = gql`
     description: String
     employee: Employee
     tache: Tache
+    isPaused: Boolean!
+    pausedDuration: Int!
+    lastPausedTime: DateTimeISO
   }
 
   type ActiveSuivi {
@@ -78,10 +81,25 @@ export const suiviDeTempTypeDefs = gql`
     ): SuiviStatsResponse!
   }
 
+  type PauseResumePayload {
+    success: Boolean!
+    message: String
+    suivi: SuiviDeTemp
+  }
+
+  type ForceResumePayload {
+    success: Boolean!
+    message: String!
+    resumedCount: Int!
+  }
+
   type Mutation {
     createSuiviDeTemp(input: CreateSuiviInput!): SuiviDeTemp!
     updateSuiviDeTemp(id: ID!, input: UpdateSuiviInput!): SuiviDeTemp!
     deleteSuiviDeTemp(id: ID!): Boolean!
     stopActiveSuivi(idEmployee: ID!, description: String): StopSuiviPayload
+    pauseSuivi(id: ID!): PauseResumePayload
+    resumeSuivi(id: ID!): PauseResumePayload
+    forceResumeAllPaused: ForceResumePayload!
   }
 `;
