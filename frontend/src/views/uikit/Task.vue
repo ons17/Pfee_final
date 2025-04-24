@@ -95,7 +95,13 @@ const { mutate: deleteTaskMutation } = useMutation(DELETE_TACHE);
 const formatDBDate = (dateString) => {
     if (!dateString) return '-';
     const date = dateString instanceof Date ? dateString : new Date(dateString);
-    return isNaN(date.getTime()) ? '-' : date.toLocaleDateString();
+    if (isNaN(date.getTime())) return '-';
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
 };
 
 const formatDateForDB = (date) => {
@@ -134,7 +140,7 @@ const validateDescription = (description) => {
     if (description && (description.length < 10 || description.length > 500)) {
         return 'Description must be between 10 and 500 characters';
     }
-    return null;
+    return null; // No error if the description is empty
 };
 
 const validateDate = (date, isStartDate) => {
@@ -156,20 +162,44 @@ const validateProject = (projectId) => {
     return null;
 };
 
+const validateTaskDates = (task, project) => {
+    if (!project) return 'Project is required to validate dates';
+
+    const projectStartDate = new Date(project.date_debut_projet);
+    const projectEndDate = new Date(project.date_fin_projet);
+
+    if (task.dateDebutTache && new Date(task.dateDebutTache) < projectStartDate) {
+        return 'Task start date cannot be before the project start date';
+    }
+    if (task.dateFinTache && new Date(task.dateFinTache) > projectEndDate) {
+        return 'Task end date cannot be after the project end date';
+    }
+    if (task.dateDebutTache && task.dateFinTache && new Date(task.dateFinTache) < new Date(task.dateDebutTache)) {
+        return 'Task end date must be after the start date';
+    }
+    return null;
+};
+
 const validateForm = () => {
     const titleError = validateTitle(task.value.titreTache);
     const descriptionError = validateDescription(task.value.descriptionTache);
-    const startDateError = validateDate(task.value.dateDebutTache, true);
-    const endDateError = validateEndDate(task.value.dateDebutTache, task.value.dateFinTache);
     const projectError = validateProject(task.value.idProjet);
+
+    const selectedProject = projects.value.find((p) => p.idProjet === task.value.idProjet);
+    const taskDateError = validateTaskDates(task.value, selectedProject);
+
+    // Check if the project is ended
+    const projectEndedError = selectedProject && selectedProject.statut_projet === 'END'
+        ? 'Cannot add or update tasks in an ended project'
+        : null;
 
     if (titleError) toast.add({ severity: 'error', summary: 'Error', detail: titleError, life: 3000 });
     if (descriptionError) toast.add({ severity: 'error', summary: 'Error', detail: descriptionError, life: 3000 });
-    if (startDateError) toast.add({ severity: 'error', summary: 'Error', detail: startDateError, life: 3000 });
-    if (endDateError) toast.add({ severity: 'error', summary: 'Error', detail: endDateError, life: 3000 });
     if (projectError) toast.add({ severity: 'error', summary: 'Error', detail: projectError, life: 3000 });
+    if (taskDateError) toast.add({ severity: 'error', summary: 'Error', detail: taskDateError, life: 3000 });
+    if (projectEndedError) toast.add({ severity: 'error', summary: 'Error', detail: projectEndedError, life: 3000 });
 
-    return !(titleError || descriptionError || startDateError || endDateError || projectError);
+    return !(titleError || descriptionError || projectError || taskDateError || projectEndedError);
 };
 
 // Watchers
@@ -242,7 +272,56 @@ const hideDialog = () => {
 };
 
 const saveTask = async () => {
+    if (isEditMode.value) {
+        // Call the update logic if editing an existing task
+        await updateTaskDetails();
+    } else {
+        // Handle the creation of a new task
+        submitted.value = true;
+        if (!validateForm()) return;
+
+        loading.value = true;
+
+        try {
+            const taskData = {
+                titreTache: task.value.titreTache.trim(),
+                descriptionTache: task.value.descriptionTache?.trim() || null, // Allow null or empty description
+                dateDebutTache: formatDateForDB(task.value.dateDebutTache),
+                dateFinTache: formatDateForDB(task.value.dateFinTache),
+                statutTache: task.value.statutTache,
+                duration: task.value.duration || 0,
+                idProjet: task.value.idProjet
+            };
+
+            await createTask(taskData);
+
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Task created successfully',
+                life: 3000
+            });
+
+            await refetchTasks();
+            taskDialog.value = false;
+        } catch (error) {
+            console.error('Error creating task:', error);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to create task: ' + (error.graphQLErrors?.[0]?.message || error.message),
+                life: 5000
+            });
+        } finally {
+            loading.value = false;
+        }
+    }
+};
+
+const updateTaskDetails = async () => {
     submitted.value = true;
+
+    // Validate the form before proceeding
     if (!validateForm()) return;
 
     loading.value = true;
@@ -250,44 +329,34 @@ const saveTask = async () => {
     try {
         const taskData = {
             titreTache: task.value.titreTache.trim(),
-            descriptionTache: task.value.descriptionTache?.trim() || null,
-            // Use original dates for updates, new dates for creates
-            dateDebutTache: isEditMode.value ? formatDateForDB(task.value.originalDateDebutTache) : formatDateForDB(task.value.dateDebutTache),
-            dateFinTache: isEditMode.value ? formatDateForDB(task.value.originalDateFinTache) : formatDateForDB(task.value.dateFinTache),
+            descriptionTache: task.value.descriptionTache?.trim() || null, // Allow null or empty description
+            dateDebutTache: formatDateForDB(task.value.originalDateDebutTache), // Original start date
+            dateFinTache: formatDateForDB(task.value.originalDateFinTache), // Original end date
             statutTache: task.value.statutTache,
             duration: task.value.duration || 0,
             idProjet: task.value.idProjet
         };
 
-        if (task.value.idTache) {
-            await updateTask({
-                id: task.value.idTache,
-                ...taskData
-            });
-            toast.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: 'Task updated (dates preserved)',
-                life: 3000
-            });
-        } else {
-            await createTask(taskData);
-            toast.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: 'Task created successfully',
-                life: 3000
-            });
-        }
+        await updateTask({
+            id: task.value.idTache,
+            ...taskData
+        });
+
+        toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Task updated successfully',
+            life: 3000
+        });
 
         await refetchTasks();
         taskDialog.value = false;
     } catch (error) {
-        console.error('Error saving task:', error);
+        console.error('Error updating task:', error);
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Failed to save task: ' + (error.graphQLErrors?.[0]?.message || error.message),
+            detail: 'Failed to update task: ' + (error.graphQLErrors?.[0]?.message || error.message),
             life: 5000
         });
     } finally {
@@ -465,7 +534,13 @@ const getStatusLabel = (status) => {
 
                 <div class="field">
                     <label for="descriptionTache" class="font-bold block mb-2">Description</label>
-                    <Textarea id="descriptionTache" v-model.trim="task.descriptionTache" rows="3" class="w-full" :class="{ 'p-invalid': submitted && validateDescription(task.descriptionTache) }" />
+                    <Textarea
+                        id="descriptionTache"
+                        v-model.trim="task.descriptionTache"
+                        rows="3"
+                        class="w-full"
+                        :class="{ 'p-invalid': submitted && validateDescription(task.descriptionTache) }"
+                    />
                     <small v-if="submitted && validateDescription(task.descriptionTache)" class="p-error">
                         {{ validateDescription(task.descriptionTache) }}
                     </small>
@@ -522,7 +597,16 @@ const getStatusLabel = (status) => {
 
                 <div class="field">
                     <label for="statutTache" class="font-bold block mb-2">Status</label>
-                    <Dropdown id="statutTache" v-model="task.statutTache" :options="statuses" optionLabel="label" optionValue="value" placeholder="Select a Status" class="w-full" />
+                    <Dropdown
+                        id="statutTache"
+                        v-model="task.statutTache"
+                        :options="statuses"
+                        optionLabel="label"
+                        optionValue="value"
+                        placeholder="Select a Status"
+                        class="w-full"
+                        
+                    />
                 </div>
 
                 <div class="field">
@@ -542,14 +626,25 @@ const getStatusLabel = (status) => {
                         class="w-full"
                         :loading="projectsLoading"
                         :class="{ 'p-invalid': submitted && !task.idProjet }"
+                        :disabled="projects.find((p) => p.idProjet === task.idProjet)?.statut_projet === 'END'"
                     />
                     <small v-if="submitted && !task.idProjet" class="p-error">Project is required.</small>
+                    <small v-if="projects.find((p) => p.idProjet === task.idProjet)?.statut_projet === 'END'" class="p-error">
+                        Cannot add tasks to an ended project.
+                    </small>
                 </div>
             </div>
 
             <template #footer>
                 <Button label="Cancel" icon="pi pi-times" @click="hideDialog" class="p-button-text" />
-                <Button label="Save" icon="pi pi-check" @click="saveTask" :loading="loading" autofocus />
+                <Button
+                    label="Save"
+                    icon="pi pi-check"
+                    @click="saveTask"
+                    :loading="loading"
+                    :disabled="loading"
+                    autofocus
+                />
             </template>
         </Dialog>
 

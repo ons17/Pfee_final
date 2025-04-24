@@ -104,7 +104,13 @@ const { mutate: removeTeamFromProject } = useMutation(REMOVE_TEAM_FROM_PROJECT);
 const formatDBDate = (dateString) => {
     if (!dateString) return '-';
     const date = dateString instanceof Date ? dateString : new Date(dateString);
-    return isNaN(date.getTime()) ? '-' : date.toLocaleDateString();
+    if (isNaN(date.getTime())) return '-';
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
 };
 
 const formatDateForDB = (date) => {
@@ -265,10 +271,13 @@ const saveProject = async () => {
     try {
         const projectData = {
             nom_projet: project.value.nom_projet.trim(),
-            description_projet: project.value.description_projet?.trim() || null,
-            // Use original dates for updates, new dates for creates
-            date_debut_projet: isEditMode.value ? formatDateForDB(project.value.originalDateDebutProjet) : formatDateForDB(project.value.date_debut_projet),
-            date_fin_projet: isEditMode.value ? formatDateForDB(project.value.originalDateFinProjet) : formatDateForDB(project.value.date_fin_projet),
+            description_projet: project.value.description_projet?.trim() || null, // Allow null or empty description
+            date_debut_projet: isEditMode.value
+                ? formatDateForDB(project.value.originalDateDebutProjet)
+                : formatDateForDB(project.value.date_debut_projet),
+            date_fin_projet: isEditMode.value
+                ? formatDateForDB(project.value.originalDateFinProjet)
+                : formatDateForDB(project.value.date_fin_projet),
             statut_projet: project.value.statut_projet
         };
 
@@ -281,7 +290,7 @@ const saveProject = async () => {
             toast.add({
                 severity: 'success',
                 summary: 'Success',
-                detail: 'Project updated (dates preserved)',
+                detail: 'Project updated successfully',
                 life: 3000
             });
         } else {

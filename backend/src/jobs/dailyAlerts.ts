@@ -259,3 +259,5 @@ async function sendDailyEmailAlerts(pool: { request: () => { (): any; new(): any
     process.exit(1);
   }
 })();
+
+//   node /home/usera/Pfee_final/backend/src/jobs/dailyAlerts.ts
