@@ -168,9 +168,10 @@ const validateName = (name) => {
 };
 
 const validateDescription = (description) => {
-    if (!description) return 'Description is required';
-    if (description.length < 10 || description.length > 500) return 'Description must be between 10 and 500 characters';
-    return null;
+    if (description && (description.length < 10 || description.length > 500)) {
+        return 'Description must be between 10 and 500 characters';
+    }
+    return null; // No error if the description is empty
 };
 
 const validateForm = () => {
@@ -192,7 +193,7 @@ const saveTeam = async () => {
     try {
         const teamData = {
             nom_equipe: team.value.nom_equipe.trim(),
-            description_equipe: team.value.description_equipe.trim()
+            description_equipe: team.value.description_equipe?.trim() || null // Allow null or empty description
         };
 
         if (team.value.idEquipe) {
@@ -204,7 +205,7 @@ const saveTeam = async () => {
             toast.add({
                 severity: 'success',
                 summary: 'Success',
-                detail: 'Team updated',
+                detail: 'Team updated successfully',
                 life: 3000
             });
         } else {
@@ -230,7 +231,7 @@ const saveTeam = async () => {
                 toast.add({
                     severity: 'success',
                     summary: 'Success',
-                    detail: 'Team created with projects',
+                    detail: 'Team created successfully',
                     life: 3000
                 });
             }
@@ -526,8 +527,14 @@ const handleRemoveProject = async (projectId) => {
                 </div>
 
                 <div class="field">
-                    <label for="description_equipe" class="font-bold block mb-2">Description *</label>
-                    <Textarea id="description_equipe" v-model.trim="team.description_equipe" rows="3" class="w-full" :class="{ 'p-invalid': submitted && validateDescription(team.description_equipe) }" />
+                    <label for="description_equipe" class="font-bold block mb-2">Description</label>
+                    <Textarea
+                        id="description_equipe"
+                        v-model.trim="team.description_equipe"
+                        rows="3"
+                        class="w-full"
+                        :class="{ 'p-invalid': submitted && validateDescription(team.description_equipe) }"
+                    />
                     <small v-if="submitted && validateDescription(team.description_equipe)" class="p-error">
                         {{ validateDescription(team.description_equipe) }}
                     </small>
