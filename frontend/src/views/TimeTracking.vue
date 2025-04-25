@@ -17,7 +17,7 @@ import {
   isSameDay
 } from 'date-fns';
 import { useQuery, useMutation } from '@vue/apollo-composable';
-import { SUIVIS_DE_TEMP, CREATE_SUIVI, STOP_ACTIVE_SUIVI, DELETE_SUIVI, GET_PROJECTS_FOR_EMPLOYEE, GET_TACHES, GET_ACTIVE_SUIVI } from '@/graphql';
+import { SUIVIS_DE_TEMP, CREATE_SUIVI, STOP_ACTIVE_SUIVI, DELETE_SUIVI, GET_PROJECTS_FOR_EMPLOYEE, GET_TACHES, GET_ACTIVE_SUIVI, PAUSE_SUIVI, RESUME_SUIVI } from '@/graphql';
 import { useTimer } from '@/views/uikit/timer';
 import debounce from 'lodash-es/debounce';
 import { useRouter } from 'vue-router';
@@ -52,7 +52,7 @@ if (!EMPLOYEE_ID) {
 
 // Composables
 const toast = useToast();
-const { timer, isRunning, startTimer, stopTimer, formatTime, restoreTimerState } = useTimer();
+const { timer, isRunning, startTimer, stopTimer, formatTime, restoreTimerState, pauseTimer, resumeTimer, isPaused } = useTimer();
 
 // Component State
 const currentDate = ref(new Date());
@@ -142,6 +142,8 @@ watch(entriesError, (err) => {
 const { mutate: createTimeEntry } = useMutation(CREATE_SUIVI);
 const { mutate: stopActiveTracking } = useMutation(STOP_ACTIVE_SUIVI);
 const { mutate: deleteTimeEntry } = useMutation(DELETE_SUIVI);
+const { mutate: pauseSuivi } = useMutation(PAUSE_SUIVI);
+const { mutate: resumeSuivi } = useMutation(RESUME_SUIVI);
 
 // Computed Properties
 const projects = computed(() => {
@@ -287,11 +289,31 @@ const handleProjectChange = () => {
   selectedTask.value = null;
 };
 
+const getTrackingButtonLabel = () => {
+  if (!isRunning.value) return 'Start Tracking';
+  if (isPaused.value) return 'Resume';
+  return 'Pause';
+};
+
+const getTrackingButtonIcon = () => {
+  if (!isRunning.value) return 'pi pi-play';
+  if (isPaused.value) return 'pi pi-play';
+  return 'pi pi-pause';
+};
+
+const getTrackingButtonClass = () => {
+  if (!isRunning.value) return 'p-button-success';
+  if (isPaused.value) return 'p-button-warning';
+  return 'p-button-secondary';
+};
+
 const handleTrackingAction = async () => {
-  if (isRunning.value) {
-    await stopTracking();
-  } else {
+  if (!isRunning.value) {
     await startTracking();
+  } else if (isPaused.value) {
+    await resumeTracking();
+  } else {
+    await pauseTracking();
   }
 };
 
@@ -342,9 +364,53 @@ const stopTracking = async () => {
       showError('Failed to stop tracking. Please try again.');
     }
   } catch (error) {
-    showError('An error occurred while stopping tracking.');
+    handleGqlError(error, 'stop tracking');
   } finally {
     loading.value = false;
+  }
+};
+
+const pauseTracking = async () => {
+  if (!activeEntry.value?.idsuivi) {
+    showError('No active time entry to pause');
+    return;
+  }
+
+  try {
+    const { data } = await pauseSuivi({ 
+      id: activeEntry.value.idsuivi  // Change this line
+    });
+    
+    if (data?.pauseSuivi?.success) {
+      const paused = pauseTimer();
+      if (paused) {
+        showSuccess('Time tracking paused');
+      }
+    }
+  } catch (error) {
+    handleGqlError(error, 'pause tracking');
+  }
+};
+
+const resumeTracking = async () => {
+  if (!activeEntry.value?.idsuivi) {
+    showError('No active time entry to resume');
+    return;
+  }
+
+  try {
+    const { data } = await resumeSuivi({ 
+      id: activeEntry.value.idsuivi  // Change this line
+    });
+    
+    if (data?.resumeSuivi?.success) {
+      const resumed = resumeTimer();
+      if (resumed) {
+        showSuccess('Time tracking resumed');
+      }
+    }
+  } catch (error) {
+    handleGqlError(error, 'resume tracking');
   }
 };
 
@@ -405,7 +471,7 @@ const exportToCSV = () => {
   link.click();
 };
 
-const resumeTracking = (startTime, taskId, projectId) => {
+const resumeTrackingFromStart = (startTime, taskId, projectId) => {
   const now = new Date();
   const start = new Date(startTime);
 
@@ -494,7 +560,11 @@ onMounted(() => {
   onActiveEntryResult((result) => {
     if (result.data?.getActiveSuivi) {
       activeEntry.value = result.data.getActiveSuivi;
-      resumeTracking(activeEntry.value.heureDebutSuivi, activeEntry.value.tache.idTache, activeEntry.value.tache.idProjet);
+      resumeTrackingFromStart(
+        activeEntry.value.heureDebutSuivi,
+        activeEntry.value.tache.idTache,
+        activeEntry.value.tache.idProjet
+      );
     } else {
       stopTimer();
     }
@@ -638,13 +708,27 @@ watch(description, (newDescription) => {
             <div class="timer-group">
               <Button
                 type="button"
-                :label="isRunning ? 'Stop Tracking' : 'Start Tracking'"
-                :icon="isRunning ? 'pi pi-stop' : 'pi pi-play'"
-                :class="isRunning ? 'p-button-danger' : 'p-button-success'"
+                :label="getTrackingButtonLabel()"
+                :icon="getTrackingButtonIcon()"
+                :class="[
+                  getTrackingButtonClass(),
+                  'track-button'
+                ]"
                 @click="handleTrackingAction"
                 :disabled="(!selectedTask && !isRunning) || loading"
-                class="track-button"
               />
+
+              <!-- Add Stop Button -->
+              <Button
+                v-if="isRunning"
+                type="button"
+                label="Stop"
+                icon="pi pi-stop"
+                class="p-button-danger track-button"
+                @click="stopTracking"
+                :disabled="loading"
+              />
+
               <Button 
                 type="button" 
                 label="Export to CSV" 
@@ -657,8 +741,8 @@ watch(description, (newDescription) => {
                 <span class="timer-label">Current Session:</span>
                 {{ formatTime(timer) }}
                 <Tag 
-                  :severity="isRunning ? 'success' : 'info'" 
-                  :value="isRunning ? 'Active' : 'Ready'" 
+                  :severity="isRunning ? (isPaused ? 'warning' : 'success') : 'info'" 
+                  :value="isRunning ? (isPaused ? 'Paused' : 'Active') : 'Ready'" 
                 />
               </div>
             </div>
@@ -862,6 +946,11 @@ watch(description, (newDescription) => {
   min-width: 160px;
 }
 
+/* Add margin between buttons */
+.track-button + .track-button {
+  margin-left: 0.5rem;
+}
+
 .current-timer {
   display: flex;
   align-items: center;
@@ -1054,7 +1143,13 @@ watch(description, (newDescription) => {
 
   .timer-group {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+  }
+  
+  .track-button {
+    width: 100%;
+    margin-left: 0 !important;
+    margin-bottom: 0.5rem;
   }
 }
 
