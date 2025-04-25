@@ -1,21 +1,17 @@
 import { ref, watchEffect } from 'vue';
-import { useMutation } from '@vue/apollo-composable';
-import { PAUSE_SUIVI, RESUME_SUIVI } from '@/graphql';
 
 const LOCAL_STORAGE_KEY = 'activeTimeTracking';
-const timer = ref(0); // Time in seconds
+const timer = ref(0);
 const isRunning = ref(false);
 const isPaused = ref(false);
 let interval = null;
 
-// GraphQL mutations
-const { mutate: pauseSuivi } = useMutation(PAUSE_SUIVI);
-const { mutate: resumeSuivi } = useMutation(RESUME_SUIVI);
-
 const startTimer = (suiviId) => {
   if (!isRunning.value && !interval) {
     interval = setInterval(() => {
-      timer.value++;
+      if (!isPaused.value) {
+        timer.value++;
+      }
       saveTimerState(suiviId);
     }, 1000);
     isRunning.value = true;
@@ -23,7 +19,7 @@ const startTimer = (suiviId) => {
   }
 };
 
-const stopTimer = (suiviId) => {
+const stopTimer = () => {
   if (interval) {
     clearInterval(interval);
     interval = null;
@@ -34,95 +30,68 @@ const stopTimer = (suiviId) => {
   }
 };
 
-const pauseTimer = async (suiviId) => {
-  if (isRunning.value && interval) {
-    clearInterval(interval); // Stop the timer
-    interval = null;
-    isRunning.value = false;
+const pauseTimer = () => {
+  if (isRunning.value && !isPaused.value) {
     isPaused.value = true;
-
-    try {
-      // Call the backend to pause the timer
-      const { data } = await pauseSuivi({ id: suiviId });
-      if (data?.pauseSuivi?.success) {
-        // Update the timer state with the paused duration from the backend
-        timer.value = data.pauseSuivi.suivi.pausedDuration || timer.value;
-        saveTimerState(suiviId); // Save the updated state to localStorage
-      } else {
-        throw new Error('Failed to pause the timer');
-      }
-    } catch (error) {
-      console.error('Failed to pause time entry:', error);
-      showError('Failed to pause the timer. Please try again.');
-    }
+    // Don't clear the interval, just stop incrementing
+    saveTimerState();
+    return true;
   }
+  return false;
 };
 
-const resumeTimer = async (suiviId) => {
-  if (!isRunning.value && isPaused.value && !interval) {
-    try {
-      // Call the backend to resume the timer
-      const { data } = await resumeSuivi({ id: suiviId });
-      if (data?.resumeSuivi?.success) {
-        // Start the timer from the current paused duration
-        timer.value = data.resumeSuivi.suivi.pausedDuration || timer.value; // Restore the correct timer value
-        interval = setInterval(() => {
-          timer.value++;
-          saveTimerState(suiviId);
-        }, 1000);
-        isRunning.value = true;
-        isPaused.value = false;
-      } else {
-        throw new Error('Failed to resume the timer');
-      }
-    } catch (error) {
-      console.error('Failed to resume time entry:', error);
-      showError('Failed to resume the timer. Please try again.');
-    }
+const resumeTimer = () => {
+  if (isRunning.value && isPaused.value) {
+    isPaused.value = false;
+    saveTimerState();
+    return true;
   }
+  return false;
 };
 
-export const saveTimerState = (suiviId) => {
-  localStorage.setItem(
-    LOCAL_STORAGE_KEY,
-    JSON.stringify({
-      timer: timer.value,
-      isRunning: isRunning.value,
-      isPaused: isPaused.value,
-      suiviId: suiviId,
-      lastUpdated: new Date().toISOString()
-    })
-  );
+const saveTimerState = (suiviId) => {
+  const state = {
+    timer: timer.value,
+    isRunning: isRunning.value,
+    isPaused: isPaused.value,
+    lastUpdated: new Date().toISOString()
+  };
+  
+  if (suiviId) {
+    state.suiviId = suiviId;
+  }
+  
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
 };
 
-const restoreTimerState = async () => {
+const restoreTimerState = async (verifyActiveFn) => {
   const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
   if (savedState) {
-    const { 
-      timer: savedTimer, 
-      isRunning: savedIsRunning,
-      isPaused: savedIsPaused,
-      suiviId
-    } = JSON.parse(savedState);
+    const state = JSON.parse(savedState);
     
-    timer.value = savedTimer || 0;
+    // Only restore if the saved state is less than 8 hours old
+    const lastUpdated = new Date(state.lastUpdated);
+    const now = new Date();
+    const hoursDiff = (now.getTime() - lastUpdated.getTime()) / (1000 * 60 * 60);
+    
+    if (hoursDiff < 8) {
+      timer.value = state.timer || 0;
+      isRunning.value = state.isRunning;
+      isPaused.value = state.isPaused;
 
-    if (savedIsPaused) {
-      isPaused.value = true;
-    } else if (savedIsRunning && suiviId) {
-      try {
-        // Verify with the backend if the suivi is still active
-        const activeTracking = await verifyActiveTracking();
-        if (activeTracking) {
-          activeEntry.value = activeTracking;
-          startTimer(activeTracking.idsuivi);
+      if (state.isRunning && state.suiviId) {
+        const activeEntry = await verifyActiveFn();
+        if (activeEntry) {
+          // Don't start a new interval if paused
+          if (!state.isPaused) {
+            startTimer(activeEntry.idsuivi);
+          }
         } else {
           clearTimerState();
         }
-      } catch (error) {
-        console.error('Failed to restore timer:', error);
-        clearTimerState();
       }
+    } else {
+      clearTimerState();
     }
   }
 };
@@ -141,9 +110,9 @@ const formatTime = (seconds) => {
 // Enhanced tab title with pause state
 watchEffect(() => {
   if (isRunning.value) {
-    document.title = `▶ ${formatTime(timer.value)} - ImbusFlow`;
-  } else if (isPaused.value) {
-    document.title = `⏸ ${formatTime(timer.value)} - ImbusFlow`;
+    document.title = isPaused.value 
+      ? `⏸ ${formatTime(timer.value)} - ImbusFlow`
+      : `▶ ${formatTime(timer.value)} - ImbusFlow`;
   } else {
     document.title = 'ImbusFlow';
   }
@@ -158,7 +127,7 @@ export const useTimer = () => {
     stopTimer,
     pauseTimer,
     resumeTimer,
-    restoreTimerState,
     formatTime,
+    restoreTimerState
   };
 };

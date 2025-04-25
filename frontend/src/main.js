@@ -35,7 +35,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 // Apollo Client Configuration
-const apolloClient = new ApolloClient({
+export const apolloClient = new ApolloClient({
   link: errorLink.concat(httpLink),
   cache: new InMemoryCache(),
   connectToDevTools: process.env.NODE_ENV !== 'production',
