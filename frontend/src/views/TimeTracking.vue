@@ -202,13 +202,8 @@ const timeEntries = computed(() => {
     }));
 });
 
-const totalWeekHours = computed(() => {
-  const totalMinutes = timeEntries.value.reduce((total, entry) => total + (entry.duration || 0), 0);
-  return (totalMinutes / 60).toFixed(1);
-});
-
 const totalWeekMinutes = computed(() => {
-  return timeEntries.value.reduce((total, entry) => total + (entry.duration || 0), 0);
+  return Math.floor(timeEntries.value.reduce((total, entry) => total + (entry.duration || 0), 0) / 60);
 });
 
 const weeklyHours = computed(() => {
@@ -225,7 +220,7 @@ const weeklyHours = computed(() => {
       return entry.startTime && isSameDay(new Date(entry.startTime), currentDay);
     });
 
-    const totalMinutes = dayEntries.reduce((sum, entry) => sum + (entry.duration || 0), 0);
+    const totalMinutes = Math.floor(dayEntries.reduce((sum, entry) => sum + (entry.duration || 0), 0) / 60);
 
     days.push({
       date: currentDay,
@@ -233,7 +228,7 @@ const weeklyHours = computed(() => {
       entries: dayEntries.map((entry) => ({
         id: entry.id,
         task: entry.task,
-        minutes: entry.duration || 0
+        minutes: Math.floor((entry.duration || 0) / 60)
       }))
     });
   }
@@ -481,7 +476,6 @@ const resumeTrackingFromStart = (startTime, taskId, projectId) => {
   }
 
   const elapsedSeconds = Math.floor((now - start) / 1000);
-
   timer.value = elapsedSeconds;
   startTimer();
   resumedSessionStart.value = startTime;
@@ -546,11 +540,16 @@ const formatDateTime = (dateString) => {
   return dateString ? format(new Date(dateString), 'MMM dd, yyyy HH:mm') : 'N/A';
 };
 
-const formatDuration = (minutes) => {
-  if (!minutes) return '0m';
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+const formatDuration = (seconds) => {
+  if (!seconds) return '0s';
+  const hours = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60) % 60;
+  const secs = seconds % 60;
+  return hours > 0
+    ? `${hours}h ${mins}m ${secs}s`
+    : mins > 0
+      ? `${mins}m ${secs}s`
+      : `${secs}s`;
 };
 
 // Initialize

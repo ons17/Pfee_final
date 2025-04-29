@@ -33,7 +33,6 @@ const stopTimer = () => {
 const pauseTimer = () => {
   if (isRunning.value && !isPaused.value) {
     isPaused.value = true;
-    // Don't clear the interval, just stop incrementing
     saveTimerState();
     return true;
   }
@@ -56,43 +55,29 @@ const saveTimerState = (suiviId) => {
     isPaused: isPaused.value,
     lastUpdated: new Date().toISOString()
   };
-  
-  if (suiviId) {
-    state.suiviId = suiviId;
-  }
-  
+  if (suiviId) state.suiviId = suiviId;
   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
 };
 
 const restoreTimerState = async (verifyActiveFn) => {
-  const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
-  if (savedState) {
-    const state = JSON.parse(savedState);
-    
-    // Only restore if the saved state is less than 8 hours old
-    const lastUpdated = new Date(state.lastUpdated);
-    const now = new Date();
-    const hoursDiff = (now.getTime() - lastUpdated.getTime()) / (1000 * 60 * 60);
-    
-    if (hoursDiff < 8) {
-      timer.value = state.timer || 0;
-      isRunning.value = state.isRunning;
-      isPaused.value = state.isPaused;
-
-      if (state.isRunning && state.suiviId) {
-        const activeEntry = await verifyActiveFn();
-        if (activeEntry) {
-          // Don't start a new interval if paused
-          if (!state.isPaused) {
-            startTimer(activeEntry.idsuivi);
-          }
-        } else {
-          clearTimerState();
-        }
-      }
+  const activeEntry = await verifyActiveFn?.();
+  if (activeEntry) {
+    if (activeEntry.isPaused) {
+      timer.value = activeEntry.exactPauseValue || 0;
+      isPaused.value = true;
+      isRunning.value = true;
+      // Do NOT start interval
     } else {
-      clearTimerState();
+      const now = new Date();
+      const start = new Date(activeEntry.heureDebutSuivi);
+      const pausedSeconds = activeEntry.pausedDuration || 0;
+      timer.value = Math.max(0, Math.floor((now - start) / 1000) - pausedSeconds);
+      isPaused.value = false;
+      isRunning.value = true;
+      startTimer(activeEntry.idsuivi);
     }
+  } else {
+    stopTimer();
   }
 };
 
@@ -107,7 +92,6 @@ const formatTime = (seconds) => {
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 };
 
-// Enhanced tab title with pause state
 watchEffect(() => {
   if (isRunning.value) {
     document.title = isPaused.value 

@@ -19,6 +19,9 @@ export const suiviDeTempTypeDefs = gql`
   type ActiveSuivi {
     idsuivi: ID!
     heureDebutSuivi: DateTimeISO!
+    isPaused: Boolean!
+    exactPauseValue: Int
+    pausedDuration: Int
     tache: ActiveSuiviTache!
   }
 

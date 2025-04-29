@@ -6,6 +6,12 @@ import Aura from '@primeuix/themes/aura';
 import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
+import Button from 'primevue/button';
+import Dropdown from 'primevue/dropdown';
+import Tooltip from 'primevue/tooltip';
+import Dialog from 'primevue/dialog';
+import ProgressBar from 'primevue/progressbar';
+import Tag from 'primevue/tag';
 
 import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client/core';
 import { DefaultApolloClient } from '@vue/apollo-composable';
@@ -71,6 +77,14 @@ app.use(ConfirmationService);
 
 // Provide Apollo Client
 app.provide(DefaultApolloClient, apolloClient);
+
+// Register components and directives
+app.component('Button', Button);
+app.component('Dropdown', Dropdown);
+app.component('Dialog', Dialog);
+app.component('ProgressBar', ProgressBar);
+app.component('Tag', Tag);
+app.directive('tooltip', Tooltip);
 
 // Mount the app
 app.mount('#app');
