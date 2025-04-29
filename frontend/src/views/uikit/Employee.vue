@@ -809,38 +809,6 @@ onMounted(() => {
           <InputText id="role" v-model="employee.role" required class="p-inputtext-lg" />
         </div>
 
-        <!-- Equipe Management Section -->
-        <div class="field">
-          <label class="font-bold block mb-2">Equipe Management</label>
-          <div class="flex gap-2">
-            <Dropdown
-              v-model="selectedEquipe"
-              :options="equipes"
-              optionLabel="nom_equipe"
-              optionValue="idEquipe"
-              placeholder="Select an equipe"
-              class="w-full"
-            />
-            <Button
-              label="Add Equipe"
-              icon="pi pi-plus"
-              @click="handleAddEquipe"
-              :disabled="!selectedEquipe"
-            />
-          </div>
-          <div class="mt-4">
-            <h5 class="font-bold mb-2">Assigned Equipe</h5>
-            <div class="flex flex-wrap gap-2">
-              <Chip
-                v-if="employee.idEquipe"
-                :label="getEquipeName(employee.idEquipe)"
-                removable
-                @remove="handleRemoveEquipe"
-              />
-            </div>
-          </div>
-        </div>
-
         <div class="field">
           <label for="disabledUntil">Disabled Until</label>
           <Calendar
@@ -850,6 +818,7 @@ onMounted(() => {
             class="w-full"
             placeholder="Select a date"
             dateFormat="yy-mm-dd"
+            :minDate="new Date()" 
           />
         </div>
       </div>
@@ -961,6 +930,7 @@ onMounted(() => {
           class="w-full"
           placeholder="Select a date"
           dateFormat="yy-mm-dd"
+          :minDate="new Date()" 
         />
       </div>
       <template #footer>
