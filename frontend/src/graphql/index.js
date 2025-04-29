@@ -35,18 +35,21 @@ export const SUIVIS_DE_TEMP = gql`
 `;
 
 export const GET_ACTIVE_SUIVI = gql`
-    query GetActiveSuivi($employeeId: ID!) {
-        getActiveSuivi(employeeId: $employeeId) {
-            idsuivi
-            heureDebutSuivi
-            tache {
-                idTache
-                idProjet
-                titreTache
-                nomProjet
-            }
-        }
+  query GetActiveSuivi($employeeId: ID!) {
+    getActiveSuivi(employeeId: $employeeId) {
+      idsuivi
+      heureDebutSuivi
+      isPaused
+      exactPauseValue
+      pausedDuration
+      tache {
+        idTache
+        idProjet
+        titreTache
+        nomProjet
+      }
     }
+  }
 `;
 
 export const CREATE_SUIVI = gql`

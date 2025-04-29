@@ -194,17 +194,13 @@ export const suiviDeTempsResolvers = {
       try {
         const result = await pool.request()
           .input("findEmployeeId", sql.UniqueIdentifier, employeeId)
-          .query<{
-            idsuivi: string;
-            heure_debut_suivi: string;
-            idTache: string;
-            titre_tache: string;
-            idProjet: string;
-            nom_projet: string;
-          }>(`
+          .query(`
             SELECT TOP 1
               s.idsuivi,
               s.heure_debut_suivi,
+              s.is_paused,
+              s.exact_pause_value,
+              s.paused_duration,
               t.idTache,
               t.titre_tache,
               p.idProjet,
@@ -218,15 +214,18 @@ export const suiviDeTempsResolvers = {
           `);
 
         if (result.recordset.length === 0) return null;
-
+        const row = result.recordset[0];
         return {
-          idsuivi: result.recordset[0].idsuivi,
-          heureDebutSuivi: result.recordset[0].heure_debut_suivi,
+          idsuivi: row.idsuivi,
+          heureDebutSuivi: row.heure_debut_suivi,
+          isPaused: row.is_paused,
+          exactPauseValue: row.exact_pause_value,
+          pausedDuration: row.paused_duration, // <-- add this
           tache: {
-            idTache: result.recordset[0].idTache,
-            idProjet: result.recordset[0].idProjet,
-            titreTache: result.recordset[0].titre_tache,
-            nomProjet: result.recordset[0].nom_projet
+            idTache: row.idTache,
+            idProjet: row.idProjet,
+            titreTache: row.titre_tache,
+            nomProjet: row.nom_projet
           }
         };
       } catch (error) {
@@ -387,16 +386,18 @@ export const suiviDeTempsResolvers = {
         let pausedDuration = suivi.paused_duration;
         const endTime = new Date();
 
-        // If the entry is paused, calculate the additional paused time
+        // If the entry is paused, calculate the additional paused time in SECONDS
         if (suivi.is_paused) {
           const lastPausedTime = new Date(suivi.last_paused_time);
-          const additionalPaused = Math.floor((endTime.getTime() - lastPausedTime.getTime()) / 60000); // Convert to minutes
+          const additionalPaused = Math.floor((endTime.getTime() - lastPausedTime.getTime()) / 1000); // SECONDS
           pausedDuration += additionalPaused;
         }
 
-        // Calculate the total duration and active duration
-        const totalDuration = Math.floor((endTime.getTime() - startTime.getTime()) / 60000); // Convert to minutes
+        // Calculate the total duration and active duration in SECONDS
+        const totalDuration = Math.floor((endTime.getTime() - startTime.getTime()) / 1000); // SECONDS
         const activeDuration = totalDuration - pausedDuration;
+
+        // When storing duree_suivi, you may want to keep it in minutes for reporting, but paused_duration must be in SECONDS
 
         // Update the database
         await new sql.Request(transaction)
@@ -472,34 +473,32 @@ export const suiviDeTempsResolvers = {
       try {
         await transaction.begin();
 
-        // Check if the time entry exists and is active
+        // Fetch the entry
         const suiviCheck = await new sql.Request(transaction)
           .input('suiviId', sql.UniqueIdentifier, id)
           .query(`
-            SELECT heure_fin_suivi, is_paused 
-            FROM SuiviDeTemp 
+            SELECT heure_debut_suivi, heure_fin_suivi, is_paused, paused_duration, last_paused_time
+            FROM SuiviDeTemp
             WHERE idsuivi = @suiviId
           `);
 
-        if (suiviCheck.recordset.length === 0) {
-          throw new UserInputError('Time entry not found');
-        }
-
+        if (suiviCheck.recordset.length === 0) throw new UserInputError('Time entry not found');
         const suivi = suiviCheck.recordset[0];
-        if (suivi.heure_fin_suivi !== null) {
-          throw new UserInputError('Cannot pause a completed time entry');
-        }
-        if (suivi.is_paused) {
-          throw new UserInputError('Time entry is already paused');
-        }
+        if (suivi.heure_fin_suivi !== null) throw new UserInputError('Cannot pause a completed time entry');
+        if (suivi.is_paused) throw new UserInputError('Time entry is already paused');
 
-        // Update the paused state and timestamp
+        // Calculate the exact pause value (seconds since start minus paused_duration)
+        const now = new Date();
+        const start = new Date(suivi.heure_debut_suivi);
+        const elapsedSeconds = Math.floor((now.getTime() - start.getTime()) / 1000) - (suivi.paused_duration || 0);
+
         await new sql.Request(transaction)
           .input('suiviId', sql.UniqueIdentifier, id)
-          .input('now', sql.DateTime, new Date())
+          .input('now', sql.DateTime, now)
+          .input('exactPauseValue', sql.Int, elapsedSeconds)
           .query(`
             UPDATE SuiviDeTemp
-            SET is_paused = 1, last_paused_time = @now
+            SET is_paused = 1, last_paused_time = @now, exact_pause_value = @exactPauseValue
             WHERE idsuivi = @suiviId
           `);
 
@@ -540,12 +539,12 @@ export const suiviDeTempsResolvers = {
           throw new UserInputError('Time entry is not paused');
         }
 
-        // Calculate the total paused duration in minutes
+        // Calculate the total paused duration in seconds
         const lastPausedTime = new Date(suivi.last_paused_time);
         const now = new Date();
-        const additionalPaused = Math.floor((now.getTime() - lastPausedTime.getTime()) / 60000); // Convert to minutes
+        const additionalPaused = Math.floor((now.getTime() - lastPausedTime.getTime()) / 1000); // SECONDS
 
-        const totalPausedDuration = suivi.paused_duration + additionalPaused;
+        const totalPausedDuration = (suivi.paused_duration || 0) + additionalPaused;
 
         // Update the database
         await new sql.Request(transaction)
@@ -582,7 +581,7 @@ export const suiviDeTempsResolvers = {
             SET 
               is_paused = 0,
               last_paused_time = NULL,
-              paused_duration = paused_duration + DATEDIFF(MINUTE, last_paused_time, @now)
+              paused_duration = paused_duration + DATEDIFF(SECOND, last_paused_time, @now)
             OUTPUT INSERTED.idsuivi
             WHERE is_paused = 1 AND heure_fin_suivi IS NULL;
           `);
