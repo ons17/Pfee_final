@@ -1,8 +1,27 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import AppConfigurator from './AppConfigurator.vue';
+import { useRouter } from 'vue-router';
 
 const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
+const router = useRouter();
+
+// Logout method
+const logout = () => {
+    // Determine user type before clearing localStorage
+    const userType = localStorage.getItem('administrateur') ? 'admin' : 'employee';
+
+    // Clear localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('administrateur');
+    localStorage.removeItem('employee');
+
+    // Redirect to the appropriate login page
+    if (userType === 'admin') {
+        router.push({ name: 'Login' }); // Redirect to admin login
+    } else {
+        router.push({ name: 'EmployeeLogin' }); // Redirect to employee login
+    }
+};
 </script>
 
 <template>
@@ -44,6 +63,11 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
                         <i class="pi pi-user"></i>
                         <span>Profile</span>
                     </router-link>
+                    <!-- Logout Button -->
+                    <button @click="logout" class="layout-topbar-action" title="Logout">
+                        <i class="pi pi-sign-out"></i>
+                        <span>Logout</span>
+                    </button>
                 </div>
             </div>
         </div>
