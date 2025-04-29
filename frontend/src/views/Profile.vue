@@ -15,15 +15,21 @@ const profile = ref({
 // Reactive state for user type
 const userType = ref(''); // 'admin' or 'employee'
 
-// Logout method
+// Logout Method
 const logout = () => {
     // Clear localStorage
     localStorage.removeItem('token');
     localStorage.removeItem('administrateur');
     localStorage.removeItem('employee');
 
-    // Redirect to login page
-    router.push({ name: 'Login' });
+    // Redirect based on user type
+    if (userType.value === 'admin') {
+        router.push({ name: 'Login' }); // Redirect to admin login
+    } else if (userType.value === 'employee') {
+        router.push({ name: 'EmployeeLogin' }); // Redirect to employee login
+    } else {
+        router.push({ name: 'Login' }); // Default redirection
+    }
 };
 
 // On mounted, retrieve the user data from localStorage
@@ -55,7 +61,7 @@ onMounted(() => {
         <!-- Profile Header -->
         <div class="profile-header">
             <div class="profile-image-container">
-                <img :src="profile.profileImage" alt="" class="profile-image" />
+                <img :src="profile.profileImage" alt="Profile Image" class="profile-image" />
             </div>
             <div class="profile-info">
                 <h1 class="profile-name">{{ profile.name }}</h1>
@@ -63,8 +69,6 @@ onMounted(() => {
                     <p><strong>📧 Email:</strong> {{ profile.email }}</p>
                     <p><strong>💼 Role:</strong> {{ profile.role }}</p>
                 </div>
-
-                <!-- Logout Button -->
                 <button @click="logout" class="logout-button">Logout</button>
             </div>
         </div>
@@ -73,10 +77,39 @@ onMounted(() => {
         <div v-if="userType === 'admin'" class="admin-section">
             <h2>Admin Dashboard</h2>
             <p>Welcome, Admin! Manage your platform here.</p>
+            <div class="dashboard-cards">
+                <div class="card" @click="router.push('/app/Reports')">
+                    <h3>📊 View Reports</h3>
+                    <p>Access detailed reports and analytics.</p>
+                </div>
+                <div class="card" @click="router.push('/app/AddAdmin')">
+                    <h3>➕ Add New Admin</h3>
+                    <p>Manage and add new administrators.</p>
+                </div>
+                <div class="card" @click="router.push('/app/Teams')">
+                    <h3>👥 Manage Teams</h3>
+                    <p>Organize and manage your teams effectively.</p>
+                </div>
+            </div>
         </div>
+
         <div v-else-if="userType === 'employee'" class="employee-section">
             <h2>Employee Dashboard</h2>
             <p>Welcome, Employee! View your tasks and projects here.</p>
+            <div class="dashboard-cards">
+                <div class="card" @click="router.push('/app/Task')">
+                    <h3>📝 View Tasks</h3>
+                    <p>Check your assigned tasks and deadlines.</p>
+                </div>
+                <div class="card" @click="router.push('/app/Project')">
+                    <h3>📂 View Projects</h3>
+                    <p>Explore the projects you are working on.</p>
+                </div>
+                <div class="card" @click="router.push('/app/Performance')">
+                    <h3>📈 View Performance</h3>
+                    <p>Track your performance and achievements.</p>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -86,9 +119,10 @@ onMounted(() => {
     max-width: 800px;
     margin: 0 auto;
     font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
+    background-color: #f9f9f9;
     padding: 20px;
     border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .profile-header {
@@ -106,10 +140,22 @@ onMounted(() => {
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
+    border: 2px solid #ddd;
 }
 
 .profile-info {
     flex-grow: 1;
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.profile-details p {
+    margin: 5px 0;
+    font-size: 1rem;
 }
 
 .logout-button {
@@ -133,5 +179,40 @@ onMounted(() => {
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between; /* Ensures even spacing */
+    align-items: stretch; /* Ensures all cards have the same height */
+}
+
+.card {
+    flex: 1 1 calc(33.333% - 20px);
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    height: 120px; /* Set a fixed height */
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card h3 {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 0.9rem;
+    color: #555;
 }
 </style>

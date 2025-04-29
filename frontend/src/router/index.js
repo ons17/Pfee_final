@@ -4,18 +4,34 @@ import EmployeeLogin from '@/views/pages/auth/EmployeeLogin.vue';
 import EmployeeDashboard from '@/views/pages/EmployeeDashboard.vue';
 import Login from '@/views/pages/auth/Login.vue';
 import ResetPasswordAdmin from '@/views/pages/admin/resetPasswordAdmin.vue';
+import ResetPassword from '@/views/pages/auth/ResetPassword.vue';
 
 const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: Login,
+    component: Login, // Admin login page
+  },
+  {
+    path: '/EmployeeLogin',
+    name: 'EmployeeLogin',
+    component: EmployeeLogin, // Employee login page
   },
   {
     path: '/dashboard',
     name: 'EmployeeDashboard',
     component: EmployeeDashboard,
     meta: { requiresAuth: true }, // Protect this route
+  },
+  {
+    path: '/ResetPassword',
+    name: 'ResetPassword',
+    component: ResetPassword,
+  },
+  {
+    path: '/resetPasswordAdmin',
+    name: 'ResetPasswordAdmin',
+    component: ResetPasswordAdmin,
   },
   {
     path: '/',
@@ -87,16 +103,6 @@ const routes = [
         component: () => import('@/views/pages/admin/AddAdmin.vue'),
       },
     ],
-  },
-  {
-    path: '/EmployeeLogin',
-    name: 'EmployeeLogin',
-    component: EmployeeLogin,
-  },
-  {
-    path: '/resetPasswordAdmin',
-    name: 'ResetPasswordAdmin',
-    component: ResetPasswordAdmin,
   },
   {
     path: '/:pathMatch(.*)*', // This will match all paths not defined above

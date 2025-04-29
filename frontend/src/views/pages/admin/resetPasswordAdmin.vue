@@ -18,7 +18,6 @@ const resetPassword = async () => {
 
   try {
     const token = route.query.token;
-    console.log('Token:', token); // Debug log
 
     const response = await axios.post('http://localhost:3000/graphql', {
       query: `
@@ -36,13 +35,13 @@ const resetPassword = async () => {
 
     if (result?.success) {
       successMessage.value = result.message;
-      setTimeout(() => router.push({ name: 'Login' }), 3000);
+      setTimeout(() => router.push({ name: 'AdminLogin' }), 3000); // Redirect to admin login
     } else {
       errorMessage.value = result?.message || 'Failed to reset password.';
     }
   } catch (error) {
     console.error('Error resetting password:', error);
-    errorMessage.value = 'Failed to reset password. Please try again.';
+    errorMessage.value = error.response?.data?.errors?.[0]?.message || 'Failed to reset password. Please try again.';
   }
 };
 </script>
@@ -63,7 +62,5 @@ const resetPassword = async () => {
       </div>
       <Button label="Reset Password" @click="resetPassword" />
     </div>
-    
   </div>
-
 </template>

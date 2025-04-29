@@ -2,7 +2,7 @@ import sql, { ConnectionPool } from 'mssql';
 
 // SQL Server configuration
 const config = {
-  user: 'SA',
+  user: 'sa',
   password: 'Ons17082001', // Replace with your actual password
 
   server: 'localhost',
