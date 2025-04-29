@@ -61,6 +61,18 @@ const isStrongPassword = (password) => {
   return strongPasswordRegex.test(password);
 };
 
+const formatDBDate = (dateString) => {
+    if (!dateString) return '-';
+    const date = dateString instanceof Date ? dateString : new Date(dateString);
+    if (isNaN(date.getTime())) return '-';
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+};
+
 // Fetch employees
 const fetchTaches = async () => {
   try {
@@ -704,7 +716,7 @@ onMounted(() => {
         <Column field="role" header="Role" sortable></Column>
         <Column field="disabledUntil" header="Disabled Until" sortable>
           <template #body="{ data }">
-            {{ data.disabledUntil ? data.disabledUntil.toLocaleDateString('en-US') : 'Active' }}
+            {{ formatDBDate(data.disabledUntil) }}
           </template>
         </Column>
         <Column field="idEquipe" header="Team">
