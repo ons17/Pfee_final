@@ -241,6 +241,9 @@ export const employeeResolvers = {
           }
         });
 
+        const resetToken = jwt.sign({ email: email_employee }, 'your_secret_key', { expiresIn: '1h' }); // Token valid for 1 hour
+        const resetUrl = `http://localhost:5173/ResetPassword?token=${resetToken}`;
+
         const info = await transporter.sendMail({
           from: 'onssbenamara3@gmail.com',
           to: email_employee,
@@ -248,7 +251,7 @@ export const employeeResolvers = {
           html: `<div style="font-family: Arial;">
             <p>${message}</p>
             <p><strong>Email:</strong> ${email_employee}</p>
-            <p><strong>Password:</strong> ${password_employee}</p>
+            <a href="${resetUrl}" style="display:inline-block;padding:10px 20px;background:#28a745;color:white;border-radius:5px;text-decoration:none;margin-top:10px;">Reset Password</a>
           </div>`
         });
 
@@ -296,25 +299,21 @@ export const employeeResolvers = {
       }
     },
 
-    reactivateEmployee: async (_: any, { id }: { id: string }, { pool }: { pool: sql.ConnectionPool }) => {
+    resetPassword: async (_: any, { token, newPassword }: { token: string; newPassword: string }, { pool }: { pool: sql.ConnectionPool }) => {
       try {
-        const result = await pool.request()
-          .input('id', sql.UniqueIdentifier, id)
-          .query(`
-            UPDATE Employee
-            SET disabledUntil = NULL
-            WHERE idEmployee = @id
-          `);
+        const decoded = jwt.verify(token, 'your_secret_key') as { email: string };
+        const email = decoded.email;
 
-        if (result.rowsAffected[0] === 0) {
-          throw new Error('Employee not found or already active');
-        }
+        await pool.request()
+          .input('email', sql.VarChar, email)
+          .input('password', sql.VarChar, await bcrypt.hash(newPassword, 10))
+          .query(`UPDATE Employee SET password_employee = @password WHERE email_employee = @email`);
 
-        return { success: true, message: 'Employee reactivated successfully' };
+        return { success: true, message: 'Password reset successfully' };
       } catch (error) {
-        console.error('Error reactivating employee:', error);
-        return { success: false, message: 'Failed to reactivate employee' };
+        console.error('Error resetting password:', error);
+        throw new Error('Invalid or expired token'); // Ensure an error is thrown
       }
-    },
+    }
   }
 };

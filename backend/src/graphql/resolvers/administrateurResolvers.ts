@@ -181,25 +181,21 @@ export const adminResolvers = {
       { pool }: { pool: sql.ConnectionPool }
     ) => {
       try {
+        // Hash the password
         const hashedPassword = await bcrypt.hash(password_administrateur, 10);
 
-        const id = crypto.randomUUID();
+        // Insert the admin into the database
         await pool.request()
-          .input("id", sql.UniqueIdentifier, id)
-          .input("nom", sql.VarChar, nom_administrateur)
-          .input("email", sql.VarChar, email_administrateur)
-          .input("password", sql.VarChar, hashedPassword)
-          .input("role", sql.VarChar, role)
+          .input('nom', sql.VarChar, nom_administrateur)
+          .input('email', sql.VarChar, email_administrateur)
+          .input('password', sql.VarChar, hashedPassword)
+          .input('role', sql.VarChar, role)
           .query(`
-            INSERT INTO Administrateur (idAdministrateur, nom_administrateur, email_administrateur, password_administrateur, role)
-            VALUES (@id, @nom, @email, @password, @role)
+            INSERT INTO Administrateur (nom_administrateur, email_administrateur, password_administrateur, role)
+            VALUES (@nom, @email, @password, @role)
           `);
 
-        // Generate a reset token
-        const resetToken = jwt.sign({ email: email_administrateur }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
-        const resetUrl = `http://localhost:5173/resetPasswordAdmin?token=${resetToken}`;
-
-        // Send email to the new admin
+        // Send email with credentials
         const transporter = nodemailer.createTransport({
           service: 'gmail',
           auth: {
@@ -214,9 +210,9 @@ export const adminResolvers = {
             <p>Your admin account has been created successfully. Below are your login details:</p>
             <ul>
               <li><strong>Email:</strong> ${email_administrateur}</li>
+              <li><strong>Password:</strong> ${password_administrateur}</li>
             </ul>
-            <p>Please reset your password using the link below:</p>
-            <a href="${resetUrl}" style="display:inline-block;padding:10px 20px;background:#007bff;color:white;border-radius:5px;text-decoration:none;">Reset Password</a>
+            <p>Please keep this information secure.</p>
             <p>Best regards,<br>Your Company</p>
           </div>
         `;
@@ -224,18 +220,14 @@ export const adminResolvers = {
         await transporter.sendMail({
           from: process.env.EMAIL_USER,
           to: email_administrateur,
-          subject: 'Welcome to the Admin Panel - Reset Your Password',
+          subject: 'Welcome to the Admin Panel - Your Credentials',
           html: emailContent,
         });
 
-        return {
-          success: true,
-          message: 'Admin created successfully and email sent',
-          administrateur: { idAdministrateur: id, nom_administrateur, email_administrateur, role },
-        };
+        return { success: true, message: 'Admin created successfully and credentials sent via email.' };
       } catch (error) {
         console.error('Error creating admin:', error);
-        return { success: false, message: 'Failed to create admin', administrateur: null };
+        return { success: false, message: 'Failed to create admin.' };
       }
     },
 
@@ -291,7 +283,8 @@ export const adminResolvers = {
           .query(`UPDATE Administrateur SET password_administrateur = @password WHERE email_administrateur = @email`);
 
         if (result.rowsAffected[0] === 0) {
-          throw new Error('Failed to reset password. Admin not found.');
+          console.error('Failed to reset password. Admin not found for email:', email);
+          return { success: false, message: 'Admin not found or invalid email.' };
         }
 
         return { success: true, message: 'Password reset successfully' };
@@ -303,4 +296,4 @@ export const adminResolvers = {
   }
 };
 
- 
+
