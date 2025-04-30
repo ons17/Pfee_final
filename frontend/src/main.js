@@ -12,6 +12,10 @@ import Tooltip from 'primevue/tooltip';
 import Dialog from 'primevue/dialog';
 import ProgressBar from 'primevue/progressbar';
 import Tag from 'primevue/tag';
+import Calendar from 'primevue/calendar';
+import Avatar from 'primevue/avatar';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 
 import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client/core';
 import { DefaultApolloClient } from '@vue/apollo-composable';
@@ -84,6 +88,10 @@ app.component('Dropdown', Dropdown);
 app.component('Dialog', Dialog);
 app.component('ProgressBar', ProgressBar);
 app.component('Tag', Tag);
+app.component('Calendar', Calendar);
+app.component('Avatar', Avatar);
+app.component('DataTable', DataTable);
+app.component('Column', Column);
 app.directive('tooltip', Tooltip);
 
 // Mount the app
