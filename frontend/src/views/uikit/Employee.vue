@@ -26,7 +26,6 @@ const taches = ref([]);
 const addEmployeeDialog = ref(false);
 const editEmployeeDialog = ref(false);
 const deleteEmployeeDialog = ref(false);
-const disableEmployeeDialog = ref(false);
 const resetPasswordDialog = ref(false);
 const sendEmailDialog = ref(false);
 const deleteEmployeesDialog = ref(false);
@@ -388,12 +387,6 @@ const openEdit = (emp) => {
   editEmployeeDialog.value = true;
 };
 
-const openDisableDialog = (employee) => {
-  selectedEmployeeId.value = employee.idEmployee;
-  selectedDisabledUntil.value = null;
-  disableDialogVisible.value = true;
-};
-
 const setDisabledUntil = async () => {
   if (!selectedDisabledUntil.value) {
     toast.add({ severity: 'warn', summary: 'Warning', detail: 'Please select a date', life: 3000 });
@@ -424,22 +417,23 @@ const setDisabledUntil = async () => {
       throw new Error(response.data.errors[0].message);
     }
 
-    toast.add({ 
-      severity: 'success', 
-      summary: 'Success', 
-      detail: 'Disabled Until date set successfully', 
-      life: 3000 
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Disabled Until date set successfully',
+      life: 3000
     });
-    
+
     disableDialogVisible.value = false;
+    selectedDisabledUntil.value = null;
     await fetchTaches();
   } catch (error) {
     console.error('Error setting Disabled Until:', error);
-    toast.add({ 
-      severity: 'error', 
-      summary: 'Error', 
-      detail: 'Failed to set Disabled Until date', 
-      life: 3000 
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to set Disabled Until date',
+      life: 3000
     });
   }
 };
@@ -524,7 +518,6 @@ const hideDialog = () => {
   addEmployeeDialog.value = false;
   editEmployeeDialog.value = false;
   deleteEmployeeDialog.value = false;
-  disableEmployeeDialog.value = false;
   resetPasswordDialog.value = false;
   sendEmailDialog.value = false;
   deleteEmployeesDialog.value = false;
@@ -653,6 +646,64 @@ const handleRemoveEquipe = () => {
   toast.add({ severity: 'info', summary: 'Team Removed', detail: 'Team unassigned from employee', life: 3000 });
 };
 
+const handleToggleActive = async (value, employee) => {
+  console.log("Toggle value:", value);
+  console.log("Employee data:", employee);
+
+  if (!value) {
+    // If turning OFF (value is false), show disable dialog
+    console.log("Showing disable dialog");
+    selectedEmployeeId.value = employee.idEmployee;
+    // selectedEmployee.value = employee; // Store the employee
+    selectedDisabledUntil.value = null; // Clear previously selected date
+    disableDialogVisible.value = true;
+    console.log("disableDialogVisible.value:", disableDialogVisible.value);
+  } else {
+    // If turning ON (value is true), clear disabledUntil
+    try {
+      const mutation = `
+        mutation UpdateEmployee($id: String!, $disabledUntil: String) {
+          updateEmployee(id: $id, disabledUntil: $disabledUntil) {
+            idEmployee
+            disabledUntil
+          }
+        }
+      `;
+
+      const variables = {
+        id: employee.idEmployee,
+        disabledUntil: null // Set to null when activating
+      };
+
+      const response = await axios.post('http://localhost:3000/graphql', {
+        query: mutation,
+        variables,
+      });
+
+      if (response.data.errors) {
+        throw new Error(response.data.errors[0].message);
+      }
+
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Employee activated',
+        life: 3000
+      });
+
+      await fetchTaches();
+    } catch (error) {
+      console.error('Error updating employee status:', error);
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to update employee status',
+        life: 3000
+      });
+    }
+  }
+};
+
 onMounted(() => {
   fetchTaches();
   fetchEquipes();
@@ -716,7 +767,19 @@ onMounted(() => {
         <Column field="role" header="Role" sortable></Column>
         <Column field="disabledUntil" header="Disabled Until" sortable>
           <template #body="{ data }">
-            {{ formatDBDate(data.disabledUntil) }}
+            <div class="inline-flex align-items-center">
+              <InputSwitch
+                :modelValue="!data.disabledUntil"
+                @update:modelValue="(value) => handleToggleActive(value, data)"
+                class="mr-2"
+              />
+              <span v-if="data.disabledUntil">
+                {{ formatDBDate(data.disabledUntil) }}
+              </span>
+              <span v-else>
+                Active
+              </span>
+            </div>
           </template>
         </Column>
         <Column field="idEquipe" header="Team">
@@ -729,7 +792,6 @@ onMounted(() => {
             <Button icon="pi pi-pencil" class="mr-2" severity="warning" outlined @click="openEdit(data)" />
             <Button icon="pi pi-trash" class="mr-2" severity="danger" outlined @click="confirmDeleteEmployee(data)" />
             <Button icon="pi pi-envelope" class="mr-2" severity="info" outlined @click="openSendEmailDialog(data.idEmployee)" />
-            <Button icon="pi pi-calendar" class="mr-2" severity="secondary" outlined @click="openDisableDialog(data)" />
           </template>
         </Column>
       </DataTable>
@@ -758,15 +820,13 @@ onMounted(() => {
             required
             toggleMask
             :class="{ 'p-invalid': submitted && !employee.passwordEmployee }"
-            class="w-full"
-          />
+            class="w-full"/>
           <small v-if="submitted && !employee.passwordEmployee" class="p-error">Password is required.</small>
           <small :style="{ color: passwordStrengthColor }">
             Password Strength: {{ passwordStrength }}
           </small>
         </div>
 
-        <!-- Equipe Management Section -->
         <div class="field">
           <label class="font-bold block mb-2">Equipe Management</label>
           <div class="flex gap-2">
@@ -861,22 +921,22 @@ onMounted(() => {
     </Dialog>
 
     <!-- Disable Employee Dialog -->
-    <Dialog v-model:visible="disableEmployeeDialog" header="Disable Employee" modal class="p-dialog-responsive" :style="{ width: '30%' }">
-      <div class="p-fluid">
-        <div class="field">
-          <label for="disabledUntil">Disable Until</label>
-          <input
-            id="disabledUntil"
-            v-model="disabledUntil"
-            type="date"
-            class="p-inputtext-lg"
-          />
-        </div>
+    <Dialog v-model:visible="disableDialogVisible" header="Set Disabled Until" :modal="true" :style="{ width: '400px' }">
+      <div class="field">
+        <label for="disable-until">Disabled Until</label>
+        <Calendar
+          id="disable-until"
+          v-model="selectedDisabledUntil"
+          :showIcon="true"
+          class="w-full"
+          placeholder="Select a date"
+          dateFormat="yy-mm-dd"
+          :minDate="new Date()" 
+        />
       </div>
-
       <template #footer>
-        <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
-        <Button label="Disable" icon="pi pi-check" class="p-button-danger" @click="disableEmployee" />
+        <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="disableDialogVisible = false" />
+        <Button label="Save" icon="pi pi-check" class="p-button" @click="setDisabledUntil" />
       </template>
     </Dialog>
 
@@ -928,26 +988,6 @@ onMounted(() => {
       <template #footer>
         <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="sendEmailDialog = false" />
         <Button label="Send" icon="pi pi-send" class="p-button" @click="sendEmail" />
-      </template>
-    </Dialog>
-
-    <!-- Set Disabled Until Dialog -->
-    <Dialog v-model:visible="disableDialogVisible" header="Set Disabled Until" :modal="true" :style="{ width: '400px' }">
-      <div class="field">
-        <label for="disable-until">Disabled Until</label>
-        <Calendar
-          id="disable-until"
-          v-model="selectedDisabledUntil"
-          :showIcon="true"
-          class="w-full"
-          placeholder="Select a date"
-          dateFormat="yy-mm-dd"
-          :minDate="new Date()" 
-        />
-      </div>
-      <template #footer>
-        <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="disableDialogVisible = false" />
-        <Button label="Save" icon="pi pi-check" class="p-button" @click="setDisabledUntil" />
       </template>
     </Dialog>
 
