@@ -4,7 +4,8 @@ import { useQuery, useMutation } from '@vue/apollo-composable';
 import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from 'primevue/usetoast';
 import ProgressSpinner from 'primevue/progressspinner';
-import { GET_TEAMS, GET_PROJECTS, CREATE_PROJECT, UPDATE_PROJECT, DELETE_PROJECT } from '@/graphql';
+import ProgressBar from 'primevue/progressbar';
+import { GET_TEAMS, GET_PROJECTS, CREATE_PROJECT, UPDATE_PROJECT, DELETE_PROJECT , GET_TACHES } from '@/graphql';
 import { ADD_TEAM_TO_PROJECT, REMOVE_TEAM_FROM_PROJECT } from '@/graphql';
 import { isAdmin, validatePassword } from '@/utils/authUtils'; // Import utility functions
 
@@ -62,6 +63,8 @@ const {
 } = useQuery(GET_TEAMS, null, {
     fetchPolicy: 'cache-and-network'
 });
+
+const { result: tasksResult } = useQuery(GET_TACHES);
 
 // Mutations
 const { mutate: createProject } = useMutation(CREATE_PROJECT, {
@@ -513,6 +516,37 @@ const handleRemoveTeam = async (teamId) => {
         removingTeam.value = false;
     }
 };
+
+// First, add this computed property in the <script setup> section of Project.vue
+
+const getProjectProgress = (project) => {
+  const taskCounts = {
+    total: 0,
+    completed: 0,
+    inProgress: 0,
+    todo: 0
+  };
+
+  // Get tasks for this project from the tasks query result
+  const projectTasks = tasksResult.value?.taches.filter(t => t.idProjet === project.idProjet) || [];
+  
+  taskCounts.total = projectTasks.length;
+  taskCounts.completed = projectTasks.filter(t => t.statutTache === 'END').length;
+  taskCounts.inProgress = projectTasks.filter(t => t.statutTache === 'IN_PROGRESS').length;
+  taskCounts.todo = projectTasks.filter(t => t.statutTache === 'TODO').length;
+
+  return {
+    ...taskCounts,
+    percentage: taskCounts.total ? Math.round((taskCounts.completed / taskCounts.total) * 100) : 0
+  };
+};
+
+const getProgressClass = (percentage) => {
+  if (percentage >= 100) return 'progress-complete';    // Green - Complete
+  if (percentage >= 70) return 'progress-high';         // Blue - Good Progress
+  if (percentage >= 30) return 'progress-medium';       // Orange - Medium Progress
+  return 'progress-low';                               // Red - Low Progress
+};
 </script>
 
 <template>
@@ -588,6 +622,32 @@ const handleRemoveTeam = async (teamId) => {
                     <template #body="{ data }">
                         <div class="flex flex-wrap gap-1">
                             <Chip v-for="team in data.equipes" :key="team.idEquipe" :label="team.nom_equipe" class="text-sm" />
+                        </div>
+                    </template>
+                </Column>
+                <Column header="Progress" headerStyle="width: 250px">
+                    <template #body="{ data }">
+                        <div class="progress-wrapper">
+                            <div v-if="getProjectProgress(data).total === 0" class="no-tasks-message">
+                                <i class="pi pi-info-circle mr-2"></i>
+                                No tasks yet
+                            </div>
+                            <div v-else-if="getProjectProgress(data).percentage === 0" class="no-progress-message">
+                                <i class="pi pi-clock mr-2"></i>
+                                No tasks completed
+                            </div>
+                            <div v-else class="progress-container">
+                                <ProgressBar 
+                                    :value="getProjectProgress(data).percentage"
+                                    :class="getProgressClass(getProjectProgress(data).percentage)"
+                                />
+                                <div class="progress-stats">
+                                    <span class="progress-percentage">{{ getProjectProgress(data).percentage }}%</span>
+                                    <div class="task-counts">
+                                        <small>{{ getProjectProgress(data).completed }}/{{ getProjectProgress(data).total }} tasks</small>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </template>
                 </Column>
@@ -768,5 +828,109 @@ const handleRemoveTeam = async (teamId) => {
     flex-wrap: wrap;
     gap: 0.5rem;
     margin-top: 0.5rem;
+}
+
+.progress-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.progress-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.progress-percentage {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.progress-details {
+    display: flex;
+    gap: 0.25rem;
+}
+
+:deep(.p-progressbar) {
+    height: 0.5rem;
+}
+
+:deep(.progress-complete) .p-progressbar-value {
+    background: var(--green-500);
+}
+
+:deep(.progress-good) .p-progressbar-value {
+    background: var(--blue-500);
+}
+
+:deep(.progress-warning) .p-progressbar-value {
+    background: var(--orange-500);
+}
+
+:deep(.progress-low) .p-progressbar-value {
+    background: var(--red-500);
+}
+
+:deep(.progress-complete) .p-progressbar-value {
+    background: linear-gradient(90deg, #4CAF50, #45a049);  /* Green gradient */
+}
+
+:deep(.progress-high) .p-progressbar-value {
+    background: linear-gradient(90deg, #2196F3, #1976D2);  /* Blue gradient */
+}
+
+:deep(.progress-medium) .p-progressbar-value {
+    background: linear-gradient(90deg, #FF9800, #F57C00);  /* Orange gradient */
+}
+
+:deep(.progress-low) .p-progressbar-value {
+    background: linear-gradient(90deg, #f44336, #d32f2f);  /* Red gradient */
+}
+
+:deep(.p-progressbar) {
+    height: 0.5rem;
+    background: #f5f5f5;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+:deep(.p-progressbar-value) {
+    transition: width 0.3s ease-in-out;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+:deep(.p-tag) {
+    font-size: 0.75rem;
+}
+
+.no-tasks-message,
+.no-progress-message {
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+}
+
+.no-tasks-message {
+  background-color: var(--surface-200);
+  color: var(--text-color-secondary);
+}
+
+.no-progress-message {
+  background-color: var(--yellow-50);
+  color: var(--yellow-700);
+}
+
+.progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.task-counts {
+  color: var(--text-color-secondary);
 }
 </style>

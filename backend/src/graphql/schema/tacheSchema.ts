@@ -17,6 +17,8 @@ export const tacheTypeDefs = gql`
     duration: Int
     idProjet: String
     projet: Projet
+    suiviDeTemps: [SuiviDeTemp]
+    progress: Float
   }
 
   input TacheFilterInput {

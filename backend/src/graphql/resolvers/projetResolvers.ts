@@ -1,8 +1,59 @@
 import { v4 as uuidv4 } from 'uuid';
 import * as sql from 'mssql';
 
+// Add this helper function at the top of the file
+export const checkAndUpdateProjectStatus = async (pool: sql.ConnectionPool, projectId: string) => {
+  const transaction = new sql.Transaction(pool);
+  try {
+    await transaction.begin();
+
+    // Check if all tasks are completed
+    const result = await new sql.Request(transaction)
+      .input('projectId', sql.UniqueIdentifier, projectId)
+      .query(`
+        SELECT 
+          COUNT(CASE WHEN statut_tache != 'end' THEN 1 end) as pending_tasks,
+          COUNT(*) as total_tasks
+        FROM Tache
+        WHERE idProjet = @projectId
+      `);
+
+    if (result.recordset.length > 0) {
+      const { pending_tasks, total_tasks } = result.recordset[0];
+
+      // If there are tasks and all are completed, set project to end
+      if (total_tasks > 0 && pending_tasks === 0) {
+        await new sql.Request(transaction)
+          .input('projectId', sql.UniqueIdentifier, projectId)
+          .query(`
+            UPDATE Projet
+            SET statut_projet = 'end'
+            WHERE idProjet = @projectId AND statut_projet != 'end'
+          `);
+      }
+      // If there are pending tasks and project is end, set it back to in_progress
+      else if (pending_tasks > 0) {
+        await new sql.Request(transaction)
+          .input('projectId', sql.UniqueIdentifier, projectId)
+          .query(`
+            UPDATE Projet
+            SET statut_projet = 'in_progress'
+            WHERE idProjet = @projectId AND statut_projet = 'end'
+          `);
+      }
+    }
+
+    await transaction.commit();
+  } catch (error) {
+    if (transaction) await transaction.rollback();
+    console.error("Error checking project status:", error);
+    throw error;
+  }
+};
+
 export const projetResolvers = {
   Query: {
+    
     // Fetch all projects with optional search and filter criteria
     searchProjets: async (
       _: any,
@@ -68,6 +119,7 @@ export const projetResolvers = {
     // Fetch all projects with optional team filter
     projets: async (_: any, { teamId }: { teamId?: string }, { pool }: { pool: sql.ConnectionPool }) => {
       try {
+        
         let query = `
           SELECT p.idProjet, p.nom_projet, p.description_projet, p.date_debut_projet, p.date_fin_projet, p.statut_projet
           FROM Projet p
@@ -93,6 +145,7 @@ export const projetResolvers = {
 
         // Fetch associated teams for each project
         for (const project of projects) {
+          await checkAndUpdateProjectStatus(pool, project.idProjet);
           const equipesResult = await pool.request()
             .input("idProjet", sql.UniqueIdentifier, project.idProjet)
             .query(`
