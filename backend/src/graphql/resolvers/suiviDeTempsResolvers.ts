@@ -42,6 +42,42 @@ const handleDatabaseError = (error: unknown, operation: string) => {
   });
 };
 
+// Add this helper function at the top with other helpers
+const checkAndUpdateTaskStatus = async (transaction: sql.Transaction, taskId: string) => {
+  try {
+    // Get total tracked time and task duration
+    const result = await new sql.Request(transaction)
+      .input('taskId', sql.UniqueIdentifier, taskId)
+      .query(`
+        SELECT 
+          t.duration * 60 as planned_duration_minutes,  -- Convert hours to minutes
+          COALESCE(SUM(CAST(s.duree_suivi AS float) / 60), 0) as total_tracked_minutes  -- Convert seconds to minutes
+        FROM Tache t
+        LEFT JOIN SuiviDeTemp s ON t.idTache = s.idTache
+        WHERE t.idTache = @taskId
+        GROUP BY t.duration
+      `);
+
+    if (result.recordset.length > 0) {
+      const { planned_duration_minutes, total_tracked_minutes } = result.recordset[0];
+      
+      // If total tracked time equals or exceeds planned duration, update status to END
+      if (total_tracked_minutes >= planned_duration_minutes) {
+        await new sql.Request(transaction)
+          .input('taskId', sql.UniqueIdentifier, taskId)
+          .query(`
+            UPDATE Tache 
+            SET statut_tache = 'END'
+            WHERE idTache = @taskId AND statut_tache != 'END'
+          `);
+      }
+    }
+  } catch (error) {
+    console.error('Error checking task status:', error);
+    throw error;
+  }
+};
+
 // Interface for SuiviDeTemp result
 interface SuiviDeTempResult {
   idsuivi: string;
@@ -417,6 +453,19 @@ export const suiviDeTempsResolvers = {
               last_paused_time = NULL
             WHERE idsuivi = @updateSuiviId
           `);
+
+        // Get the task ID for the time entry
+        const taskResult = await new sql.Request(transaction)
+          .input('suiviId', sql.UniqueIdentifier, idsuivi)
+          .query(`
+            SELECT idTache FROM SuiviDeTemp WHERE idsuivi = @suiviId
+          `);
+
+        if (taskResult.recordset.length > 0) {
+          const taskId = taskResult.recordset[0].idTache;
+          // Check and update task status
+          await checkAndUpdateTaskStatus(transaction, taskId);
+        }
 
         const result = await fetchSuiviById(transaction, idsuivi);
         await transaction.commit();

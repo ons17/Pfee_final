@@ -1,33 +1,121 @@
 import sql from 'mssql';
 import { v4 as uuidv4 } from 'uuid';
+import { checkAndUpdateProjectStatus } from './projetResolvers';
+
+// Add this helper function at the top of the file
+const checkTaskStatus = async (pool: sql.ConnectionPool, taskId: string) => {
+  try {
+    // Get total tracked time, task duration and current status
+    const result = await pool.request()
+      .input('taskId', sql.UniqueIdentifier, taskId)
+      .query(`
+        SELECT 
+          t.duration * 60 as planned_duration_minutes,  -- Convert hours to minutes
+          COALESCE(SUM(CAST(s.duree_suivi AS float) / 60), 0) as total_tracked_minutes,  -- Convert seconds to minutes
+          t.statut_tache as current_status
+        FROM Tache t
+        LEFT JOIN SuiviDeTemp s ON t.idTache = s.idTache
+        WHERE t.idTache = @taskId
+        GROUP BY t.duration, t.statut_tache
+      `);
+
+    if (result.recordset.length > 0) {
+      const { planned_duration_minutes, total_tracked_minutes, current_status } = result.recordset[0];
+      
+      // Logical status progression:
+      // 1. If tracked time >= planned duration and status is IN_PROGRESS, set to END
+      // 2. If tracked time > 0 and < planned duration and status is TODO, set to IN_PROGRESS
+      // 3. If tracked time >= planned duration and status is TODO, set to END
+      
+      let newStatus = null;
+
+      if (total_tracked_minutes >= planned_duration_minutes && current_status !== 'END') {
+        newStatus = 'END';
+      } else if (total_tracked_minutes > 0 && total_tracked_minutes < planned_duration_minutes && current_status === 'TODO') {
+        newStatus = 'IN_PROGRESS';
+      }
+
+      // Update only if status needs to change
+      if (newStatus) {
+        await pool.request()
+          .input('taskId', sql.UniqueIdentifier, taskId)
+          .input('newStatus', sql.VarChar, newStatus)
+          .query(`
+            UPDATE Tache 
+            SET statut_tache = @newStatus
+            WHERE idTache = @taskId
+          `);
+      }
+    }
+  } catch (error) {
+    console.error("Error checking task status:", error);
+    throw error;
+  }
+};
 
 export const tacheResolvers = {
   Query: {
     taches: async (_: any, __: any, { pool }: { pool: sql.ConnectionPool }) => {
       try {
+        // First, get tasks with their basic info and tracked time
         const result = await pool.request().query(`
-          SELECT idTache, titre_tache, description_tache, date_debut_tache, date_fin_tache, statut_tache, duration, idProjet
-          FROM Tache
+          SELECT 
+            t.idTache,
+            t.titre_tache as titreTache,
+            t.description_tache as descriptionTache,
+            t.date_debut_tache as dateDebutTache,
+            t.date_fin_tache as dateFinTache,
+            t.statut_tache as statutTache,
+            t.duration,
+            t.idProjet,
+            (
+              SELECT CAST(ISNULL(SUM(s.duree_suivi), 0) AS INT)
+              FROM SuiviDeTemp s
+              WHERE s.idTache = t.idTache
+            ) as total_tracked_time
+          FROM Tache t
         `);
 
-        return result.recordset.map((tache) => ({
-          idTache: tache.idTache,
-          titreTache: tache.titre_tache,
-          descriptionTache: tache.description_tache,
-          dateDebutTache: tache.date_debut_tache ? new Date(tache.date_debut_tache).toISOString() : null,
-          dateFinTache: tache.date_fin_tache ? new Date(tache.date_fin_tache).toISOString() : null,
-          statutTache: tache.statut_tache,
-          duration: tache.duration,
-          idProjet: tache.idProjet
+        // For each task, fetch its time tracking entries
+        const tasks = await Promise.all(result.recordset.map(async (task) => {
+          // Get time tracking entries
+          const suiviResult = await pool.request()
+            .input('taskId', sql.UniqueIdentifier, task.idTache)
+            .query(`
+              SELECT idsuivi, duree_suivi
+              FROM SuiviDeTemp
+              WHERE idTache = @taskId
+            `);
+
+          // Check and update task status based on tracked time
+          await checkTaskStatus(pool, task.idTache);
+
+          return {
+            idTache: task.idTache,
+            titreTache: task.titreTache,
+            descriptionTache: task.descriptionTache,
+            dateDebutTache: task.dateDebutTache ? new Date(task.dateDebutTache).toISOString() : null,
+            dateFinTache: task.dateFinTache ? new Date(task.dateFinTache).toISOString() : null,
+            statutTache: task.statutTache,
+            duration: task.duration,
+            idProjet: task.idProjet,
+            suiviDeTemps: suiviResult.recordset,
+            total_tracked_time: task.total_tracked_time
+          };
         }));
+
+        return tasks;
       } catch (error) {
-        console.error("Error fetching taches:", error);
-        throw new Error("Error fetching taches");
+        console.error('Error fetching tasks:', error);
+        throw error;
       }
     },
 
     tache: async (_: any, { id }: { id: string }, { pool }: { pool: sql.ConnectionPool }) => {
       try {
+        // Check status first
+        await checkTaskStatus(pool, id);
+
         const result = await pool.request()
           .input('id', sql.UniqueIdentifier, id)
           .query(`
@@ -135,6 +223,9 @@ export const tacheResolvers = {
             VALUES (@idTache, @titre_tache, @description_tache, @duration, @idProjet, @date_debut_tache, @date_fin_tache)
           `);
 
+        // After inserting the new task
+        await checkAndUpdateProjectStatus(pool, idProjet);
+
         // Fetch the newly created tache to return it
         const newTache = await pool.request()
           .input('idTache', sql.UniqueIdentifier, idTache)
@@ -176,71 +267,101 @@ export const tacheResolvers = {
       },
       { pool }: { pool: sql.ConnectionPool }
     ) => {
+      const transaction = new sql.Transaction(pool);
       try {
-        const request = pool.request().input('id', sql.UniqueIdentifier, id);
+        await transaction.begin();
+
+        // First check the tracked time vs duration
+        const timeCheck = await new sql.Request(transaction)
+          .input('taskId', sql.UniqueIdentifier, id)
+          .query(`
+            SELECT 
+              t.duration * 60 as planned_duration_minutes,
+              COALESCE(SUM(CAST(s.duree_suivi AS float) / 60), 0) as total_tracked_minutes
+            FROM Tache t
+            LEFT JOIN SuiviDeTemp s ON t.idTache = s.idTache
+            WHERE t.idTache = @taskId
+            GROUP BY t.duration
+          `);
+
+        if (timeCheck.recordset.length > 0) {
+          const { planned_duration_minutes, total_tracked_minutes } = timeCheck.recordset[0];
+          
+          // If tracked time >= duration, force status to END
+          if (total_tracked_minutes >= planned_duration_minutes) {
+            statutTache = 'END';
+          }
+        }
+
+        const request = new sql.Request(transaction).input('id', sql.UniqueIdentifier, id);
         const updates = [];
-    
+
         if (titreTache !== undefined) {
           updates.push('titre_tache = @titreTache');
           request.input('titreTache', sql.NVarChar, titreTache);
         }
-    
+
         if (descriptionTache !== undefined) {
           updates.push('description_tache = @descriptionTache');
           request.input('descriptionTache', sql.NVarChar, descriptionTache);
         }
-    
+
         if (statutTache !== undefined) {
           updates.push('statut_tache = @statutTache');
           request.input('statutTache', sql.NVarChar, statutTache);
         }
-    
+
         if (duration !== undefined) {
           updates.push('duration = @duration');
           request.input('duration', sql.Int, duration);
         }
-    
+
         if (idProjet !== undefined && idProjet !== null) {
           updates.push('idProjet = @idProjet');
           request.input('idProjet', sql.UniqueIdentifier, idProjet);
         }
-        
+
         if (dateDebutTache !== undefined) {
           updates.push('date_debut_tache = @dateDebutTache');
           request.input('dateDebutTache', sql.DateTime, dateDebutTache ? new Date(dateDebutTache) : null);
         }
-        
+
         if (dateFinTache !== undefined) {
           updates.push('date_fin_tache = @dateFinTache');
           request.input('dateFinTache', sql.DateTime, dateFinTache ? new Date(dateFinTache) : null);
         }
-    
+
         if (updates.length === 0) {
           throw new Error("No updates provided");
         }
-    
+
         const query = `
           UPDATE Tache
           SET ${updates.join(', ')}
           WHERE idTache = @id
         `;
-    
+
         await request.query(query);
-        
+
         // Fetch the updated tache
-        const updatedTacheResult = await pool.request()
+        const updatedTacheResult = await new sql.Request(transaction)
           .input('id', sql.UniqueIdentifier, id)
           .query(`
-            SELECT idTache, titre_tache, description_tache, date_debut_tache, date_fin_tache, statut_tache, duration, idProjet
+            SELECT idTache, titre_tache, description_tache, date_debut_tache, 
+                   date_fin_tache, statut_tache, duration, idProjet
             FROM Tache
             WHERE idTache = @id
           `);
 
-        if (updatedTacheResult.recordset.length === 0) {
-          throw new Error("Tache not found after update");
-        }
+        await transaction.commit();
 
         const updatedTache = updatedTacheResult.recordset[0];
+
+        if (idProjet) {
+          await checkAndUpdateProjectStatus(pool, idProjet);
+        }
+
+       
 
         return {
           idTache: updatedTache.idTache,
@@ -253,6 +374,7 @@ export const tacheResolvers = {
           idProjet: updatedTache.idProjet
         };
       } catch (error) {
+        if (transaction) await transaction.rollback();
         console.error("Error updating tache:", error);
         throw new Error("Error updating tache");
       }
@@ -264,11 +386,20 @@ export const tacheResolvers = {
       { pool }: { pool: sql.ConnectionPool }
     ) => {
       try {
+        // Get project ID before deleting
+        const task = await pool.request()
+          .input('id', sql.UniqueIdentifier, id)
+          .query('SELECT idProjet FROM Tache WHERE idTache = @id');
+        const projectId = task.recordset[0]?.idProjet;
+
         await pool.request()
           .input('id', sql.UniqueIdentifier, id)
-          .query(`
-            DELETE FROM Tache WHERE idTache = @id
-          `);
+          .query('DELETE FROM Tache WHERE idTache = @id');
+
+        // Update project status after deletion
+        if (projectId) {
+          await checkAndUpdateProjectStatus(pool, projectId);
+        }
 
         return `Tache with ID ${id} deleted successfully`;
       } catch (error) {

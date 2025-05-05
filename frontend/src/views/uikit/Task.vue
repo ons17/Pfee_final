@@ -438,6 +438,46 @@ const getStatusLabel = (status) => {
     };
     return statusSeverity[status] || 'info';
 };
+
+// First, add this computed function in your Task.vue component
+const getTaskProgress = (task) => {
+    if (!task || !task.duration) return { trackedMinutes: 0, percentage: 0 };
+
+    // Calculate total tracked seconds
+    const trackedSeconds = task.suiviDeTemps?.reduce((total, suivi) => {
+        return total + (parseInt(suivi.duree_suivi) || 0);
+    }, 0) || 0;
+
+    // Convert to minutes
+    const trackedMinutes = Math.floor(trackedSeconds / 60);
+    // Convert duration from hours to minutes
+    const plannedMinutes = task.duration * 60;
+    
+    // Calculate percentage
+    const percentage = plannedMinutes > 0 
+        ? Math.min(100, Math.round((trackedMinutes / plannedMinutes) * 100))
+        : 0;
+
+    return {
+        trackedMinutes,
+        percentage
+    };
+};
+
+// Helper function to format time
+const formatTime = (minutes) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}.${mins.toString().padStart(2, '0')}`;
+};
+
+const getProgressClass = (percentage) => {
+    if (percentage >= 100) return 'progress-complete';    // Green
+    if (percentage >= 70) return 'progress-high';         // Blue
+    if (percentage >= 30) return 'progress-medium';       // Orange
+    return 'progress-low';                               // Red
+};
+
 </script>
 
 <template>
@@ -513,6 +553,32 @@ const getStatusLabel = (status) => {
                 <Column field="idProjet" header="Project" sortable>
                     <template #body="{ data }">
                         {{ projects.find((p) => p.idProjet === data.idProjet)?.nom_projet || 'N/A' }}
+                    </template>
+                </Column>
+                <Column header="Progress" headerStyle="width: 250px">
+                    <template #body="{ data }">
+                        <div class="progress-wrapper">
+                            <div v-if="!data.duration" class="no-duration-message">
+                                <i class="pi pi-info-circle mr-2"></i>
+                                No duration set
+                            </div>
+                            <div v-else-if="getTaskProgress(data).percentage === 0" class="no-progress-message">
+                                <i class="pi pi-clock mr-2"></i>
+                                No time tracked
+                            </div>
+                            <div v-else class="progress-container">
+                                <ProgressBar 
+                                    :value="getTaskProgress(data).percentage"
+                                    :class="getProgressClass(getTaskProgress(data).percentage)"
+                                />
+                                <div class="progress-stats">
+                                    <span class="progress-percentage">{{ getTaskProgress(data).percentage }}%</span>
+                                    <div class="time-tracked">
+                                        <small>{{ formatTime(getTaskProgress(data).trackedMinutes) }}/{{ data.duration }}h</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </template>
                 </Column>
                 <Column header="Actions" headerStyle="width: 10rem">
@@ -698,5 +764,80 @@ const getStatusLabel = (status) => {
 .p-calendar:disabled {
     opacity: 0.8;
     background-color: #f5f5f5;
+}
+
+.progress-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.progress-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.progress-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.progress-percentage {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.time-tracked {
+    color: var(--text-color-secondary);
+}
+
+.no-duration-message,
+.no-progress-message {
+    padding: 0.5rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+}
+
+.no-duration-message {
+    background-color: var(--surface-200);
+    color: var(--text-color-secondary);
+}
+
+.no-progress-message {
+    background-color: var(--yellow-50);
+    color: var(--yellow-700);
+}
+
+:deep(.p-progressbar) {
+    height: 0.5rem;
+    background: var(--surface-200);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+:deep(.p-progressbar-value) {
+    transition: width 0.3s ease-in-out;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+:deep(.progress-complete) .p-progressbar-value {
+    background: linear-gradient(90deg, #4CAF50, #45a049);  /* Green gradient */
+}
+
+:deep(.progress-high) .p-progressbar-value {
+    background: linear-gradient(90deg, #2196F3, #1976D2);  /* Blue gradient */
+}
+
+:deep(.progress-medium) .p-progressbar-value {
+    background: linear-gradient(90deg, #FF9800, #F57C00);  /* Orange gradient */
+}
+
+:deep(.progress-low) .p-progressbar-value {
+    background: linear-gradient(90deg, #f44336, #d32f2f);  /* Red gradient */
 }
 </style>

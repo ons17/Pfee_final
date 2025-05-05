@@ -11,6 +11,10 @@ export const GET_TACHES = gql`
       statutTache
       duration
       idProjet
+      suiviDeTemps {
+        idsuivi
+        duree_suivi
+      }
     }
   }
 `;
