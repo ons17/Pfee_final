@@ -100,7 +100,7 @@ const routes = [
       {
         path: 'AddAdmin',
         name: 'AddAdmin',
-        component: () => import('@/views/pages/admin/AddAdmin.vue'),
+        component: () => import('@/views/pages/admin/AddSupervisor.vue'),
       },
     ],
   },

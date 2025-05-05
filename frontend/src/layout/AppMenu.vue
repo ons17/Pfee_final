@@ -50,7 +50,7 @@ const model = ref([
     {
         label: 'ADMINISTRATION',
         items: [
-            { label: 'Add Admin', icon: 'pi pi-fw pi-user-plus', to: '/app/AddAdmin', roles: ['admin'] }
+            { label: 'Add Superviseur', icon: 'pi pi-fw pi-user-plus', to: '/app/AddAdmin', roles: ['admin'] }
         ]
     }
 ]);

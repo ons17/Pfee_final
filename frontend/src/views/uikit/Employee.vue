@@ -716,13 +716,7 @@ onMounted(() => {
       <Toolbar class="mb-4">
         <template #start>
           <Button label="New" icon="pi pi-plus" class="mr-2" @click="openNew" />
-          <Button
-            label="Delete"
-            icon="pi pi-trash"
-            severity="danger"
-            @click="confirmDeleteSelectedEmployees"
-            :disabled="!selectedEmployees.length"
-          />
+        
         </template>
         <template #end>
           <Button label="Export" icon="pi pi-upload" @click="exportCSV" />
@@ -761,7 +755,17 @@ onMounted(() => {
           </div>
         </template>
 
-        <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+        <Column headerStyle="width: 3rem">
+          <template #body="{ data }">
+            <div class="flex align-items-center justify-content-center">
+              <i
+                class="pi"
+                :class="{'pi-circle-fill text-green-500': !data.disabledUntil, 'pi-circle-fill text-red-500': data.disabledUntil}"
+                style="font-size: 1rem"
+              ></i>
+            </div>
+          </template>
+        </Column>
         <Column field="nomEmployee" header="Name" sortable></Column>
         <Column field="emailEmployee" header="Email" sortable></Column>
         <Column field="role" header="Role" sortable></Column>
@@ -790,7 +794,6 @@ onMounted(() => {
         <Column header="Actions" headerStyle="width: 14rem">
           <template #body="{ data }">
             <Button icon="pi pi-pencil" class="mr-2" severity="warning" outlined @click="openEdit(data)" />
-            <Button icon="pi pi-trash" class="mr-2" severity="danger" outlined @click="confirmDeleteEmployee(data)" />
             <Button icon="pi pi-envelope" class="mr-2" severity="info" outlined @click="openSendEmailDialog(data.idEmployee)" />
           </template>
         </Column>
