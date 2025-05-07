@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -54,6 +54,28 @@ onMounted(() => {
         router.push({ name: 'Login' });
     }
 });
+
+// Add computed property for initials
+const userInitials = computed(() => {
+    const name = profile.value.name;
+    if (!name) return '';
+    
+    const words = name.split(' ');
+    if (words.length >= 2) {
+        return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+});
+
+// Generate random background color for avatar
+const avatarBackgroundColor = computed(() => {
+    const colors = [
+        '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
+        '#FFEEAD', '#D4A5A5', '#9B59B6', '#3498DB'
+    ];
+    const index = profile.value.name.length % colors.length;
+    return colors[index];
+});
 </script>
 
 <template>
@@ -61,7 +83,10 @@ onMounted(() => {
         <!-- Profile Header -->
         <div class="profile-header">
             <div class="profile-image-container">
-                <img :src="profile.profileImage" alt="Profile Image" class="profile-image" />
+                <!-- Replace img with avatar div -->
+                <div class="avatar" :style="{ backgroundColor: avatarBackgroundColor }">
+                    {{ userInitials }}
+                </div>
             </div>
             <div class="profile-info">
                 <h1 class="profile-name">{{ profile.name }}</h1>
@@ -135,12 +160,19 @@ onMounted(() => {
     margin-right: 20px;
 }
 
-.profile-image {
+.avatar {
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+    border: 3px solid #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .profile-info {
