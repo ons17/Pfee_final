@@ -49,6 +49,7 @@ const filters = ref({
 const equipes = ref([]);
 const selectedEquipe = ref(null);
 const adminPassword = ref('');
+const confirmPassword = ref(''); // New ref for confirm password
 
 const isValidEmail = (email) => {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -144,11 +145,20 @@ const openNew = () => {
   addEmployeeDialog.value = true;
 };
 
+const doPasswordsMatch = computed(() => {
+  return employee.value.passwordEmployee === confirmPassword.value;
+});
+
 const saveEmployee = async () => {
   submitted.value = true;
 
-  if (!employee.value.nomEmployee || !employee.value.emailEmployee || !employee.value.role || !employee.value.passwordEmployee) {
+  if (!employee.value.nomEmployee || !employee.value.emailEmployee || !employee.value.role || !employee.value.passwordEmployee || !confirmPassword.value) {
     toast.add({ severity: 'warn', summary: 'Warning', detail: 'Please fill in all fields', life: 3000 });
+    return;
+  }
+
+  if (!doPasswordsMatch.value) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Passwords do not match', life: 3000 });
     return;
   }
 
@@ -815,19 +825,40 @@ onMounted(() => {
           <label for="role">Role</label>
           <InputText id="role" v-model="employee.role" required class="p-inputtext-lg" />
         </div>
-        <div class="field">
-          <label for="password" class="font-bold block mb-2">Password *</label>
-          <Password
-            id="password"
-            v-model="employee.passwordEmployee"
-            required
-            toggleMask
-            :class="{ 'p-invalid': submitted && !employee.passwordEmployee }"
-            class="w-full"/>
-          <small v-if="submitted && !employee.passwordEmployee" class="p-error">Password is required.</small>
-          <small :style="{ color: passwordStrengthColor }">
-            Password Strength: {{ passwordStrength }}
-          </small>
+        <div class="grid">
+          <div class="col-12 md:col-6">
+            <div class="field">
+              <label for="password" class="font-bold block mb-2">Password *</label>
+              <Password
+                id="password"
+                v-model="employee.passwordEmployee"
+                required
+                toggleMask
+                :class="{ 'p-invalid': submitted && !employee.passwordEmployee }"
+                class="w-full"
+              />
+              <small v-if="submitted && !employee.passwordEmployee" class="p-error">Password is required.</small>
+              <small :style="{ color: passwordStrengthColor }">
+                Password Strength: {{ passwordStrength }}
+              </small>
+            </div>
+          </div>
+          
+          <div class="col-12 md:col-6">
+            <div class="field">
+              <label for="confirmPassword" class="font-bold block mb-2">Confirm Password *</label>
+              <Password
+                id="confirmPassword"
+                v-model="confirmPassword"
+                required
+                toggleMask
+                :class="{ 'p-invalid': submitted && (!confirmPassword || !doPasswordsMatch) }"
+                class="w-full"
+              />
+              <small v-if="submitted && !confirmPassword" class="p-error">Confirm password is required.</small>
+              <small v-if="submitted && confirmPassword && !doPasswordsMatch" class="p-error">Passwords do not match.</small>
+            </div>
+          </div>
         </div>
 
         <div class="field">
@@ -895,6 +926,38 @@ onMounted(() => {
             dateFormat="yy-mm-dd"
             :minDate="new Date()" 
           />
+        </div>
+
+        <!-- Nouvelle section pour la gestion d'équipe -->
+        <div class="field">
+          <label class="font-bold block mb-2">Equipe Management</label>
+          <div class="flex gap-2">
+            <Dropdown
+              v-model="selectedEquipe"
+              :options="equipes"
+              optionLabel="nom_equipe"
+              optionValue="idEquipe"
+              placeholder="Select an equipe"
+              class="w-full"
+            />
+            <Button
+              label="Add Equipe"
+              icon="pi pi-plus"
+              @click="handleAddEquipe"
+              :disabled="!selectedEquipe"
+            />
+          </div>
+          <div class="mt-4">
+            <h5 class="font-bold mb-2">Assigned Equipe</h5>
+            <div class="flex flex-wrap gap-2">
+              <Chip
+                v-if="employee.idEquipe"
+                :label="getEquipeName(employee.idEquipe)"
+                removable
+                @remove="handleRemoveEquipe"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1054,5 +1117,23 @@ small {
   display: block;
   margin-top: 0.5rem;
   font-weight: bold;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -0.5rem;
+}
+
+.col-12 {
+  flex: 0 0 100%;
+  padding: 0.5rem;
+}
+
+@media screen and (min-width: 768px) {
+  .md\:col-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
 }
 </style>
