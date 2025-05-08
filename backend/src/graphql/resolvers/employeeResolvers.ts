@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
-
 const fetchEmployees = async (pool: sql.ConnectionPool) => {
   try {
     const result = await pool.request().query(`

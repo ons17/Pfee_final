@@ -138,3 +138,16 @@ export const RESUME_SUIVI = gql`
     }
   }
 `;
+
+export const GET_EMPLOYEES = gql`
+  query GetEmployees {
+    employees {
+      employees {
+        idEmployee
+        nomEmployee
+        role
+        emailEmployee
+      }
+    }
+  }
+`;
