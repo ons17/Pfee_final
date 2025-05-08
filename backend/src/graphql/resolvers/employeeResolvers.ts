@@ -226,11 +226,18 @@ export const employeeResolvers = {
       try {
         const result = await pool.request()
           .input('id', sql.UniqueIdentifier, id)
-          .query(`SELECT email_employee, password_employee FROM Employee WHERE idEmployee = @id`);
+          .query(`SELECT * FROM Employee WHERE idEmployee = @id`);
 
-        if (result.recordset.length === 0) throw new Error('Employee not found');
+        if (result.recordset.length === 0) {
+          throw new Error('Employee not found');
+        }
 
-        const { email_employee, password_employee } = result.recordset[0];
+        const employee = result.recordset[0];
+
+        // Check if employee is disabled
+        if (isEmployeeDisabled(employee)) {
+          throw new Error('Cannot send email to disabled employee');
+        }
 
         const transporter = nodemailer.createTransport({
           service: 'gmail',
@@ -240,16 +247,16 @@ export const employeeResolvers = {
           }
         });
 
-        const resetToken = jwt.sign({ email: email_employee }, 'your_secret_key', { expiresIn: '1h' }); // Token valid for 1 hour
+        const resetToken = jwt.sign({ email: employee.email_employee }, 'your_secret_key', { expiresIn: '1h' }); // Token valid for 1 hour
         const resetUrl = `http://localhost:5173/ResetPassword?token=${resetToken}`;
 
         const info = await transporter.sendMail({
           from: 'onssbenamara3@gmail.com',
-          to: email_employee,
+          to: employee.email_employee,
           subject,
           html: `<div style="font-family: Arial;">
             <p>${message}</p>
-            <p><strong>Email:</strong> ${email_employee}</p>
+            <p><strong>Email:</strong> ${employee.email_employee}</p>
             <a href="${resetUrl}" style="display:inline-block;padding:10px 20px;background:#28a745;color:white;border-radius:5px;text-decoration:none;margin-top:10px;">Reset Password</a>
           </div>`
         });
@@ -315,4 +322,22 @@ export const employeeResolvers = {
       }
     }
   }
+};
+
+// Employee interface and helper function
+interface Employee {
+  idEmployee: string;
+  nom_employee: string;
+  email_employee: string;
+  password_employee: string;
+  role: string;
+  disabledUntil: Date | null;
+  idEquipe?: string;
+}
+
+// Add helper function to check if employee is disabled
+const isEmployeeDisabled = (employee: Employee): boolean => {
+  if (!employee.disabledUntil) return false;
+  const disabledDate = new Date(employee.disabledUntil);
+  return disabledDate > new Date();
 };

@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import AppLayout from '@/layout/AppLayout.vue';
 import EmployeeLogin from '@/views/pages/auth/EmployeeLogin.vue';
-import EmployeeDashboard from '@/views/pages/EmployeeDashboard.vue';
 import Login from '@/views/pages/auth/Login.vue';
 import ResetPasswordAdmin from '@/views/pages/admin/resetPasswordAdmin.vue';
 import ResetPassword from '@/views/pages/auth/ResetPassword.vue';
+import Dashboard from '@/views/Dashboard.vue';
+import TimeTracking from '@/views/TimeTracking.vue';
 
 const routes = [
   {
@@ -17,12 +18,7 @@ const routes = [
     name: 'EmployeeLogin',
     component: EmployeeLogin, // Employee login page
   },
-  {
-    path: '/dashboard',
-    name: 'EmployeeDashboard',
-    component: EmployeeDashboard,
-    meta: { requiresAuth: true }, // Protect this route
-  },
+ 
   {
     path: '/ResetPassword',
     name: 'ResetPassword',
@@ -45,12 +41,19 @@ const routes = [
       {
         path: '/app',
         name: 'Dashboard',
-        component: () => import('@/views/Dashboard.vue'),
+        component: Dashboard,
+        meta: { 
+          requiresAuth: true,
+          adminOnly: true
+        }
       },
       {
         path: 'TimeTracking',
         name: 'TimeTracking',
-        component: () => import('@/views/TimeTracking.vue'),
+        component: TimeTracking,
+        meta: { 
+          requiresAuth: true
+        }
       },
       {
         path: 'Project',
@@ -128,15 +131,25 @@ const router = createRouter({
 
 // Global Navigation Guard
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token'); // Check if a token exists in localStorage
+  const employee = JSON.parse(localStorage.getItem('employee'));
 
-  if (to.meta.requiresAuth && !token) {
-    // If the route requires authentication and no token is found, redirect to login
-    next({ name: 'Login' });
-  } else {
-    // Otherwise, allow access
-    next();
+  // Protect dashboard route
+  if (to.path.includes('/dashboard')) {
+    if (!employee || employee.role.toLowerCase() !== 'admin') {
+      next('/app/timetracking'); // Redirect non-admins to time tracking
+      return;
+    }
   }
+
+  // Check authentication for protected routes
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!localStorage.getItem('token')) {
+      next('/login');
+      return;
+    }
+  }
+
+  next();
 });
 
 export default router;

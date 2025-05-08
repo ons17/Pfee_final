@@ -714,6 +714,64 @@ const handleToggleActive = async (value, employee) => {
   }
 };
 
+const handleDisableEmployee = async (employee) => {
+  try {
+    if (!selectedDisabledUntil.value) {
+      toast.add({ 
+        severity: 'warn', 
+        summary: 'Warning', 
+        detail: 'Please select a disable date', 
+        life: 3000 
+      });
+      return;
+    }
+
+    const mutation = `
+      mutation UpdateEmployee($id: String!, $disabledUntil: String!) {
+        updateEmployee(
+          id: $id, 
+          disabledUntil: $disabledUntil
+        ) {
+          idEmployee
+          disabledUntil
+        }
+      }
+    `;
+
+    const variables = {
+      id: employee.idEmployee,
+      disabledUntil: selectedDisabledUntil.value.toISOString()
+    };
+
+    await axios.post('http://localhost:3000/graphql', {
+      query: mutation,
+      variables
+    });
+
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Employee disabled successfully',
+      life: 3000
+    });
+
+    await fetchTaches();
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.message || 'Failed to disable employee',
+      life: 3000
+    });
+  }
+};
+
+// Add computed property to check if employee is disabled
+const isDisabled = (employee) => {
+  if (!employee.disabledUntil) return false;
+  return new Date(employee.disabledUntil) > new Date();
+};
+
 onMounted(() => {
   fetchTaches();
   fetchEquipes();
@@ -801,10 +859,30 @@ onMounted(() => {
             {{ getEquipeName(data.idEquipe) }}
           </template>
         </Column>
+        <Column field="status" header="Status">
+          <template #body="{ data }">
+            <div class="flex align-items-center">
+              <i :class="`pi ${isDisabled(data) ? 'pi-times-circle text-red-500' : 'pi-check-circle text-green-500'}`"></i>
+              <span class="ml-2">{{ isDisabled(data) ? 'Disabled' : 'Active' }}</span>
+            </div>
+          </template>
+        </Column>
         <Column header="Actions" headerStyle="width: 14rem">
           <template #body="{ data }">
-            <Button icon="pi pi-pencil" class="mr-2" severity="warning" outlined @click="openEdit(data)" />
-            <Button icon="pi pi-envelope" class="mr-2" severity="info" outlined @click="openSendEmailDialog(data.idEmployee)" />
+            <Button 
+              icon="pi pi-pencil" 
+              class="mr-2" 
+              @click="openEdit(data)"
+              :disabled="isDisabled(data)"
+              :tooltip="isDisabled(data) ? 'Employee is disabled' : ''"
+            />
+            <Button 
+              icon="pi pi-envelope" 
+              class="mr-2"
+              @click="openSendEmailDialog(data.idEmployee)"
+              :disabled="isDisabled(data)"
+              :tooltip="isDisabled(data) ? 'Cannot send email to disabled employee' : ''"
+            />
           </template>
         </Column>
       </DataTable>
