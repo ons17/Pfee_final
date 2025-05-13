@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.2.2 (Python 3.10.12 on linux)" generated="2025-05-13T14:59:43.811634" rpa="false" schemaversion="5">
+<suite id="s1" name="Login" source="/home/usera/Pfee_final/robot-tests/login.robot">
+<test id="s1-t1" name="Valid Login" line="7">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-13T14:59:44.003693" level="INFO">{"browser": "chromium", "headless": true, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/robot-tests/browser/traces/temp/4a9e77f4-f4ff-4238-bc4a-236c850fb62e"}</msg>
+<msg time="2025-05-13T14:59:44.013814" level="INFO">Starting Browser process /home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js using at 127.0.0.1:33097</msg>
+<msg time="2025-05-13T14:59:45.043757" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":true,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/robot-tests/browser/traces/temp/4a9e77f4-f4ff-4238-bc4a-236c850fb62e"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-13T14:59:43.985358" elapsed="1.058734"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-13T14:59:45.047009" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-13T14:59:45.063945" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-13T14:59:45.064103" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-13T14:59:45.044476" elapsed="0.019757"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-13T14:59:49.276578" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-13T14:59:45.064525" elapsed="4.212357"/>
+</kw>
+<status status="PASS" start="2025-05-13T14:59:43.984520" elapsed="5.292632"/>
+</kw>
+<kw name="Login With Credentials" owner="common">
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-13T14:59:49.278752" level="INFO">Fills the text 'admin@example.com' in the given field.</msg>
+<msg time="2025-05-13T14:59:59.474375" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="browser/screenshot/fail-screenshot-1.png" target="_blank"&gt;&lt;img src="browser/screenshot/fail-screenshot-1.png" width="800px"/&gt;&lt;/a&gt;</msg>
+<msg time="2025-05-13T14:59:59.474638" level="INFO">See also file:///home/usera/Pfee_final/robot-tests/playwright-log.txt for additional details.</msg>
+<msg time="2025-05-13T14:59:59.475705" level="FAIL">TimeoutError: locator.fill: Timeout 10000ms exceeded.
+Call log:
+  - waiting for locator('[data-test="email-input"]')
+</msg>
+<arg>[data-test="email-input"]</arg>
+<arg>${email}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="FAIL" start="2025-05-13T14:59:49.278172" elapsed="10.208300">TimeoutError: locator.fill: Timeout 10000ms exceeded.
+Call log:
+  - waiting for locator('[data-test="email-input"]')
+</status>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<arg>[data-test="password-input"]</arg>
+<arg>${password}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="NOT RUN" start="2025-05-13T14:59:59.487056" elapsed="0.000210"/>
+</kw>
+<kw name="Click" owner="Browser">
+<arg>button:has-text("Sign In")</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="NOT RUN" start="2025-05-13T14:59:59.487511" elapsed="0.000178"/>
+</kw>
+<arg>${VALID_EMAIL}</arg>
+<arg>${VALID_PASSWORD}</arg>
+<status status="FAIL" start="2025-05-13T14:59:49.277561" elapsed="10.210436">TimeoutError: locator.fill: Timeout 10000ms exceeded.
+Call log:
+  - waiting for locator('[data-test="email-input"]')
+</status>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<arg>text=Dashboard</arg>
+<arg>visible</arg>
+<arg>timeout=10s</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="NOT RUN" start="2025-05-13T14:59:59.488346" elapsed="0.000152"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-13T14:59:59.542521" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-13T14:59:59.489094" elapsed="0.053675"/>
+</kw>
+<status status="FAIL" start="2025-05-13T14:59:43.983731" elapsed="15.559419">TimeoutError: locator.fill: Timeout 10000ms exceeded.
+Call log:
+  - waiting for locator('[data-test="email-input"]')
+</status>
+</test>
+<test id="s1-t2" name="Invalid Login" line="11">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-13T14:59:59.559790" level="INFO">{"browser": "chromium", "headless": true, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/robot-tests/browser/traces/temp/bb7c5426-be79-4d2b-a37c-cdc2c91f0ebd"}</msg>
+<msg time="2025-05-13T14:59:59.651739" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":true,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/robot-tests/browser/traces/temp/bb7c5426-be79-4d2b-a37c-cdc2c91f0ebd"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-13T14:59:59.558696" elapsed="0.093320"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-13T14:59:59.654829" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-13T14:59:59.663817" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-13T14:59:59.663986" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-13T14:59:59.652387" elapsed="0.011777"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-13T15:00:01.850275" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-13T14:59:59.664599" elapsed="2.186224"/>
+</kw>
+<status status="PASS" start="2025-05-13T14:59:59.558155" elapsed="2.293018"/>
+</kw>
+<kw name="Login With Credentials" owner="common">
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-13T15:00:01.854347" level="INFO">Fills the text 'invalid@email.com' in the given field.</msg>
+<msg time="2025-05-13T15:00:12.068140" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="browser/screenshot/fail-screenshot-2.png" target="_blank"&gt;&lt;img src="browser/screenshot/fail-screenshot-2.png" width="800px"/&gt;&lt;/a&gt;</msg>
+<msg time="2025-05-13T15:00:12.068298" level="INFO">See also file:///home/usera/Pfee_final/robot-tests/playwright-log.txt for additional details.</msg>
+<msg time="2025-05-13T15:00:12.068495" level="FAIL">TimeoutError: locator.fill: Timeout 10000ms exceeded.
+Call log:
+  - waiting for locator('[data-test="email-input"]')
+</msg>
+<arg>[data-test="email-input"]</arg>
+<arg>${email}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="FAIL" start="2025-05-13T15:00:01.852811" elapsed="10.215972">TimeoutError: locator.fill: Timeout 10000ms exceeded.
+Call log:
+  - waiting for locator('[data-test="email-input"]')
+</status>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<arg>[data-test="password-input"]</arg>
+<arg>${password}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="NOT RUN" start="2025-05-13T15:00:12.069065" elapsed="0.000121"/>
+</kw>
+<kw name="Click" owner="Browser">
+<arg>button:has-text("Sign In")</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="NOT RUN" start="2025-05-13T15:00:12.069367" elapsed="0.000078"/>
+</kw>
+<arg>invalid@email.com</arg>
+<arg>wrongpassword</arg>
+<status status="FAIL" start="2025-05-13T15:00:01.851800" elapsed="10.217802">TimeoutError: locator.fill: Timeout 10000ms exceeded.
+Call log:
+  - waiting for locator('[data-test="email-input"]')
+</status>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<arg>text="Invalid credentials"</arg>
+<arg>visible</arg>
+<arg>timeout=10s</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="NOT RUN" start="2025-05-13T15:00:12.069824" elapsed="0.000078"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-13T15:00:12.117568" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-13T15:00:12.070230" elapsed="0.047568"/>
+</kw>
+<status status="FAIL" start="2025-05-13T14:59:59.553403" elapsed="12.564607">TimeoutError: locator.fill: Timeout 10000ms exceeded.
+Call log:
+  - waiting for locator('[data-test="email-input"]')
+</status>
+</test>
+<status status="FAIL" start="2025-05-13T14:59:43.812936" elapsed="28.310799"/>
+</suite>
+<statistics>
+<total>
+<stat pass="0" fail="2" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat name="Login" id="s1" pass="0" fail="2" skip="0">Login</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
