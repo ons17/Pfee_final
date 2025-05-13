@@ -110,8 +110,9 @@ export const adminResolvers = {
           return { success: false, message: "Email ou mot de passe incorrect", administrateur: null, token: null };
         }
 
-        if (admin.role !== 'ADMIN') {
-          throw new Error("Access denied");
+        // Allow both ADMIN and SUPERVISOR roles
+        if (admin.role !== 'ADMIN' && admin.role !== 'SUPERVISOR') {
+          return { success: false, message: "Accès non autorisé", administrateur: null, token: null };
         }
 
         const token = generateToken(admin);
@@ -128,7 +129,7 @@ export const adminResolvers = {
           token,
         };
       } catch (error) {
-        console.error('Erreur lors de la connexion administrateur:', error);
+        console.error('Erreur lors de la connexion:', error);
         return { success: false, message: "Erreur interne", administrateur: null, token: null };
       }
     },
@@ -204,16 +205,22 @@ export const adminResolvers = {
           },
         });
 
+        // Update the email content in createAdministrateur resolver
         const emailContent = `
           <div style="font-family: Arial;">
+            <h2>Welcome to ImbusFlow</h2>
             <p>Dear ${nom_administrateur},</p>
-            <p>Your admin account has been created successfully. Below are your login details:</p>
+            <p>Your supervisor account has been created successfully. Here are your login credentials:</p>
             <ul>
               <li><strong>Email:</strong> ${email_administrateur}</li>
               <li><strong>Password:</strong> ${password_administrateur}</li>
             </ul>
-            <p>Please keep this information secure.</p>
-            <p>Best regards,<br>Your Company</p>
+            <p><strong>Important:</strong> Please change your password after your first login.</p>
+            <a href="http://localhost:5173/admin/reset-password" 
+               style="display:inline-block;padding:10px 20px;color:#fff;background-color:#007bff;text-decoration:none;border-radius:5px;">
+              Reset Password
+            </a>
+            <p>Best regards,<br>ImbusFlow Team</p>
           </div>
         `;
 

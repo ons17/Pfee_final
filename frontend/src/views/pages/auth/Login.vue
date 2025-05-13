@@ -40,8 +40,8 @@ const login = async () => {
       // Store token and admin details in localStorage
       localStorage.setItem('token', token);
       localStorage.setItem('administrateur', JSON.stringify(administrateur));
-
-      // Redirect to Dashboard
+      
+      // Both ADMIN and SUPERVISOR go to the same dashboard
       router.push({ name: 'Dashboard' });
     } else {
       errorMessage.value = message; // Show error message
