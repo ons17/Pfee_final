@@ -478,20 +478,49 @@ const getProgressClass = (percentage) => {
     return 'progress-low';                               // Red
 };
 
+// Add role detection
+const admin = JSON.parse(localStorage.getItem('administrateur'));
+const employee = JSON.parse(localStorage.getItem('employee'));
+const isAdmin = ref(!!admin);
+
 </script>
 
 <template>
     <div class="p-4 task-page">
         <div class="card">
-            <Toolbar class="mb-4">
-                <template #start>
-                    <Button label="New" icon="pi pi-plus" class="mr-2" @click="openNew" />
-                    <Button label="Delete" icon="pi pi-trash" severity="danger" @click="confirmDeleteSelected" :disabled="!selectedTasks?.length" />
-                </template>
-                <template #end>
-                    <Button label="Export" icon="pi pi-upload" @click="exportCSV" />
-                </template>
-            </Toolbar>
+            <div class="toolbar-flex mb-4">
+                <div>
+                    <!-- Admin-only buttons -->
+                    <Button 
+                        v-if="isAdmin"
+                        label="New" 
+                        icon="pi pi-plus" 
+                        class="mr-2" 
+                        @click="openNew" 
+                    />
+                    <Button 
+                        v-if="isAdmin"
+                        label="Delete" 
+                        icon="pi pi-trash" 
+                        severity="danger" 
+                        @click="confirmDeleteSelected" 
+                        :disabled="!selectedTasks?.length" 
+                    />
+                </div>
+                <!-- Employee name badge -->
+                <div v-if="employee" class="employee-center-badge">
+                    <i class="pi pi-user mr-2"></i>
+                    {{ employee.nomEmployee || employee.nom_employee || 'Employee' }}
+                </div>
+                <div>
+                    <Button 
+                        v-if="isAdmin"
+                        label="Export" 
+                        icon="pi pi-upload" 
+                        @click="exportCSV" 
+                    />
+                </div>
+            </div>
 
             <div v-if="tasksError" class="p-mt-3 p-p-3 p-text-center error-message">
                 <i class="pi pi-exclamation-triangle p-mr-2"></i>
@@ -581,7 +610,8 @@ const getProgressClass = (percentage) => {
                         </div>
                     </template>
                 </Column>
-                <Column header="Actions" headerStyle="width: 10rem">
+                <!-- Hide Actions column for non-admin users -->
+                <Column v-if="isAdmin" header="Actions" headerStyle="width: 10rem">
                     <template #body="{ data }">
                         <Button icon="pi pi-pencil" class="mr-2" outlined @click="editTask(data)" />
                         <Button icon="pi pi-trash" severity="danger" outlined @click="confirmDeleteTask(data)" />
@@ -839,5 +869,30 @@ const getProgressClass = (percentage) => {
 
 :deep(.progress-low) .p-progressbar-value {
     background: linear-gradient(90deg, #f44336, #d32f2f);  /* Red gradient */
+}
+
+.toolbar-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.employee-center-badge {
+    background: linear-gradient(45deg, #9fd0c0 0%, #c5e0d8 100%);
+    box-shadow: 0 2px 4px rgba(44, 81, 74, 0.1);
+    transition: all 0.3s ease;
+    padding: 0.8em 1.2em;
+    border-radius: 8px;
+    color: #2c514a;
+    font-weight: 600;
+}
+
+.employee-center-badge:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(44, 81, 74, 0.2);
 }
 </style>
