@@ -20,7 +20,7 @@ onMounted(() => {
 
 // Sidebar menu items
 const menuItems = ref([
-    { name: 'Dashboard', route: '/dashboard', icon: 'pi pi-home', roles: ['admin', 'employee'] },
+    { name: 'Dashboard', route: '/dashboard', icon: 'pi pi-home', roles: ['admin'] },
     { name: 'Time Tracking', route: '/time-tracking', icon: 'pi pi-clock', roles: ['employee'] },
     { name: 'Employee', route: '/employee', icon: 'pi pi-users', roles: ['admin'] },
     { name: 'Settings', route: '/settings', icon: 'pi pi-cog', roles: ['admin', 'employee'] },

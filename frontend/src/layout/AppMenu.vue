@@ -20,7 +20,7 @@ const model = ref([
     {
         label: 'HOME',
         items: [
-            { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/app', roles: ['admin', 'employee'] },
+            { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/app', roles: ['admin'] },
             { label: 'Time Tracking', icon: 'pi pi-fw pi-clock', to: '/app/TimeTracking', roles: ['employee'] }
         ]
     },
@@ -28,9 +28,9 @@ const model = ref([
         label: 'MANAGEMENT',
         items: [
             { label: 'Employee', icon: 'pi pi-fw pi-user', to: '/app/Employee', roles: ['admin'] },
-            { label: 'Teams', icon: 'pi pi-fw pi-users', to: '/app/Teams', roles: ['admin'] },
-            { label: 'Project', icon: 'pi pi-fw pi-folder', to: '/app/Project', roles: ['admin'] },
-            { label: 'Task', icon: 'pi pi-fw pi-list-check', to: '/app/Task', roles: ['admin'] }
+            { label: 'Teams', icon: 'pi pi-fw pi-users', to: '/app/Teams', roles: ['admin', 'employee'] },
+            { label: 'Project', icon: 'pi pi-fw pi-folder', to: '/app/Project', roles: ['admin', 'employee'] },
+            { label: 'Task', icon: 'pi pi-fw pi-list-check', to: '/app/Task', roles: ['admin', 'employee'] }
         ]
     },
     {
