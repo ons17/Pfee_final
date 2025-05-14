@@ -37,12 +37,12 @@ const login = async () => {
     const { success, message, token, administrateur } = response.data.data.loginAdministrateur;
 
     if (success) {
-      // Store token and admin details in localStorage
+      localStorage.clear(); // Clear any existing auth data
       localStorage.setItem('token', token);
       localStorage.setItem('administrateur', JSON.stringify(administrateur));
+      localStorage.setItem('userType', 'admin'); // Set user type
       
-      // Both ADMIN and SUPERVISOR go to the same dashboard
-      router.push({ name: 'Dashboard' });
+      router.push('/app');
     } else {
       errorMessage.value = message; // Show error message
     }
