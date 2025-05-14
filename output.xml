@@ -1,0 +1,3096 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.2.2 (Python 3.10.12 on linux)" generated="2025-05-14T14:32:25.270961" rpa="false" schemaversion="5">
+<suite id="s1" name="Login" source="/home/usera/Pfee_final/robot-tests/tests/login">
+<suite id="s1-s1" name="Login Accessibility" source="/home/usera/Pfee_final/robot-tests/tests/login/login_accessibility.robot">
+<test id="s1-s1-t1" name="ARIA Labels Test" line="8">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:32:25.455468" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/dda11d6a-de59-4057-80c0-93745f80e31f"}</msg>
+<msg time="2025-05-14T14:32:25.462011" level="INFO">Starting Browser process /home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js using at 127.0.0.1:52015</msg>
+<msg time="2025-05-14T14:32:26.400594" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/dda11d6a-de59-4057-80c0-93745f80e31f"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:32:25.454551" elapsed="0.946273"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:32:26.403292" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:32:26.423643" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:32:26.423780" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:32:26.401122" elapsed="0.022783"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:32:29.512326" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:32:26.424179" elapsed="3.088625"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:32:29.557298" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:32:29.513259" elapsed="0.044452"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:32:25.453658" elapsed="4.104339"/>
+</kw>
+<kw name="Get Attribute" owner="Browser">
+<msg time="2025-05-14T14:32:29.591274" level="INFO">Attribute is: 'Email'</msg>
+<arg>input#email1</arg>
+<arg>aria-label</arg>
+<arg>==</arg>
+<arg>Email</arg>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the HTML ``attribute`` of the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:29.558429" elapsed="0.033155"/>
+</kw>
+<kw name="Get Attribute" owner="Browser">
+<msg time="2025-05-14T14:32:29.625325" level="INFO">Attribute is: 'Password'</msg>
+<arg>.p-password input</arg>
+<arg>aria-label</arg>
+<arg>==</arg>
+<arg>Password</arg>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the HTML ``attribute`` of the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:29.592180" elapsed="0.033427"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:32:30.115025" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:32:29.626231" elapsed="0.489121"/>
+</kw>
+<doc>Verifies ARIA labels are present</doc>
+<tag>accessibility</tag>
+<tag>aria</tag>
+<status status="PASS" start="2025-05-14T14:32:25.452625" elapsed="4.663003"/>
+</test>
+<doc>Accessibility Test Suite for Login Page</doc>
+<status status="PASS" start="2025-05-14T14:32:25.294424" elapsed="4.831718"/>
+</suite>
+<suite id="s1-s2" name="Login Authentication" source="/home/usera/Pfee_final/robot-tests/tests/login/login_authentication.robot">
+<test id="s1-s2-t1" name="Valid Login" line="9">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:32:30.165751" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/c8bde9e5-db1e-4b50-86d0-c0882302a00c"}</msg>
+<msg time="2025-05-14T14:32:30.513999" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/c8bde9e5-db1e-4b50-86d0-c0882302a00c"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:32:30.163997" elapsed="0.350356"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:32:30.518467" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:32:30.528606" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:32:30.528762" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:32:30.514797" elapsed="0.014110"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:32:33.347593" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:32:30.529258" elapsed="2.818759"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:32:33.391538" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:32:33.348446" elapsed="0.043401"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:32:30.163167" elapsed="3.228940"/>
+</kw>
+<kw name="Input Login Credentials" owner="login_keywords">
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:32:33.395812" level="INFO">Fills the text 'onssbenamara3@gmail.com' in the given field.</msg>
+<arg>${EMAIL_INPUT}</arg>
+<arg>${email}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:33.394695" elapsed="0.036455"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:32:33.432952" level="INFO">Fills the text 'ons123' in the given field.</msg>
+<arg>${PASSWORD_INPUT}</arg>
+<arg>${password}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:33.432121" elapsed="0.042402"/>
+</kw>
+<arg>${VALID_EMAIL}</arg>
+<arg>${VALID_PASSWORD}</arg>
+<doc>Inputs email and password into login form</doc>
+<status status="PASS" start="2025-05-14T14:32:33.393210" elapsed="0.081890"/>
+</kw>
+<kw name="Submit Login Form" owner="login_keywords">
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:32:33.478774" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:33.477277" elapsed="0.102284"/>
+</kw>
+<doc>Submits the login form</doc>
+<status status="PASS" start="2025-05-14T14:32:33.476046" elapsed="0.104214"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:32:34.022911" level="INFO">Waited for Element with selector text="Dashboard" at state visible</msg>
+<arg>text="Dashboard"</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:32:33.581297" elapsed="0.441981"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:32:34.789385" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:32:34.024027" elapsed="0.765652"/>
+</kw>
+<doc>Tests successful login with valid credentials</doc>
+<tag>authentication</tag>
+<tag>critical</tag>
+<tag>smoke</tag>
+<status status="PASS" start="2025-05-14T14:32:30.156807" elapsed="4.633099"/>
+</test>
+<test id="s1-s2-t2" name="Invalid Login - Wrong Password" line="16">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:32:34.806111" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/7e03d845-4b43-4301-a09a-379e5e6f294b"}</msg>
+<msg time="2025-05-14T14:32:35.158686" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/7e03d845-4b43-4301-a09a-379e5e6f294b"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:32:34.804949" elapsed="0.354070"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:32:35.162945" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:32:35.173826" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:32:35.173977" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:32:35.159435" elapsed="0.014669"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:32:37.849904" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:32:35.174436" elapsed="2.675977"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:32:37.885177" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:32:37.850830" elapsed="0.034728"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:32:34.804332" elapsed="3.081465"/>
+</kw>
+<kw name="Input Login Credentials" owner="login_keywords">
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:32:37.887695" level="INFO">Fills the text 'onssbenamara3@gmail.com' in the given field.</msg>
+<arg>${EMAIL_INPUT}</arg>
+<arg>${email}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:37.887087" elapsed="0.023970"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:32:37.913894" level="INFO">Fills the text 'wrongpassword' in the given field.</msg>
+<arg>${PASSWORD_INPUT}</arg>
+<arg>${password}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:37.912621" elapsed="0.041614"/>
+</kw>
+<arg>${VALID_EMAIL}</arg>
+<arg>wrongpassword</arg>
+<doc>Inputs email and password into login form</doc>
+<status status="PASS" start="2025-05-14T14:32:37.886378" elapsed="0.068472"/>
+</kw>
+<kw name="Submit Login Form" owner="login_keywords">
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:32:37.958914" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:37.957536" elapsed="0.096156"/>
+</kw>
+<doc>Submits the login form</doc>
+<status status="PASS" start="2025-05-14T14:32:37.955783" elapsed="0.098216"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:32:38.156260" level="INFO">Waited for Element with selector text="Email ou mot de passe incorrect" at state visible</msg>
+<arg>text="Email ou mot de passe incorrect"</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:32:38.054472" elapsed="0.102047"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:32:38.647354" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:32:38.157049" elapsed="0.490735"/>
+</kw>
+<doc>Tests login failure with incorrect password</doc>
+<tag>authentication</tag>
+<tag>negative</tag>
+<status status="PASS" start="2025-05-14T14:32:34.800080" elapsed="3.848100"/>
+</test>
+<test id="s1-s2-t3" name="Invalid Login - Wrong Email" line="23">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:32:38.665575" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/008c0833-2375-4fae-a451-39167e3aa20a"}</msg>
+<msg time="2025-05-14T14:32:38.958121" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/008c0833-2375-4fae-a451-39167e3aa20a"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:32:38.663440" elapsed="0.294967"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:32:38.961320" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:32:38.970006" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:32:38.970143" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:32:38.958797" elapsed="0.011464"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:32:41.636094" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:32:38.970552" elapsed="2.666083"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:32:41.676997" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:32:41.637309" elapsed="0.039924"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:32:38.662440" elapsed="3.014975"/>
+</kw>
+<kw name="Input Login Credentials" owner="login_keywords">
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:32:41.678977" level="INFO">Fills the text 'invalid@email.com' in the given field.</msg>
+<arg>${EMAIL_INPUT}</arg>
+<arg>${email}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:41.678379" elapsed="0.025590"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:32:41.705537" level="INFO">Fills the text 'ons123' in the given field.</msg>
+<arg>${PASSWORD_INPUT}</arg>
+<arg>${password}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:41.704433" elapsed="0.041429"/>
+</kw>
+<arg>invalid@email.com</arg>
+<arg>${VALID_PASSWORD}</arg>
+<doc>Inputs email and password into login form</doc>
+<status status="PASS" start="2025-05-14T14:32:41.677827" elapsed="0.068239"/>
+</kw>
+<kw name="Submit Login Form" owner="login_keywords">
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:32:41.747408" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:41.746889" elapsed="0.080025"/>
+</kw>
+<doc>Submits the login form</doc>
+<status status="PASS" start="2025-05-14T14:32:41.746439" elapsed="0.080678"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:32:41.840473" level="INFO">Waited for Element with selector text="Email ou mot de passe incorrect" at state visible</msg>
+<arg>text="Email ou mot de passe incorrect"</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:32:41.827414" elapsed="0.013327"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:32:42.306758" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:32:41.841308" elapsed="0.465709"/>
+</kw>
+<doc>Tests login failure with incorrect email</doc>
+<tag>authentication</tag>
+<tag>negative</tag>
+<status status="PASS" start="2025-05-14T14:32:38.656843" elapsed="3.650403"/>
+</test>
+<test id="s1-s2-t4" name="Remember Me Login" line="30">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:32:42.318299" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/0617a332-5913-4c96-8f47-7afdd2900caa"}</msg>
+<msg time="2025-05-14T14:32:42.615943" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/0617a332-5913-4c96-8f47-7afdd2900caa"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:32:42.316982" elapsed="0.299342"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:32:42.619062" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:32:42.628201" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:32:42.628350" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:32:42.616732" elapsed="0.011748"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:32:45.823760" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:32:42.628815" elapsed="3.195492"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:32:45.858656" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:32:45.825126" elapsed="0.033799"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:32:42.316158" elapsed="3.542964"/>
+</kw>
+<kw name="Input Login Credentials" owner="login_keywords">
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:32:45.860819" level="INFO">Fills the text 'onssbenamara3@gmail.com' in the given field.</msg>
+<arg>${EMAIL_INPUT}</arg>
+<arg>${email}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:45.860162" elapsed="0.022773"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:32:45.884475" level="INFO">Fills the text 'ons123' in the given field.</msg>
+<arg>${PASSWORD_INPUT}</arg>
+<arg>${password}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:45.883395" elapsed="0.036156"/>
+</kw>
+<arg>${VALID_EMAIL}</arg>
+<arg>${VALID_PASSWORD}</arg>
+<doc>Inputs email and password into login form</doc>
+<status status="PASS" start="2025-05-14T14:32:45.859518" elapsed="0.060510"/>
+</kw>
+<kw name="Check Checkbox" owner="Browser">
+<arg>${REMEMBER_ME_CB}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Checks the checkbox or selects radio button found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:45.920767" elapsed="0.066175"/>
+</kw>
+<kw name="Submit Login Form" owner="login_keywords">
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:32:45.990359" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:45.989003" elapsed="0.061109"/>
+</kw>
+<doc>Submits the login form</doc>
+<status status="PASS" start="2025-05-14T14:32:45.987991" elapsed="0.062331"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:32:46.523870" level="INFO">Waited for Element with selector text="Dashboard" at state visible</msg>
+<arg>text="Dashboard"</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:32:46.050639" elapsed="0.473663"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:32:47.135981" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:32:46.524941" elapsed="0.611285"/>
+</kw>
+<doc>Tests login with remember me functionality</doc>
+<tag>authentication</tag>
+<tag>remember-me</tag>
+<status status="PASS" start="2025-05-14T14:32:42.312651" elapsed="4.823772"/>
+</test>
+<doc>Authentication Test Suite for Login Page
+Tests various login scenarios and authentication flows</doc>
+<status status="PASS" start="2025-05-14T14:32:30.134721" elapsed="17.008595"/>
+</suite>
+<suite id="s1-s3" name="Login Routing" source="/home/usera/Pfee_final/robot-tests/tests/login/login_routing.robot">
+<test id="s1-s3-t1" name="Successful Login Navigation" line="7">
+<kw name="Open Browser To Login Page" owner="common">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:32:47.164740" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/8b5f9b5f-2ed3-47bd-b3fa-ad12683f81f1"}</msg>
+<msg time="2025-05-14T14:32:47.507361" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/8b5f9b5f-2ed3-47bd-b3fa-ad12683f81f1"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:32:47.163615" elapsed="0.344076"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:32:47.510152" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:32:47.518517" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:32:47.518663" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:32:47.508064" elapsed="0.010710"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:32:50.182822" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:32:47.519045" elapsed="2.664294"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:32:50.224150" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:32:50.183921" elapsed="0.040553"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:32:47.163074" elapsed="3.061627"/>
+</kw>
+<kw name="Login With Credentials" owner="common">
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:32:50.226447" level="INFO">Fills the text 'onssbenamara3@gmail.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>${email}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:50.225815" elapsed="0.024161"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:32:50.251740" level="INFO">Fills the text 'ons123' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>${password}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:50.250520" elapsed="0.030182"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:32:50.281827" level="INFO">Clicks the element '"Sign In"'.</msg>
+<arg>"Sign In"</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:50.281131" elapsed="0.057373"/>
+</kw>
+<arg>${VALID_EMAIL}</arg>
+<arg>${VALID_PASSWORD}</arg>
+<doc>Performs login with given credentials</doc>
+<status status="PASS" start="2025-05-14T14:32:50.225115" elapsed="0.113899"/>
+</kw>
+<kw name="Submit Login Form" owner="login_keywords">
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:32:50.341280" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:50.340359" elapsed="0.049498"/>
+</kw>
+<doc>Submits the login form</doc>
+<status status="PASS" start="2025-05-14T14:32:50.339515" elapsed="0.050705"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:32:50.551601" level="INFO">Waited for Element with selector text="Dashboard" at state visible</msg>
+<arg>text="Dashboard"</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:32:50.390760" elapsed="0.161243"/>
+</kw>
+<kw name="Get Url" owner="Browser">
+<arg>==</arg>
+<arg>${SITE_URL}/app</arg>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="PASS" start="2025-05-14T14:32:50.552583" elapsed="0.006522"/>
+</kw>
+<msg time="2025-05-14T14:32:50.926617" level="INFO">Switching context to context=8754ae3f-79f5-40df-af89-99f639c71b6b in CURRENT</msg>
+<msg time="2025-05-14T14:32:51.002219" level="INFO">Successfully changed active context: context=8754ae3f-79f5-40df-af89-99f639c71b6b</msg>
+<msg time="2025-05-14T14:32:51.078378" level="INFO">Successfully closed Context</msg>
+<doc>Tests navigation to dashboard after successful login</doc>
+<tag>navigation</tag>
+<tag>routing</tag>
+<status status="PASS" start="2025-05-14T14:32:47.158587" elapsed="3.401115"/>
+</test>
+<test id="s1-s3-t2" name="Unauthorized Access Prevention" line="16">
+<kw name="Open Browser To Login Page" owner="common">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:32:51.088428" level="INFO">Switching browser to browser=7529cfdd-f163-4deb-a686-6b8793f8279c</msg>
+<msg time="2025-05-14T14:32:51.096640" level="INFO">Successfully changed active browser: browser=7529cfdd-f163-4deb-a686-6b8793f8279c</msg>
+<msg time="2025-05-14T14:32:51.096917" level="INFO">Reusing existing browser with id: browser=7529cfdd-f163-4deb-a686-6b8793f8279c</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:32:51.087261" elapsed="0.009813"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:32:51.101561" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:32:51.115463" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:32:51.115614" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:32:51.097545" elapsed="0.018185"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:32:53.532451" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:32:51.116079" elapsed="2.416951"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:32:53.586425" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:32:53.533714" elapsed="0.053174"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:32:51.086457" elapsed="2.500762"/>
+</kw>
+<kw name="Go To" owner="Browser">
+<msg time="2025-05-14T14:32:55.084852" level="INFO">Successfully opened URL http://localhost:5173/app</msg>
+<arg>${SITE_URL}/app</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Navigates to the given ``url``.</doc>
+<status status="PASS" start="2025-05-14T14:32:53.587889" elapsed="1.497418"/>
+</kw>
+<kw name="Get Url" owner="Browser">
+<arg>==</arg>
+<arg>${SITE_URL}/login</arg>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the current URL.</doc>
+<status status="PASS" start="2025-05-14T14:32:55.085997" elapsed="0.004265"/>
+</kw>
+<msg time="2025-05-14T14:32:55.119550" level="INFO">Switching context to context=7ed15fc0-6590-4def-a337-dd50274d17b9 in CURRENT</msg>
+<msg time="2025-05-14T14:32:55.130878" level="INFO">Successfully changed active context: context=7ed15fc0-6590-4def-a337-dd50274d17b9</msg>
+<msg time="2025-05-14T14:32:55.162947" level="INFO">Successfully closed Context</msg>
+<doc>Tests prevention of unauthorized dashboard access</doc>
+<tag>routing</tag>
+<tag>security</tag>
+<status status="PASS" start="2025-05-14T14:32:51.079191" elapsed="4.011585"/>
+</test>
+<doc>Navigation Test Suite
+Tests navigation and routing after login</doc>
+<status status="PASS" start="2025-05-14T14:32:47.150243" elapsed="8.013589"/>
+</suite>
+<suite id="s1-s4" name="Login Security" source="/home/usera/Pfee_final/robot-tests/tests/login/login_security.robot">
+<test id="s1-s4-t1" name="Password Masking Test" line="11">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:32:55.199570" level="INFO">Switching browser to browser=7529cfdd-f163-4deb-a686-6b8793f8279c</msg>
+<msg time="2025-05-14T14:32:55.205724" level="INFO">Successfully changed active browser: browser=7529cfdd-f163-4deb-a686-6b8793f8279c</msg>
+<msg time="2025-05-14T14:32:55.205972" level="INFO">Reusing existing browser with id: browser=7529cfdd-f163-4deb-a686-6b8793f8279c</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:32:55.198434" elapsed="0.007682"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:32:55.209402" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:32:55.225173" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:32:55.225353" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:32:55.206541" elapsed="0.018994"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:32:57.826926" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:32:55.225936" elapsed="2.601486"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:32:57.864296" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:32:57.827803" elapsed="0.036828"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:32:55.197650" elapsed="2.667243"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:32:57.866376" level="INFO">Fills the text 'ons123' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>${VALID_PASSWORD}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:57.865391" elapsed="0.029366"/>
+</kw>
+<kw name="Get Property" owner="Browser">
+<msg time="2025-05-14T14:32:57.932015" level="INFO">Property: 'password'</msg>
+<arg>.p-password input</arg>
+<arg>type</arg>
+<arg>==</arg>
+<arg>password</arg>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the ``property`` of the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:32:57.895466" elapsed="0.036811"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:32:58.416569" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:32:57.932988" elapsed="0.483856"/>
+</kw>
+<doc>Verifies password field is masked by default</doc>
+<tag>password</tag>
+<tag>security</tag>
+<status status="PASS" start="2025-05-14T14:32:55.192606" elapsed="3.224477"/>
+</test>
+<test id="s1-s4-t2" name="CSRF Protection Test" line="17">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:32:58.428726" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/1fd6f3b6-5670-4421-94c9-726a730e6aba"}</msg>
+<msg time="2025-05-14T14:32:58.728632" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/1fd6f3b6-5670-4421-94c9-726a730e6aba"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:32:58.427203" elapsed="0.301713"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:32:58.731287" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:32:58.740511" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:32:58.740646" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:32:58.729207" elapsed="0.011552"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:33:01.837510" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:32:58.741035" elapsed="3.097247"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:01.883200" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:01.839128" elapsed="0.044621"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:32:58.426387" elapsed="3.457768"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-05-14T14:33:01.885483" level="INFO">${headers} = {'X-CSRF-TOKEN': None}</msg>
+<var>${headers}</var>
+<arg>X-CSRF-TOKEN</arg>
+<arg>${None}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2025-05-14T14:33:01.884682" elapsed="0.000898"/>
+</kw>
+<kw name="Run Keyword And Expect Error" owner="BuiltIn">
+<kw name="Login With Invalid CSRF" owner="common">
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:01.887505" level="INFO">Fills the text 'onssbenamara3@gmail.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>${VALID_EMAIL}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:01.886848" elapsed="0.022963"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:01.911719" level="INFO">Fills the text 'ons123' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>${VALID_PASSWORD}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:01.910546" elapsed="0.028977"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-05-14T14:33:01.940897" level="INFO">${headers} = {'X-CSRF-TOKEN': 'invalid'}</msg>
+<var>${headers}</var>
+<arg>X-CSRF-TOKEN=invalid</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2025-05-14T14:33:01.940256" elapsed="0.000688"/>
+</kw>
+<kw name="Try To Click">
+<msg time="2025-05-14T14:33:01.942988" level="FAIL">No keyword with name 'Try To Click' found.</msg>
+<arg>button[aria-label="Sign In"]</arg>
+<status status="FAIL" start="2025-05-14T14:33:01.942782" elapsed="0.000298">No keyword with name 'Try To Click' found.</status>
+</kw>
+<doc>Attempts login with invalid CSRF token</doc>
+<status status="FAIL" start="2025-05-14T14:33:01.886400" elapsed="0.056929">No keyword with name 'Try To Click' found.</status>
+</kw>
+<arg>*</arg>
+<arg>Login With Invalid CSRF</arg>
+<doc>Runs the keyword and checks that the expected error occurred.</doc>
+<status status="PASS" start="2025-05-14T14:33:01.885925" elapsed="0.057778"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:33:02.435561" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:33:01.944195" elapsed="0.491661"/>
+</kw>
+<doc>Verifies CSRF token is present in requests</doc>
+<tag>csrf</tag>
+<tag>security</tag>
+<status status="PASS" start="2025-05-14T14:32:58.422902" elapsed="4.013216"/>
+</test>
+<test id="s1-s4-t3" name="Password Strength Validation" line="23">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:33:02.454856" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/85fdf469-3faa-4fe1-b575-91d0d164578e"}</msg>
+<msg time="2025-05-14T14:33:02.754970" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/85fdf469-3faa-4fe1-b575-91d0d164578e"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:02.452004" elapsed="0.303270"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:33:02.757660" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:33:02.768535" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:33:02.768686" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:02.755656" elapsed="0.013160"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:33:05.320950" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:33:02.769124" elapsed="2.552142"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:05.359435" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:05.321610" elapsed="0.038175"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:33:02.450509" elapsed="2.909625"/>
+</kw>
+<kw name="Create List" owner="BuiltIn">
+<msg time="2025-05-14T14:33:05.361484" level="INFO">@{weak_passwords} = [ 123 | password | abcdef ]</msg>
+<var>@{weak_passwords}</var>
+<arg>123</arg>
+<arg>password</arg>
+<arg>abcdef</arg>
+<doc>Returns a list containing given items.</doc>
+<status status="PASS" start="2025-05-14T14:33:05.360724" elapsed="0.000876"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:05.364145" level="INFO">Fills the text 'onssbenamara3@gmail.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>${VALID_EMAIL}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:05.362953" elapsed="0.030744"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:05.395158" level="INFO">Fills the text '123' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>${weak_pass}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:05.394149" elapsed="0.031012"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:33:05.426161" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:05.425482" elapsed="0.061803"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:05.578315" level="INFO">Waited for Element with selector .text-red-500 at state visible</msg>
+<arg>.text-red-500</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:05.487764" elapsed="0.091009"/>
+</kw>
+<var name="${weak_pass}">123</var>
+<status status="PASS" start="2025-05-14T14:33:05.362574" elapsed="0.216448"/>
+</iter>
+<iter>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:05.581322" level="INFO">Fills the text 'onssbenamara3@gmail.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>${VALID_EMAIL}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:05.580011" elapsed="0.019683"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:05.601307" level="INFO">Fills the text 'password' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>${weak_pass}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:05.600202" elapsed="0.030331"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:33:05.632599" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:05.631229" elapsed="0.058497"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:05.697629" level="INFO">Waited for Element with selector .text-red-500 at state visible</msg>
+<arg>.text-red-500</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:05.690163" elapsed="0.007729"/>
+</kw>
+<var name="${weak_pass}">password</var>
+<status status="PASS" start="2025-05-14T14:33:05.579504" elapsed="0.118545"/>
+</iter>
+<iter>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:05.699421" level="INFO">Fills the text 'onssbenamara3@gmail.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>${VALID_EMAIL}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:05.698644" elapsed="0.012823"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:05.712719" level="INFO">Fills the text 'abcdef' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>${weak_pass}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:05.711855" elapsed="0.017426"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:33:05.730798" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:05.729748" elapsed="0.049474"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:05.786220" level="INFO">Waited for Element with selector .text-red-500 at state visible</msg>
+<arg>.text-red-500</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:05.779549" elapsed="0.007170"/>
+</kw>
+<var name="${weak_pass}">abcdef</var>
+<status status="PASS" start="2025-05-14T14:33:05.698325" elapsed="0.088587"/>
+</iter>
+<var>${weak_pass}</var>
+<value>@{weak_passwords}</value>
+<status status="PASS" start="2025-05-14T14:33:05.361981" elapsed="0.425051"/>
+</for>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:33:06.491582" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:33:05.787631" elapsed="0.704195"/>
+</kw>
+<doc>Tests password strength requirements</doc>
+<tag>password-strength</tag>
+<tag>security</tag>
+<status status="PASS" start="2025-05-14T14:33:02.444673" elapsed="4.047351"/>
+</test>
+<test id="s1-s4-t4" name="Remember Me Test" line="34">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:33:06.502800" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/0210bae3-ad7e-440a-8f6a-3f7bce0cf1fa"}</msg>
+<msg time="2025-05-14T14:33:06.808030" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/0210bae3-ad7e-440a-8f6a-3f7bce0cf1fa"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:06.501758" elapsed="0.306537"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:33:06.810475" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:33:06.819053" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:33:06.819233" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:06.808629" elapsed="0.010771"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:33:09.470255" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:33:06.819786" elapsed="2.651092"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:09.523111" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:09.471461" elapsed="0.052016"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:33:06.501131" elapsed="3.022636"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:09.525247" level="INFO">Fills the text 'onssbenamara3@gmail.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>${VALID_EMAIL}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:09.524243" elapsed="0.024321"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:09.553905" level="INFO">Fills the text 'ons123' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>${VALID_PASSWORD}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:09.549208" elapsed="0.043482"/>
+</kw>
+<kw name="Check Checkbox" owner="Browser">
+<arg>css=#rememberme1 input[type="checkbox"]</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Checks the checkbox or selects radio button found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:09.593266" elapsed="0.072580"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:33:09.668415" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:09.667003" elapsed="0.062647"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:10.224277" level="INFO">Waited for Element with selector text="Dashboard" at state visible</msg>
+<arg>text="Dashboard"</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:09.730070" elapsed="0.494526"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:33:10.742370" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:33:10.225150" elapsed="0.517512"/>
+</kw>
+<doc>Tests remember me functionality</doc>
+<tag>remember-me</tag>
+<tag>security</tag>
+<status status="PASS" start="2025-05-14T14:33:06.497364" elapsed="4.245525"/>
+</test>
+<test id="s1-s4-t5" name="Login Failure Rate Limit" line="43">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:33:10.755100" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/ee9f6dc3-3b56-4224-a99d-d729bf122e21"}</msg>
+<msg time="2025-05-14T14:33:11.136848" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/ee9f6dc3-3b56-4224-a99d-d729bf122e21"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:10.753309" elapsed="0.383921"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:33:11.140320" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:33:11.148620" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:33:11.148841" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:11.137681" elapsed="0.011284"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:33:13.842564" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:33:11.149245" elapsed="2.694457"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:13.901499" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:13.844775" elapsed="0.057013"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:33:10.752425" elapsed="3.149599"/>
+</kw>
+<for flavor="IN RANGE">
+<iter>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:13.903414" level="INFO">Fills the text 'invalid@email.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>invalid@email.com</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:13.902865" elapsed="0.023818"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:13.928187" level="INFO">Fills the text 'wrongpass0' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>wrongpass${index}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:13.927139" elapsed="0.034716"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:33:13.962813" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:13.962179" elapsed="0.058487"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:14.029943" level="INFO">Waited for Element with selector .text-red-500 at state visible</msg>
+<arg>.text-red-500</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:14.021226" elapsed="0.009070"/>
+</kw>
+<var name="${index}">0</var>
+<status status="PASS" start="2025-05-14T14:33:13.902643" elapsed="0.127896"/>
+</iter>
+<iter>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:14.032097" level="INFO">Fills the text 'invalid@email.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>invalid@email.com</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:14.031267" elapsed="0.011911"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:14.044206" level="INFO">Fills the text 'wrongpass1' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>wrongpass${index}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:14.043501" elapsed="0.020877"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:33:14.065616" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:14.064887" elapsed="0.048966"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:14.122563" level="INFO">Waited for Element with selector .text-red-500 at state visible</msg>
+<arg>.text-red-500</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:14.114377" elapsed="0.008597"/>
+</kw>
+<var name="${index}">1</var>
+<status status="PASS" start="2025-05-14T14:33:14.030895" elapsed="0.092214"/>
+</iter>
+<iter>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:14.124199" level="INFO">Fills the text 'invalid@email.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>invalid@email.com</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:14.123627" elapsed="0.012838"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:14.137902" level="INFO">Fills the text 'wrongpass2' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>wrongpass${index}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:14.137000" elapsed="0.018444"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:33:14.156466" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:14.155847" elapsed="0.040849"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:14.207151" level="INFO">Waited for Element with selector .text-red-500 at state visible</msg>
+<arg>.text-red-500</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:14.197252" elapsed="0.010135"/>
+</kw>
+<var name="${index}">2</var>
+<status status="PASS" start="2025-05-14T14:33:14.123341" elapsed="0.084213"/>
+</iter>
+<var>${index}</var>
+<value>3</value>
+<status status="PASS" start="2025-05-14T14:33:13.902223" elapsed="0.305431"/>
+</for>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:33:14.789902" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:33:14.208100" elapsed="0.582145"/>
+</kw>
+<doc>Tests rate limiting on failed login attempts</doc>
+<tag>rate-limit</tag>
+<tag>security</tag>
+<status status="PASS" start="2025-05-14T14:33:10.748437" elapsed="4.042097"/>
+</test>
+<doc>Security Test Suite
+Tests security features of the login page</doc>
+<status status="PASS" start="2025-05-14T14:32:55.173570" elapsed="19.625056"/>
+</suite>
+<suite id="s1-s5" name="Login Ui" source="/home/usera/Pfee_final/robot-tests/tests/login/login_ui.robot">
+<test id="s1-s5-t1" name="Verify All UI Elements Present" line="9">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:33:14.825257" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/ee4837d7-1621-441a-9a0f-3d5d07712c94"}</msg>
+<msg time="2025-05-14T14:33:15.132704" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/ee4837d7-1621-441a-9a0f-3d5d07712c94"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:14.823741" elapsed="0.309339"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:33:15.136431" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:33:15.144167" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:33:15.144301" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:15.133559" elapsed="0.010852"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:33:17.963782" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:33:15.144704" elapsed="2.819564"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:17.998731" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:17.964891" elapsed="0.034225"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:33:14.822843" elapsed="3.176614"/>
+</kw>
+<kw name="Verify Page Elements" owner="login_keywords">
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:18.010442" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:18.001104" elapsed="0.009614"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:18.032627" level="INFO">Waited for Element with selector input#email1 at state visible</msg>
+<arg>${EMAIL_INPUT}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:18.011008" elapsed="0.021967"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:18.044572" level="INFO">Waited for Element with selector .p-password input at state visible</msg>
+<arg>${PASSWORD_INPUT}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:18.033403" elapsed="0.011432"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:18.057020" level="INFO">Waited for Element with selector text="OR" at state visible</msg>
+<arg>${OR_TEXT}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:18.045186" elapsed="0.012521"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:18.065400" level="INFO">Waited for Element with selector #google-signin-button at state visible</msg>
+<arg>${GOOGLE_BUTTON}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:18.058136" elapsed="0.007526"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:18.073578" level="INFO">Waited for Element with selector css=#rememberme1 input[type="checkbox"] at state visible</msg>
+<arg>${REMEMBER_ME_CB}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:18.065984" elapsed="0.007951"/>
+</kw>
+<doc>Verifies that all essential page elements are present</doc>
+<status status="PASS" start="2025-05-14T14:33:18.000219" elapsed="0.073963"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:33:18.747801" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:33:18.074733" elapsed="0.673355"/>
+</kw>
+<doc>Verifies all UI elements are present and visible</doc>
+<tag>smoke</tag>
+<tag>ui</tag>
+<status status="PASS" start="2025-05-14T14:33:14.817059" elapsed="3.931303"/>
+</test>
+<test id="s1-s5-t2" name="Test Password Visibility Toggle" line="14">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:33:18.764263" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/6a2a9403-f77f-40e0-9653-35dd7ac49c9b"}</msg>
+<msg time="2025-05-14T14:33:19.060502" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/6a2a9403-f77f-40e0-9653-35dd7ac49c9b"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:18.762833" elapsed="0.298135"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:33:19.064382" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:33:19.074228" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:33:19.074412" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:19.061480" elapsed="0.013223"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:33:21.746732" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:33:19.075225" elapsed="2.672017"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:21.806223" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:21.747793" elapsed="0.058888"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:33:18.762062" elapsed="3.044982"/>
+</kw>
+<kw name="Input Login Credentials" owner="login_keywords">
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:21.810216" level="INFO">Fills the text 'onssbenamara3@gmail.com' in the given field.</msg>
+<arg>${EMAIL_INPUT}</arg>
+<arg>${email}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:21.808977" elapsed="0.025013"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:21.836228" level="INFO">Fills the text 'ons123' in the given field.</msg>
+<arg>${PASSWORD_INPUT}</arg>
+<arg>${password}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:21.834574" elapsed="0.034303"/>
+</kw>
+<arg>${VALID_EMAIL}</arg>
+<arg>${VALID_PASSWORD}</arg>
+<doc>Inputs email and password into login form</doc>
+<status status="PASS" start="2025-05-14T14:33:21.807790" elapsed="0.061482"/>
+</kw>
+<kw name="Toggle Password Visibility" owner="login_keywords">
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:33:21.871428" level="INFO">Clicks the element '.p-password svg.p-password-toggle-mask-icon'.</msg>
+<arg>${PASSWORD_TOGGLE}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:21.870772" elapsed="0.077627"/>
+</kw>
+<kw name="Get Attribute" owner="Browser">
+<msg time="2025-05-14T14:33:21.975739" level="INFO">Attribute is: 'text'</msg>
+<arg>${PASSWORD_INPUT}</arg>
+<arg>type</arg>
+<arg>==</arg>
+<arg>text</arg>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the HTML ``attribute`` of the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:21.948781" elapsed="0.027140"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:33:21.976907" level="INFO">Clicks the element '.p-password svg.p-password-toggle-mask-icon'.</msg>
+<arg>${PASSWORD_TOGGLE}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:21.976210" elapsed="0.042875"/>
+</kw>
+<kw name="Get Attribute" owner="Browser">
+<msg time="2025-05-14T14:33:22.034155" level="INFO">Attribute is: 'password'</msg>
+<arg>${PASSWORD_INPUT}</arg>
+<arg>type</arg>
+<arg>==</arg>
+<arg>password</arg>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the HTML ``attribute`` of the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:22.019642" elapsed="0.014795"/>
+</kw>
+<doc>Toggles password visibility and verifies the state</doc>
+<status status="PASS" start="2025-05-14T14:33:21.870098" elapsed="0.164706"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:33:22.537425" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:33:22.035665" elapsed="0.502162"/>
+</kw>
+<doc>Tests password visibility toggle functionality</doc>
+<tag>password</tag>
+<tag>ui</tag>
+<status status="PASS" start="2025-05-14T14:33:18.756528" elapsed="3.781608"/>
+</test>
+<test id="s1-s5-t3" name="Test Remember Me Checkbox" line="20">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:33:22.555731" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/575d118a-8180-4f11-b321-dbd8dde052d0"}</msg>
+<msg time="2025-05-14T14:33:22.846747" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/575d118a-8180-4f11-b321-dbd8dde052d0"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:22.553390" elapsed="0.293709"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:33:22.849900" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:33:22.858858" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:33:22.858998" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:22.847528" elapsed="0.011607"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:33:25.395887" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:33:22.859499" elapsed="2.536775"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:25.432573" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:25.396628" elapsed="0.036201"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:33:22.552206" elapsed="2.880821"/>
+</kw>
+<kw name="Toggle Remember Me" owner="login_keywords">
+<kw name="Check Checkbox" owner="Browser">
+<arg>${REMEMBER_ME_CB}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Checks the checkbox or selects radio button found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:25.434140" elapsed="0.079809"/>
+</kw>
+<kw name="Get Checkbox State" owner="Browser">
+<msg time="2025-05-14T14:33:25.536304" level="INFO">Retrieved dom property for element css=#rememberme1 input[type="checkbox"] containing true</msg>
+<msg time="2025-05-14T14:33:25.536422" level="INFO">Checkbox is checked</msg>
+<arg>${REMEMBER_ME_CB}</arg>
+<arg>==</arg>
+<arg>checked</arg>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the state of the checkbox found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:25.514406" elapsed="0.022176"/>
+</kw>
+<kw name="Uncheck Checkbox" owner="Browser">
+<arg>${REMEMBER_ME_CB}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Unchecks the checkbox found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:25.536915" elapsed="0.043780"/>
+</kw>
+<kw name="Get Checkbox State" owner="Browser">
+<msg time="2025-05-14T14:33:25.592579" level="INFO">Retrieved dom property for element css=#rememberme1 input[type="checkbox"] containing false</msg>
+<msg time="2025-05-14T14:33:25.592722" level="INFO">Checkbox is unchecked</msg>
+<arg>${REMEMBER_ME_CB}</arg>
+<arg>==</arg>
+<arg>unchecked</arg>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns the state of the checkbox found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:25.581065" elapsed="0.011828"/>
+</kw>
+<doc>Toggles remember me checkbox and verifies its state</doc>
+<status status="PASS" start="2025-05-14T14:33:25.433539" elapsed="0.159566"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:33:26.162557" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:33:25.593673" elapsed="0.569160"/>
+</kw>
+<doc>Tests remember me checkbox functionality</doc>
+<tag>checkbox</tag>
+<tag>ui</tag>
+<status status="PASS" start="2025-05-14T14:33:22.546748" elapsed="3.616342"/>
+</test>
+<test id="s1-s5-t4" name="Test Form Field Clearing" line="25">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:33:26.172226" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/46dab49b-a727-4961-b275-af9201b892bf"}</msg>
+<msg time="2025-05-14T14:33:26.460738" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/46dab49b-a727-4961-b275-af9201b892bf"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:26.171250" elapsed="0.289747"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:33:26.463590" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:33:26.471968" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:33:26.472095" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:26.461364" elapsed="0.010844"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:33:29.316476" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:33:26.472484" elapsed="2.844345"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:29.364664" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:29.317183" elapsed="0.047737"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:33:26.170744" elapsed="3.194414"/>
+</kw>
+<kw name="Input Login Credentials" owner="login_keywords">
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:29.367298" level="INFO">Fills the text 'onssbenamara3@gmail.com' in the given field.</msg>
+<arg>${EMAIL_INPUT}</arg>
+<arg>${email}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:29.366469" elapsed="0.022553"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:29.390683" level="INFO">Fills the text 'ons123' in the given field.</msg>
+<arg>${PASSWORD_INPUT}</arg>
+<arg>${password}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:29.389551" elapsed="0.034551"/>
+</kw>
+<arg>${VALID_EMAIL}</arg>
+<arg>${VALID_PASSWORD}</arg>
+<doc>Inputs email and password into login form</doc>
+<status status="PASS" start="2025-05-14T14:33:29.365665" elapsed="0.058655"/>
+</kw>
+<kw name="Clear Login Form" owner="login_keywords">
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:29.426855" level="INFO">Fills the text '' in the given field.</msg>
+<arg>${EMAIL_INPUT}</arg>
+<arg>${EMPTY}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:29.425547" elapsed="0.037993"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:29.465925" level="INFO">Fills the text '' in the given field.</msg>
+<arg>${PASSWORD_INPUT}</arg>
+<arg>${EMPTY}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:29.464014" elapsed="0.024920"/>
+</kw>
+<kw name="Uncheck Checkbox" owner="Browser">
+<arg>${REMEMBER_ME_CB}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Unchecks the checkbox found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:29.489298" elapsed="0.012114"/>
+</kw>
+<doc>Clears all form fields</doc>
+<status status="PASS" start="2025-05-14T14:33:29.424839" elapsed="0.076912"/>
+</kw>
+<kw name="Get Text" owner="Browser">
+<msg time="2025-05-14T14:33:29.535795" level="INFO">Text: ''</msg>
+<arg>${EMAIL_INPUT}</arg>
+<arg>==</arg>
+<arg>${EMPTY}</arg>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns text attribute of the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:29.502171" elapsed="0.033888"/>
+</kw>
+<kw name="Get Text" owner="Browser">
+<msg time="2025-05-14T14:33:29.559392" level="INFO">Text: ''</msg>
+<arg>${PASSWORD_INPUT}</arg>
+<arg>==</arg>
+<arg>${EMPTY}</arg>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns text attribute of the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:29.536607" elapsed="0.023055"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:33:30.267721" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:33:29.560611" elapsed="0.707415"/>
+</kw>
+<doc>Tests clearing form fields</doc>
+<tag>form</tag>
+<tag>ui</tag>
+<status status="PASS" start="2025-05-14T14:33:26.168004" elapsed="4.100325"/>
+</test>
+<doc>UI Test Suite for Login Page
+Tests the visual elements and interactions of the login page</doc>
+<status status="PASS" start="2025-05-14T14:33:14.805238" elapsed="15.471709"/>
+</suite>
+<suite id="s1-s6" name="Login Validation" source="/home/usera/Pfee_final/robot-tests/tests/login/login_validation.robot">
+<test id="s1-s6-t1" name="Empty Form Submission" line="9">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:33:30.307567" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/f73630be-2492-4d21-87a4-186fb8b64d78"}</msg>
+<msg time="2025-05-14T14:33:30.623843" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/f73630be-2492-4d21-87a4-186fb8b64d78"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:30.306053" elapsed="0.318166"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:33:30.627413" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:33:30.635517" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:33:30.635652" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:30.624665" elapsed="0.011096"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:33:33.446058" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:33:30.636050" elapsed="2.810659"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:33.504658" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:33.447469" elapsed="0.057628"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:33:30.305294" elapsed="3.200162"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:33:33.507527" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:33.506194" elapsed="0.074108"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:33.589244" level="INFO">Waited for Element with selector .text-red-500 at state visible</msg>
+<arg>.text-red-500</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:33.580731" elapsed="0.008860"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:33:34.595572" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:33:33.590261" elapsed="1.005767"/>
+</kw>
+<doc>Tests submission with empty form</doc>
+<tag>negative</tag>
+<tag>validation</tag>
+<status status="PASS" start="2025-05-14T14:33:30.298631" elapsed="4.297778"/>
+</test>
+<test id="s1-s6-t2" name="Invalid Email Format" line="15">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:33:34.615388" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/6c2ac3b4-e2ec-4988-ab85-91eaf29c05dc"}</msg>
+<msg time="2025-05-14T14:33:34.912298" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/6c2ac3b4-e2ec-4988-ab85-91eaf29c05dc"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:34.613252" elapsed="0.299387"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:33:34.915163" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:33:34.923358" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:33:34.923523" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:34.913034" elapsed="0.010620"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:33:37.553057" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:33:34.923943" elapsed="2.630008"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:37.586258" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:37.554349" elapsed="0.032232"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:33:34.612172" elapsed="2.974620"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:37.587909" level="INFO">Fills the text 'invalid-email' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>invalid-email</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:37.587218" elapsed="0.044557"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:37.633164" level="INFO">Fills the text 'ons123' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>${VALID_PASSWORD}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:37.632222" elapsed="0.033121"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:33:37.666547" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:37.665888" elapsed="0.066913"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:37.744001" level="INFO">Waited for Element with selector .text-red-500 at state visible</msg>
+<arg>.text-red-500</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:37.733365" elapsed="0.010994"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:33:38.340690" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:33:37.745047" elapsed="0.595884"/>
+</kw>
+<doc>Tests email format validation</doc>
+<tag>email</tag>
+<tag>validation</tag>
+<status status="PASS" start="2025-05-14T14:33:34.605623" elapsed="3.735494"/>
+</test>
+<test id="s1-s6-t3" name="Multiple Failed Login Attempts" line="23">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:33:38.354544" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/5d7c0c2b-b5ea-4e28-baa3-ac85d813923e"}</msg>
+<msg time="2025-05-14T14:33:38.658467" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/5d7c0c2b-b5ea-4e28-baa3-ac85d813923e"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:38.352666" elapsed="0.306228"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:33:38.661729" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:33:38.670529" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:33:38.670719" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:38.659326" elapsed="0.011535"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:33:41.371438" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:33:38.671158" elapsed="2.700649"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:41.408090" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:41.372186" elapsed="0.036135"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:33:38.351875" elapsed="3.056646"/>
+</kw>
+<for flavor="IN RANGE">
+<iter>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:41.411050" level="INFO">Fills the text 'invalid@email.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>invalid@email.com</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:41.409966" elapsed="0.020781"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:41.432253" level="INFO">Fills the text 'wrongpass0' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>wrongpass${index}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:41.431213" elapsed="0.033011"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:33:41.465188" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:41.464553" elapsed="0.076123"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:41.548535" level="INFO">Waited for Element with selector .text-red-500 at state visible</msg>
+<arg>.text-red-500</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:41.541139" elapsed="0.007686"/>
+</kw>
+<var name="${index}">0</var>
+<status status="PASS" start="2025-05-14T14:33:41.409533" elapsed="0.139463"/>
+</iter>
+<iter>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:41.550284" level="INFO">Fills the text 'invalid@email.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>invalid@email.com</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:41.549604" elapsed="0.012564"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:41.563634" level="INFO">Fills the text 'wrongpass1' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>wrongpass${index}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:41.562508" elapsed="0.018363"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:33:41.582461" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:41.581391" elapsed="0.052335"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:41.645055" level="INFO">Waited for Element with selector .text-red-500 at state visible</msg>
+<arg>.text-red-500</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:41.634231" elapsed="0.011230"/>
+</kw>
+<var name="${index}">1</var>
+<status status="PASS" start="2025-05-14T14:33:41.549281" elapsed="0.096486"/>
+</iter>
+<iter>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:41.647811" level="INFO">Fills the text 'invalid@email.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>invalid@email.com</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:41.646684" elapsed="0.016444"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:41.665063" level="INFO">Fills the text 'wrongpass2' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>wrongpass${index}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:41.663713" elapsed="0.025747"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:33:41.691896" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:41.690193" elapsed="0.046148"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:41.748406" level="INFO">Waited for Element with selector .text-red-500 at state visible</msg>
+<arg>.text-red-500</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:41.737098" elapsed="0.011760"/>
+</kw>
+<var name="${index}">2</var>
+<status status="PASS" start="2025-05-14T14:33:41.646191" elapsed="0.102910"/>
+</iter>
+<var>${index}</var>
+<value>3</value>
+<status status="PASS" start="2025-05-14T14:33:41.408906" elapsed="0.340368"/>
+</for>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:33:42.297253" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:33:41.750201" elapsed="0.547347"/>
+</kw>
+<doc>Tests behavior with multiple failed attempts</doc>
+<tag>security</tag>
+<tag>validation</tag>
+<status status="PASS" start="2025-05-14T14:33:38.346396" elapsed="3.951408"/>
+</test>
+<test id="s1-s6-t4" name="Email Field Validation" line="33">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:33:42.314551" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/7423391c-d7bc-4e93-9fe1-364e47938029"}</msg>
+<msg time="2025-05-14T14:33:42.620802" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/7423391c-d7bc-4e93-9fe1-364e47938029"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:42.312607" elapsed="0.308512"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:33:42.625104" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:33:42.635753" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:33:42.635922" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:42.621548" elapsed="0.014530"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:33:45.307958" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:33:42.636386" elapsed="2.671938"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:45.346322" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:45.308774" elapsed="0.037967"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:33:42.311600" elapsed="3.035483"/>
+</kw>
+<kw name="Open Browser To Login Page" owner="common">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:33:45.350101" level="INFO">Switching browser to browser=7e5ef056-8be7-43c9-81b6-0c762eb5d0b9</msg>
+<msg time="2025-05-14T14:33:45.354891" level="INFO">Successfully changed active browser: browser=7e5ef056-8be7-43c9-81b6-0c762eb5d0b9</msg>
+<msg time="2025-05-14T14:33:45.355285" level="INFO">Reusing existing browser with id: browser=7e5ef056-8be7-43c9-81b6-0c762eb5d0b9</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:45.348642" elapsed="0.006875"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:33:45.359757" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:33:45.376659" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:33:45.376832" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:45.356081" elapsed="0.020925"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:33:47.684596" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:33:45.377413" elapsed="2.307598"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:47.730922" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:47.685627" elapsed="0.045603"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:33:45.347766" elapsed="2.383738"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:47.733607" level="INFO">Fills the text '' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>${EMPTY}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:47.732004" elapsed="0.022725"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:47.757258" level="INFO">Fills the text 'ons123' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>${VALID_PASSWORD}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:47.755321" elapsed="0.055200"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:33:47.811807" level="INFO">Clicks the element '"Sign In"'.</msg>
+<arg>"Sign In"</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:47.811040" elapsed="0.076097"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:47.896860" level="INFO">Waited for Element with selector .text-red-500 at state visible</msg>
+<arg>.text-red-500</arg>
+<arg>visible</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:47.887717" elapsed="0.009345"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:47.898033" level="INFO">Fills the text 'invalid-email' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>invalid-email</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:47.897397" elapsed="0.015168"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:33:47.913884" level="INFO">Clicks the element '"Sign In"'.</msg>
+<arg>"Sign In"</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:47.913066" elapsed="0.060918"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:47.983410" level="INFO">Waited for Element with selector .text-red-500 at state visible</msg>
+<arg>.text-red-500</arg>
+<arg>visible</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:47.974865" elapsed="0.008933"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:33:48.599866" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:33:47.984440" elapsed="0.615633"/>
+</kw>
+<doc>Tests email field validation</doc>
+<tag>email</tag>
+<tag>validation</tag>
+<status status="PASS" start="2025-05-14T14:33:42.305829" elapsed="6.294444"/>
+</test>
+<test id="s1-s6-t5" name="Password Field Validation" line="48">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:33:48.614210" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/7c02c251-2311-4f18-9d98-6125e73bfa68"}</msg>
+<msg time="2025-05-14T14:33:48.923228" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/7c02c251-2311-4f18-9d98-6125e73bfa68"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:48.612326" elapsed="0.311149"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:33:48.926187" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:33:48.933943" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:33:48.934071" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:48.923835" elapsed="0.010347"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:33:51.944131" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:33:48.934458" elapsed="3.010333"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:51.984417" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:51.945455" elapsed="0.039512"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:33:48.611206" elapsed="3.374101"/>
+</kw>
+<kw name="Open Browser To Login Page" owner="common">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:33:51.987874" level="INFO">Switching browser to browser=8aec4428-3747-4e79-8b46-161543d3c344</msg>
+<msg time="2025-05-14T14:33:51.991825" level="INFO">Successfully changed active browser: browser=8aec4428-3747-4e79-8b46-161543d3c344</msg>
+<msg time="2025-05-14T14:33:51.992089" level="INFO">Reusing existing browser with id: browser=8aec4428-3747-4e79-8b46-161543d3c344</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:51.987066" elapsed="0.005155"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:33:51.994740" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:33:52.009001" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:33:52.009275" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:51.992565" elapsed="0.016892"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:33:54.377079" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:33:52.009886" elapsed="2.367514"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:54.410720" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:54.377771" elapsed="0.033337"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:33:51.986227" elapsed="2.425210"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:54.413138" level="INFO">Fills the text 'onssbenamara3@gmail.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>${VALID_EMAIL}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:54.411902" elapsed="0.022346"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:54.437045" level="INFO">Fills the text 'short' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>short</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:54.435952" elapsed="0.032779"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:33:54.470308" level="INFO">Clicks the element '"Sign In"'.</msg>
+<arg>"Sign In"</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:54.469365" elapsed="0.067192"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:54.739825" level="INFO">Waited for Element with selector .text-red-500 at state visible</msg>
+<arg>.text-red-500</arg>
+<arg>visible</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:54.537184" elapsed="0.203030"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:33:55.318814" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:33:54.741068" elapsed="0.578150"/>
+</kw>
+<doc>Tests password field validation</doc>
+<tag>password</tag>
+<tag>validation</tag>
+<status status="PASS" start="2025-05-14T14:33:48.606623" elapsed="6.712984"/>
+</test>
+<test id="s1-s6-t6" name="XSS Prevention Test" line="57">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:33:55.335977" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/0b4cc48b-3b48-49ac-b69e-5f665bbbf209"}</msg>
+<msg time="2025-05-14T14:33:55.645907" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/0b4cc48b-3b48-49ac-b69e-5f665bbbf209"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:55.334143" elapsed="0.312099"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:33:55.648899" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:33:55.659102" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:33:55.659242" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:55.646683" elapsed="0.012680"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:33:58.310067" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:33:55.659673" elapsed="2.650716"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:58.345302" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:58.310861" elapsed="0.034813"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:33:55.333187" elapsed="3.012764"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:58.347341" level="INFO">Fills the text '&lt;script&gt;alert('xss')&lt;/script&gt;' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>&lt;script&gt;alert('xss')&lt;/script&gt;</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:58.346403" elapsed="0.023541"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:33:58.371714" level="INFO">Fills the text 'ons123' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>${VALID_PASSWORD}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:58.370579" elapsed="0.037345"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:33:58.409524" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:33:58.408501" elapsed="0.092329"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:33:58.512180" level="INFO">Waited for Element with selector .text-red-500 at state visible</msg>
+<arg>.text-red-500</arg>
+<arg>visible</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:33:58.501771" elapsed="0.010665"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:33:59.016628" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:33:58.513009" elapsed="0.503888"/>
+</kw>
+<doc>Tests XSS prevention in input fields</doc>
+<status status="PASS" start="2025-05-14T14:33:55.328106" elapsed="3.689012"/>
+</test>
+<test id="s1-s6-t7" name="SQL Injection Prevention Test" line="64">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-14T14:33:59.029467" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/browser/traces/temp/ac2d1d77-b68b-4ebf-9a20-a086bdc5e12a"}</msg>
+<msg time="2025-05-14T14:33:59.323278" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/browser/traces/temp/ac2d1d77-b68b-4ebf-9a20-a086bdc5e12a"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:59.027649" elapsed="0.295977"/>
+</kw>
+<kw name="New Context" owner="Browser">
+<msg time="2025-05-14T14:33:59.326291" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  }
+}</msg>
+<msg time="2025-05-14T14:33:59.334725" level="INFO">Successfully created context. </msg>
+<msg time="2025-05-14T14:33:59.334851" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1920, 'height': 1080}}</msg>
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2025-05-14T14:33:59.323956" elapsed="0.011006"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-14T14:34:02.496335" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<arg>${SITE_URL}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-14T14:33:59.335236" elapsed="3.161530"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:34:02.528087" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:34:02.497179" elapsed="0.031253"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="PASS" start="2025-05-14T14:33:59.026891" elapsed="3.501864"/>
+</kw>
+<kw name="Create List" owner="BuiltIn">
+<msg time="2025-05-14T14:34:02.529990" level="INFO">@{sql_injections} = [ ' OR '1'='1 | ' OR 1=1;-- | '; DROP TABLE users;-- ]</msg>
+<var>@{sql_injections}</var>
+<arg>' OR '1'='1</arg>
+<arg>' OR 1=1;--</arg>
+<arg>'; DROP TABLE users;--</arg>
+<doc>Returns a list containing given items.</doc>
+<status status="PASS" start="2025-05-14T14:34:02.529272" elapsed="0.000797"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:34:02.532192" level="INFO">Fills the text '' OR '1'='1' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>${injection}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:34:02.531178" elapsed="0.025687"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:34:02.558391" level="INFO">Fills the text 'ons123' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>${VALID_PASSWORD}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:34:02.557346" elapsed="0.035476"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:34:02.593849" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:34:02.593203" elapsed="0.045121"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:34:02.647743" level="INFO">Waited for Element with selector .text-red-500 at state visible</msg>
+<arg>.text-red-500</arg>
+<arg>visible</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:34:02.638863" elapsed="0.009198"/>
+</kw>
+<var name="${injection}">' OR '1'='1</var>
+<status status="PASS" start="2025-05-14T14:34:02.530820" elapsed="0.117429"/>
+</iter>
+<iter>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:34:02.649913" level="INFO">Fills the text '' OR 1=1;--' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>${injection}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:34:02.648994" elapsed="0.013785"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:34:02.664762" level="INFO">Fills the text 'ons123' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>${VALID_PASSWORD}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:34:02.663406" elapsed="0.017559"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:34:02.682817" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:34:02.681522" elapsed="0.051442"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:34:02.741344" level="INFO">Waited for Element with selector .text-red-500 at state visible</msg>
+<arg>.text-red-500</arg>
+<arg>visible</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:34:02.733461" elapsed="0.008157"/>
+</kw>
+<var name="${injection}">' OR 1=1;--</var>
+<status status="PASS" start="2025-05-14T14:34:02.648604" elapsed="0.093141"/>
+</iter>
+<iter>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:34:02.743101" level="INFO">Fills the text ''; DROP TABLE users;--' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>${injection}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:34:02.742227" elapsed="0.016406"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-14T14:34:02.759770" level="INFO">Fills the text 'ons123' in the given field.</msg>
+<arg>.p-password input</arg>
+<arg>${VALID_PASSWORD}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:34:02.759047" elapsed="0.015646"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-14T14:34:02.775755" level="INFO">Clicks the element 'button.w-full'.</msg>
+<arg>button.w-full</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-14T14:34:02.775118" elapsed="0.040509"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-14T14:34:02.824167" level="INFO">Waited for Element with selector .text-red-500 at state visible</msg>
+<arg>.text-red-500</arg>
+<arg>visible</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-14T14:34:02.816198" elapsed="0.008206"/>
+</kw>
+<var name="${injection}">'; DROP TABLE users;--</var>
+<status status="PASS" start="2025-05-14T14:34:02.741965" elapsed="0.082578"/>
+</iter>
+<var>${injection}</var>
+<value>@{sql_injections}</value>
+<status status="PASS" start="2025-05-14T14:34:02.530337" elapsed="0.294292"/>
+</for>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-14T14:34:03.313479" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-14T14:34:02.825062" elapsed="0.488689"/>
+</kw>
+<doc>Tests SQL injection prevention</doc>
+<status status="PASS" start="2025-05-14T14:33:59.022042" elapsed="4.291923"/>
+</test>
+<doc>Form Validation Test Suite
+Tests input validation and error handling</doc>
+<status status="PASS" start="2025-05-14T14:33:30.287198" elapsed="33.032453"/>
+</suite>
+<status status="PASS" start="2025-05-14T14:32:25.272125" elapsed="98.054261"/>
+</suite>
+<statistics>
+<total>
+<stat pass="23" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="1" fail="0" skip="0">accessibility</stat>
+<stat pass="1" fail="0" skip="0">aria</stat>
+<stat pass="4" fail="0" skip="0">authentication</stat>
+<stat pass="1" fail="0" skip="0">checkbox</stat>
+<stat pass="1" fail="0" skip="0">critical</stat>
+<stat pass="1" fail="0" skip="0">csrf</stat>
+<stat pass="2" fail="0" skip="0">email</stat>
+<stat pass="1" fail="0" skip="0">form</stat>
+<stat pass="1" fail="0" skip="0">navigation</stat>
+<stat pass="3" fail="0" skip="0">negative</stat>
+<stat pass="3" fail="0" skip="0">password</stat>
+<stat pass="1" fail="0" skip="0">password-strength</stat>
+<stat pass="1" fail="0" skip="0">rate-limit</stat>
+<stat pass="2" fail="0" skip="0">remember-me</stat>
+<stat pass="2" fail="0" skip="0">routing</stat>
+<stat pass="7" fail="0" skip="0">security</stat>
+<stat pass="2" fail="0" skip="0">smoke</stat>
+<stat pass="4" fail="0" skip="0">ui</stat>
+<stat pass="5" fail="0" skip="0">validation</stat>
+</tag>
+<suite>
+<stat name="Login" id="s1" pass="23" fail="0" skip="0">Login</stat>
+<stat name="Login Accessibility" id="s1-s1" pass="1" fail="0" skip="0">Login.Login Accessibility</stat>
+<stat name="Login Authentication" id="s1-s2" pass="4" fail="0" skip="0">Login.Login Authentication</stat>
+<stat name="Login Routing" id="s1-s3" pass="2" fail="0" skip="0">Login.Login Routing</stat>
+<stat name="Login Security" id="s1-s4" pass="5" fail="0" skip="0">Login.Login Security</stat>
+<stat name="Login Ui" id="s1-s5" pass="4" fail="0" skip="0">Login.Login Ui</stat>
+<stat name="Login Validation" id="s1-s6" pass="7" fail="0" skip="0">Login.Login Validation</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
