@@ -62,17 +62,32 @@ const filteredModel = computed(() => {
         items: section.items.filter(item => item.roles.includes(userRole.value))
     })).filter(section => section.items.length > 0);
 });
+
+// Add new computed property for TimeTracking styling
+const isEmployee = computed(() => userRole.value === 'employee');
 </script>
 
 <template>
     <ul class="layout-menu">
         <template v-for="(item, i) in filteredModel" :key="i">
-            <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
+            <app-menu-item 
+                v-if="!item.separator" 
+                :item="item" 
+                :index="i"
+                :class="{ 
+                    'time-tracking-highlight': isEmployee && item.items.some(menuItem => menuItem.label === 'Time Tracking')
+                }"
+            ></app-menu-item>
             <li v-if="item.separator" class="menu-separator"></li>
         </template>
     </ul>
 </template>
 
 <style lang="scss" scoped>
-/* Add your styles here if needed */
+.time-tracking-highlight {
+    :deep(.router-link-active) {
+        color: #0aa56a !important; /* Blue color - you can change this */
+        font-weight: bold;
+    }
+}
 </style>
