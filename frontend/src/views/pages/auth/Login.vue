@@ -141,11 +141,25 @@ onMounted(() => {
           <!-- Email and Password Login -->
           <div>
             <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
-            <InputText id="email1" type="text" placeholder="Email address" class="w-full md:w-[30rem] mb-8" v-model="email" />
-
+            <InputText 
+    id="email1" 
+    type="text" 
+    placeholder="Email address" 
+    aria-label="Email"
+    class="w-full md:w-[30rem] mb-8" 
+    v-model="email" 
+/>
             <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Password</label>
-            <Password id="password1" v-model="password" placeholder="Password" :toggleMask="true" class="mb-4" fluid :feedback="false"></Password>
-
+            <Password 
+    id="password1" 
+    v-model="password" 
+    placeholder="Password" 
+    aria-label="Password"
+    :toggleMask="true" 
+    class="mb-4" 
+    fluid 
+    :feedback="false"
+/>
             <div class="flex items-center justify-between mt-2 mb-8 gap-8">
               <div class="flex items-center">
                 <Checkbox v-model="checked" id="rememberme1" binary class="mr-2"></Checkbox>
