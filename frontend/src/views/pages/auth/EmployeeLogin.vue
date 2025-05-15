@@ -8,6 +8,7 @@ const email = ref('');
 const password = ref('');
 const checked = ref(false);
 const errorMessage = ref('');
+const showPassword = ref(false);
 const router = useRouter();
 
 // API Base URL
@@ -69,7 +70,22 @@ const login = async () => {
             <input id="email1" type="text" placeholder="Email address" class="w-full md:w-[30rem] mb-8 p-2 border rounded" v-model="email" />
 
             <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Password</label>
-            <input id="password1" type="password" placeholder="Password" class="w-full md:w-[30rem] mb-4 p-2 border rounded" v-model="password" />
+            <div class="relative">
+              <input 
+                id="password1" 
+                :type="showPassword ? 'text' : 'password'" 
+                placeholder="Password" 
+                class="w-full md:w-[30rem] mb-4 p-2 border rounded pr-10" 
+                v-model="password" 
+              />
+              <button 
+                type="button"
+                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                @click="showPassword = !showPassword"
+              >
+                <i :class="[showPassword ? 'pi pi-eye-slash' : 'pi pi-eye']"></i>
+              </button>
+            </div>
 
             <div class="flex items-center justify-between mt-2 mb-8 gap-8">
               <div class="flex items-center">
@@ -100,5 +116,27 @@ button {
 
 button:hover {
   background-color: #075831; /* Darker green for hover effect */
+}
+
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+button.absolute {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+}
+
+button.absolute:hover {
+  background: none;
+}
+
+.pi {
+  font-size: 1.2rem;
 }
 </style>

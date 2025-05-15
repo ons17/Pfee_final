@@ -1,4 +1,5 @@
 import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 import App from './App.vue';
 import router from './router';
 
@@ -61,6 +62,7 @@ export const apolloClient = new ApolloClient({
 
 // App Creation
 const app = createApp(App);
+const pinia = createPinia();
 
 // Initialize the timer globally
 const { restoreTimerState } = useTimer();
@@ -78,6 +80,7 @@ app.use(PrimeVue, {
 });
 app.use(ToastService);
 app.use(ConfirmationService);
+app.use(pinia);
 
 // Provide Apollo Client
 app.provide(DefaultApolloClient, apolloClient);

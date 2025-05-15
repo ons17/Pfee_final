@@ -1,137 +1,1017 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generator="Robot 7.2.2 (Python 3.10.12 on linux)" generated="2025-05-14T11:38:06.343514" rpa="false" schemaversion="5">
-<suite id="s1" name="Login" source="/home/usera/Pfee_final/robot-tests/login.robot">
-<test id="s1-t1" name="Valid Login" line="19">
+<robot generator="Robot 7.0 (Python 3.10.12 on linux)" generated="2025-05-14T15:07:11.621997" rpa="false" schemaversion="5">
+<suite id="s1" name="Login" source="/home/userb/Pfee_final/robot-tests/tests/login">
+<suite id="s1-s1" name="Login Accessibility" source="/home/userb/Pfee_final/robot-tests/tests/login/login_accessibility.robot">
+<test id="s1-s1-t1" name="ARIA Labels Test" line="8">
 <kw name="Open Browser To Login Page" owner="common" type="SETUP">
-<kw name="New Browser" owner="Browser">
-<msg time="2025-05-14T11:38:06.524390" level="INFO">{"browser": "firefox", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/robot-tests/browser/traces/temp/c1c1be18-6369-4a4e-b497-f37fc3b118da"}</msg>
-<msg time="2025-05-14T11:38:06.531239" level="INFO">Starting Browser process /home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js using at 127.0.0.1:51715</msg>
-<msg time="2025-05-14T11:38:08.964369" level="INFO">Successfully created browser with options: {"browser":"firefox","headless":false,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/robot-tests/browser/traces/temp/c1c1be18-6369-4a4e-b497-f37fc3b118da"}</msg>
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.668534" level="FAIL">No keyword with name 'New Browser' found.</msg>
 <arg>browser=${BROWSER}</arg>
 <arg>headless=${HEADLESS}</arg>
-<tag>BrowserControl</tag>
-<tag>Setter</tag>
-<doc>Create a new playwright Browser with specified options.</doc>
-<status status="PASS" start="2025-05-14T11:38:06.523453" elapsed="2.441354"/>
+<status status="FAIL" start="2025-05-14T15:07:11.668476" elapsed="0.000144">No keyword with name 'New Browser' found.</status>
 </kw>
-<kw name="New Context" owner="Browser">
-<msg time="2025-05-14T11:38:08.969259" level="INFO">{
-  "acceptDownloads": true,
-  "bypassCSP": false,
-  "forcedColors": "none",
-  "ignoreHTTPSErrors": false,
-  "javaScriptEnabled": true,
-  "offline": false,
-  "reducedMotion": "no-preference",
-  "serviceWorkers": "allow",
-  "viewport": {
-    "height": 1080,
-    "width": 1920
-  }
-}</msg>
-<msg time="2025-05-14T11:38:09.442065" level="INFO">Successfully created context. </msg>
-<msg time="2025-05-14T11:38:09.442231" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'height': 1080, 'width': 1920}}</msg>
+<kw name="New Context">
 <arg>viewport={'width': 1920, 'height': 1080}</arg>
-<tag>BrowserControl</tag>
-<tag>Setter</tag>
-<doc>Create a new BrowserContext with specified options.</doc>
-<status status="PASS" start="2025-05-14T11:38:08.965279" elapsed="0.477126"/>
+<status status="NOT RUN" start="2025-05-14T15:07:11.670395" elapsed="0.000049"/>
 </kw>
-<kw name="New Page" owner="Browser">
-<msg time="2025-05-14T11:38:17.036949" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173</msg>
+<kw name="New Page">
 <arg>${SITE_URL}</arg>
-<tag>BrowserControl</tag>
-<tag>Setter</tag>
-<doc>Open a new Page.</doc>
-<status status="PASS" start="2025-05-14T11:38:09.442815" elapsed="7.594603"/>
+<status status="NOT RUN" start="2025-05-14T15:07:11.671934" elapsed="0.000040"/>
 </kw>
-<kw name="Wait For Elements State" owner="Browser">
-<msg time="2025-05-14T11:38:17.113110" level="INFO">Waited for Element with selector img[alt="Logo"] at state visible</msg>
-<arg>img[alt="Logo"]</arg>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
 <arg>visible</arg>
 <arg>timeout=${TIMEOUT}</arg>
-<tag>PageContent</tag>
-<tag>Wait</tag>
-<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
-<status status="PASS" start="2025-05-14T11:38:17.038014" elapsed="0.075445"/>
+<status status="NOT RUN" start="2025-05-14T15:07:11.674104" elapsed="0.000044"/>
 </kw>
-<doc>Opens browser and navigates to the login page
-Waits for the logo to be visible to ensure page is loaded</doc>
-<status status="PASS" start="2025-05-14T11:38:06.522514" elapsed="10.591230"/>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.666216" elapsed="0.008185">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.676763" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.676697" elapsed="0.000142">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Verifies ARIA labels are present</doc>
+<tag>accessibility</tag>
+<tag>aria</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.665149" elapsed="0.011861">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<doc>Accessibility Test Suite for Login Page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.653893" elapsed="0.024083"/>
+</suite>
+<suite id="s1-s2" name="Login Authentication" source="/home/userb/Pfee_final/robot-tests/tests/login/login_authentication.robot">
+<test id="s1-s2-t1" name="Valid Login" line="9">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.698139" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.698047" elapsed="0.000170">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.699281" elapsed="0.000028"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.700173" elapsed="0.000029"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.701351" elapsed="0.000039"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.695830" elapsed="0.005704">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.702844" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.702799" elapsed="0.000097">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Tests successful login with valid credentials</doc>
+<tag>authentication</tag>
+<tag>critical</tag>
+<tag>smoke</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.694811" elapsed="0.008189">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<test id="s1-s2-t2" name="Invalid Login - Wrong Password" line="16">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.705149" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.705113" elapsed="0.000086">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.706178" elapsed="0.000028"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.707046" elapsed="0.000027"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.708270" elapsed="0.000029"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.703914" elapsed="0.004524">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.710501" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.710429" elapsed="0.000157">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Tests login failure with incorrect password</doc>
+<tag>authentication</tag>
+<tag>negative</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.703336" elapsed="0.007436">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<test id="s1-s2-t3" name="Invalid Login - Wrong Email" line="23">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.713947" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.713883" elapsed="0.000144">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.715809" elapsed="0.000045"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.717575" elapsed="0.000048"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.719973" elapsed="0.000046"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.712225" elapsed="0.008026">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.722712" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.722646" elapsed="0.000148">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Tests login failure with incorrect email</doc>
+<tag>authentication</tag>
+<tag>negative</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.711377" elapsed="0.011578">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<test id="s1-s2-t4" name="Remember Me Login" line="30">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.727132" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.727073" elapsed="0.000136">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.729172" elapsed="0.000070"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.730931" elapsed="0.000070"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.733009" elapsed="0.000074"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.724794" elapsed="0.008541">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.735501" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.735424" elapsed="0.000165">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Tests login with remember me functionality</doc>
+<tag>authentication</tag>
+<tag>remember-me</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.723893" elapsed="0.011901">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<doc>Authentication Test Suite for Login Page
+Tests various login scenarios and authentication flows</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.679069" elapsed="0.057368"/>
+</suite>
+<suite id="s1-s3" name="Login Routing" source="/home/userb/Pfee_final/robot-tests/tests/login/login_routing.robot">
+<test id="s1-s3-t1" name="Successful Login Navigation" line="7">
+<kw name="Open Browser To Login Page" owner="common">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.745035" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.744967" elapsed="0.000160">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.747091" elapsed="0.000051"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.748838" elapsed="0.000043"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.751080" elapsed="0.000044"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.742802" elapsed="0.008553">No keyword with name 'New Browser' found.</status>
 </kw>
 <kw name="Login With Credentials" owner="common">
-<kw name="Fill Text" owner="Browser">
-<msg time="2025-05-14T11:38:17.115837" level="INFO">Fills the text 'onssbenamara3@gmail.com' in the given field.</msg>
-<arg>input#email1</arg>
-<arg>${email}</arg>
-<tag>PageContent</tag>
-<tag>Setter</tag>
-<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
-<status status="PASS" start="2025-05-14T11:38:17.114999" elapsed="0.053359"/>
-</kw>
-<kw name="Fill Text" owner="Browser">
-<msg time="2025-05-14T11:38:17.169878" level="INFO">Fills the text 'ons123' in the given field.</msg>
-<arg>.p-password input</arg>
-<arg>${password}</arg>
-<tag>PageContent</tag>
-<tag>Setter</tag>
-<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
-<status status="PASS" start="2025-05-14T11:38:17.168854" elapsed="0.038948"/>
-</kw>
-<kw name="Click" owner="Browser">
-<msg time="2025-05-14T11:38:17.209395" level="INFO">Clicks the element '"Sign In"'.</msg>
-<arg>"Sign In"</arg>
-<tag>PageContent</tag>
-<tag>Setter</tag>
-<doc>Simulates mouse click on the element found by ``selector``.</doc>
-<status status="PASS" start="2025-05-14T11:38:17.208290" elapsed="0.117542"/>
-</kw>
 <arg>${VALID_EMAIL}</arg>
 <arg>${VALID_PASSWORD}</arg>
 <doc>Performs login with given credentials</doc>
-<status status="PASS" start="2025-05-14T11:38:17.114245" elapsed="0.212102"/>
+<status status="NOT RUN" start="2025-05-14T15:07:11.751806" elapsed="0.000070"/>
 </kw>
-<kw name="Wait For Elements State" owner="Browser">
-<msg time="2025-05-14T11:38:18.119845" level="INFO">Waited for Element with selector text="Dashboard" at state visible</msg>
+<kw name="Submit Login Form" owner="login_keywords">
+<doc>Submits the login form</doc>
+<status status="NOT RUN" start="2025-05-14T15:07:11.752196" elapsed="0.000047"/>
+</kw>
+<kw name="Wait For Elements State">
 <arg>text="Dashboard"</arg>
 <arg>visible</arg>
 <arg>timeout=${TIMEOUT}</arg>
-<tag>PageContent</tag>
-<tag>Wait</tag>
-<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
-<status status="PASS" start="2025-05-14T11:38:17.327026" elapsed="0.793170"/>
+<status status="NOT RUN" start="2025-05-14T15:07:11.754883" elapsed="0.000047"/>
 </kw>
-<kw name="Close Browser" owner="Browser" type="TEARDOWN">
-<msg time="2025-05-14T11:38:19.772789" level="INFO">Closed browser</msg>
-<tag>BrowserControl</tag>
-<tag>Setter</tag>
-<doc>Closes the current browser.</doc>
-<status status="PASS" start="2025-05-14T11:38:18.120922" elapsed="1.652097"/>
+<kw name="Get Url">
+<arg>==</arg>
+<arg>${SITE_URL}/app</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.756599" elapsed="0.000045"/>
 </kw>
-<doc>Tests successful login with valid credentials</doc>
-<tag>critical</tag>
-<tag>login</tag>
-<tag>smoke</tag>
-<status status="PASS" start="2025-05-14T11:38:06.521291" elapsed="13.251941"/>
+<doc>Tests navigation to dashboard after successful login</doc>
+<tag>navigation</tag>
+<tag>routing</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.742086" elapsed="0.014921">No keyword with name 'New Browser' found.</status>
 </test>
-<doc>Login Test Suite
-A test suite for verifying the login functionality
-including manual login, Google login, and form validation.</doc>
-<status status="PASS" start="2025-05-14T11:38:06.344868" elapsed="13.436065"/>
+<test id="s1-s3-t2" name="Unauthorized Access Prevention" line="16">
+<kw name="Open Browser To Login Page" owner="common">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.760672" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.760598" elapsed="0.000163">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.762835" elapsed="0.000079"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.764615" elapsed="0.000070"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.766930" elapsed="0.000073"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.758452" elapsed="0.008803">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Go To">
+<arg>${SITE_URL}/app</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.768952" elapsed="0.000029"/>
+</kw>
+<kw name="Get Url">
+<arg>==</arg>
+<arg>${SITE_URL}/login</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.770615" elapsed="0.000049"/>
+</kw>
+<doc>Tests prevention of unauthorized dashboard access</doc>
+<tag>routing</tag>
+<tag>security</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.757571" elapsed="0.013497">No keyword with name 'New Browser' found.</status>
+</test>
+<doc>Navigation Test Suite
+Tests navigation and routing after login</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.737382" elapsed="0.034373"/>
+</suite>
+<suite id="s1-s4" name="Login Security" source="/home/userb/Pfee_final/robot-tests/tests/login/login_security.robot">
+<test id="s1-s4-t1" name="Password Masking Test" line="11">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.781524" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.781452" elapsed="0.000165">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.783400" elapsed="0.000047"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.785043" elapsed="0.000059"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.786793" elapsed="0.000051"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.779334" elapsed="0.007732">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.788952" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.788880" elapsed="0.000143">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Verifies password field is masked by default</doc>
+<tag>password</tag>
+<tag>security</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.778386" elapsed="0.010821">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<test id="s1-s4-t2" name="CSRF Protection Test" line="17">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.792798" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.792718" elapsed="0.000171">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.794558" elapsed="0.000043"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.796156" elapsed="0.000055"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.798177" elapsed="0.000049"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.790399" elapsed="0.008068">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.800966" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.800897" elapsed="0.000151">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Verifies CSRF token is present in requests</doc>
+<tag>csrf</tag>
+<tag>security</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.789709" elapsed="0.011533">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<test id="s1-s4-t3" name="Password Strength Validation" line="23">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.804204" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.804143" elapsed="0.000142">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.805938" elapsed="0.000038"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.807389" elapsed="0.000041"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.809316" elapsed="0.000052"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.802686" elapsed="0.006888">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.811886" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.811815" elapsed="0.000154">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Tests password strength requirements</doc>
+<tag>password-strength</tag>
+<tag>security</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.802013" elapsed="0.010291">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<test id="s1-s4-t4" name="Remember Me Test" line="34">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.816026" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.815956" elapsed="0.000156">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.817825" elapsed="0.000060"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.819264" elapsed="0.000046"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.820419" elapsed="0.000044"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.813824" elapsed="0.006809">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.822205" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.822124" elapsed="0.000171">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Tests remember me functionality</doc>
+<tag>remember-me</tag>
+<tag>security</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.813048" elapsed="0.009440">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<test id="s1-s4-t5" name="Login Failure Rate Limit" line="43">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.825892" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.825828" elapsed="0.000140">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.828552" elapsed="0.000065"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.830319" elapsed="0.000056"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.832529" elapsed="0.000061"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.823886" elapsed="0.008967">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.835268" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.835194" elapsed="0.000173">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Tests rate limiting on failed login attempts</doc>
+<tag>rate-limit</tag>
+<tag>security</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.823030" elapsed="0.012503">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<doc>Security Test Suite
+Tests security features of the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.772879" elapsed="0.063394"/>
+</suite>
+<suite id="s1-s5" name="Login Ui" source="/home/userb/Pfee_final/robot-tests/tests/login/login_ui.robot">
+<test id="s1-s5-t1" name="Verify All UI Elements Present" line="9">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.847576" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.847474" elapsed="0.000214">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.850016" elapsed="0.000079"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.851993" elapsed="0.000055"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.854520" elapsed="0.000063"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.845045" elapsed="0.009789">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.857540" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.857429" elapsed="0.000216">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Verifies all UI elements are present and visible</doc>
+<tag>smoke</tag>
+<tag>ui</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.844056" elapsed="0.013831">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<test id="s1-s5-t2" name="Test Password Visibility Toggle" line="14">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.862259" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.862154" elapsed="0.000221">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.864932" elapsed="0.000088"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.866540" elapsed="0.000076"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.868802" elapsed="0.000042"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.859594" elapsed="0.009472">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.871238" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.871163" elapsed="0.000161">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Tests password visibility toggle functionality</doc>
+<tag>password</tag>
+<tag>ui</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.858536" elapsed="0.012961">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<test id="s1-s5-t3" name="Test Remember Me Checkbox" line="20">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.874983" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.874929" elapsed="0.000127">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.876807" elapsed="0.000042"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.878372" elapsed="0.000039"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.880466" elapsed="0.000043"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.872887" elapsed="0.007816">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.882817" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.882757" elapsed="0.000129">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Tests remember me checkbox functionality</doc>
+<tag>checkbox</tag>
+<tag>ui</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.872052" elapsed="0.010980">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<test id="s1-s5-t4" name="Test Form Field Clearing" line="25">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.886275" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.886233" elapsed="0.000096">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.888056" elapsed="0.000046"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.889809" elapsed="0.000042"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.891978" elapsed="0.000041"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.884595" elapsed="0.007629">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.894484" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.894403" elapsed="0.000170">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Tests clearing form fields</doc>
+<tag>form</tag>
+<tag>ui</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.883546" elapsed="0.011229">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<doc>UI Test Suite for Login Page
+Tests the visual elements and interactions of the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.837473" elapsed="0.058057"/>
+</suite>
+<suite id="s1-s6" name="Login Validation" source="/home/userb/Pfee_final/robot-tests/tests/login/login_validation.robot">
+<test id="s1-s6-t1" name="Empty Form Submission" line="9">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.906277" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.906198" elapsed="0.000184">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.908241" elapsed="0.000046"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.909894" elapsed="0.000055"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.912385" elapsed="0.000067"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.903989" elapsed="0.008732">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.915380" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.915273" elapsed="0.000211">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Tests submission with empty form</doc>
+<tag>negative</tag>
+<tag>validation</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.903157" elapsed="0.012544">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<test id="s1-s6-t2" name="Invalid Email Format" line="15">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.919571" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.919514" elapsed="0.000131">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.921621" elapsed="0.000055"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.923225" elapsed="0.000035"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.924657" elapsed="0.000034"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.917171" elapsed="0.007675">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.926164" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.926114" elapsed="0.000109">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Tests email format validation</doc>
+<tag>email</tag>
+<tag>validation</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.916277" elapsed="0.010132">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<test id="s1-s6-t3" name="Multiple Failed Login Attempts" line="23">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.928623" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.928574" elapsed="0.000110">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.929706" elapsed="0.000031"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.930748" elapsed="0.000043"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.932863" elapsed="0.000054"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.927312" elapsed="0.005851">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.935453" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.935393" elapsed="0.000142">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Tests behavior with multiple failed attempts</doc>
+<tag>security</tag>
+<tag>validation</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.926758" elapsed="0.008927">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<test id="s1-s6-t4" name="Email Field Validation" line="33">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.939157" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.939105" elapsed="0.000123">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.941033" elapsed="0.000042"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.942379" elapsed="0.000040"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.944427" elapsed="0.000044"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.937036" elapsed="0.007644">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.946672" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.946612" elapsed="0.000141">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Tests email field validation</doc>
+<tag>email</tag>
+<tag>validation</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.936226" elapsed="0.010695">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<test id="s1-s6-t5" name="Password Field Validation" line="48">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.950092" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.950036" elapsed="0.000118">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.951292" elapsed="0.000041"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.952931" elapsed="0.000058"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.955213" elapsed="0.000068"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.948284" elapsed="0.007259">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.957897" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.957807" elapsed="0.000188">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Tests password field validation</doc>
+<tag>password</tag>
+<tag>validation</tag>
+<status status="FAIL" start="2025-05-14T15:07:11.947454" elapsed="0.010747">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<test id="s1-s6-t6" name="XSS Prevention Test" line="57">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.962367" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.962297" elapsed="0.000155">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.964464" elapsed="0.000052"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.966231" elapsed="0.000040"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.968516" elapsed="0.000044"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.959657" elapsed="0.009122">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.974751" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.974684" elapsed="0.000145">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Tests XSS prevention in input fields</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.958808" elapsed="0.016187">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<test id="s1-s6-t7" name="SQL Injection Prevention Test" line="64">
+<kw name="Open Browser To Login Page" owner="common" type="SETUP">
+<kw name="New Browser">
+<msg time="2025-05-14T15:07:11.978493" level="FAIL">No keyword with name 'New Browser' found.</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<status status="FAIL" start="2025-05-14T15:07:11.978406" elapsed="0.000162">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="New Context">
+<arg>viewport={'width': 1920, 'height': 1080}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.980489" elapsed="0.000067"/>
+</kw>
+<kw name="New Page">
+<arg>${SITE_URL}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.982221" elapsed="0.000065"/>
+</kw>
+<kw name="Wait For Elements State">
+<arg>${LOGO_IMG}</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<status status="NOT RUN" start="2025-05-14T15:07:11.984411" elapsed="0.000055"/>
+</kw>
+<doc>Opens browser and navigates to the login page</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.976291" elapsed="0.008415">No keyword with name 'New Browser' found.</status>
+</kw>
+<kw name="Close Browser" type="TEARDOWN">
+<msg time="2025-05-14T15:07:11.986702" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" start="2025-05-14T15:07:11.986635" elapsed="0.000151">No keyword with name 'Close Browser' found.</status>
+</kw>
+<doc>Tests SQL injection prevention</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.975515" elapsed="0.011428">Setup failed:
+No keyword with name 'New Browser' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<doc>Form Validation Test Suite
+Tests input validation and error handling</doc>
+<status status="FAIL" start="2025-05-14T15:07:11.896684" elapsed="0.090979"/>
+</suite>
+<status status="FAIL" start="2025-05-14T15:07:11.623220" elapsed="0.365871"/>
 </suite>
 <statistics>
 <total>
-<stat pass="1" fail="0" skip="0">All Tests</stat>
+<stat pass="0" fail="23" skip="0">All Tests</stat>
 </total>
 <tag>
-<stat pass="1" fail="0" skip="0">critical</stat>
-<stat pass="1" fail="0" skip="0">login</stat>
-<stat pass="1" fail="0" skip="0">smoke</stat>
+<stat pass="0" fail="1" skip="0">accessibility</stat>
+<stat pass="0" fail="1" skip="0">aria</stat>
+<stat pass="0" fail="4" skip="0">authentication</stat>
+<stat pass="0" fail="1" skip="0">checkbox</stat>
+<stat pass="0" fail="1" skip="0">critical</stat>
+<stat pass="0" fail="1" skip="0">csrf</stat>
+<stat pass="0" fail="2" skip="0">email</stat>
+<stat pass="0" fail="1" skip="0">form</stat>
+<stat pass="0" fail="1" skip="0">navigation</stat>
+<stat pass="0" fail="3" skip="0">negative</stat>
+<stat pass="0" fail="3" skip="0">password</stat>
+<stat pass="0" fail="1" skip="0">password-strength</stat>
+<stat pass="0" fail="1" skip="0">rate-limit</stat>
+<stat pass="0" fail="2" skip="0">remember-me</stat>
+<stat pass="0" fail="2" skip="0">routing</stat>
+<stat pass="0" fail="7" skip="0">security</stat>
+<stat pass="0" fail="2" skip="0">smoke</stat>
+<stat pass="0" fail="4" skip="0">ui</stat>
+<stat pass="0" fail="5" skip="0">validation</stat>
 </tag>
 <suite>
-<stat name="Login" id="s1" pass="1" fail="0" skip="0">Login</stat>
+<stat pass="0" fail="23" skip="0" id="s1" name="Login">Login</stat>
+<stat pass="0" fail="1" skip="0" id="s1-s1" name="Login Accessibility">Login.Login Accessibility</stat>
+<stat pass="0" fail="4" skip="0" id="s1-s2" name="Login Authentication">Login.Login Authentication</stat>
+<stat pass="0" fail="2" skip="0" id="s1-s3" name="Login Routing">Login.Login Routing</stat>
+<stat pass="0" fail="5" skip="0" id="s1-s4" name="Login Security">Login.Login Security</stat>
+<stat pass="0" fail="4" skip="0" id="s1-s5" name="Login Ui">Login.Login Ui</stat>
+<stat pass="0" fail="7" skip="0" id="s1-s6" name="Login Validation">Login.Login Validation</stat>
 </suite>
 </statistics>
 <errors>
+<msg time="2025-05-14T15:07:11.663113" level="ERROR">Error in file '/home/userb/Pfee_final/robot-tests/resources/common.resource' on line 3: Importing library 'Browser' failed: ModuleNotFoundError: No module named 'Browser'
+Traceback (most recent call last):
+  None
+PYTHONPATH:
+  /usr/local/bin
+  /usr/lib/python310.zip
+  /usr/lib/python3.10
+  /usr/lib/python3.10/lib-dynload
+  /usr/local/lib/python3.10/dist-packages
+  /usr/lib/python3/dist-packages</msg>
+<msg time="2025-05-14T15:07:11.690200" level="ERROR">Error in file '/home/userb/Pfee_final/robot-tests/resources/common.resource' on line 3: Importing library 'Browser' failed: ModuleNotFoundError: No module named 'Browser'
+Traceback (most recent call last):
+  None
+PYTHONPATH:
+  /usr/local/bin
+  /usr/lib/python310.zip
+  /usr/lib/python3.10
+  /usr/lib/python3.10/lib-dynload
+  /usr/local/lib/python3.10/dist-packages
+  /usr/lib/python3/dist-packages</msg>
+<msg time="2025-05-14T15:07:11.740067" level="ERROR">Error in file '/home/userb/Pfee_final/robot-tests/resources/common.resource' on line 3: Importing library 'Browser' failed: ModuleNotFoundError: No module named 'Browser'
+Traceback (most recent call last):
+  None
+PYTHONPATH:
+  /usr/local/bin
+  /usr/lib/python310.zip
+  /usr/lib/python3.10
+  /usr/lib/python3.10/lib-dynload
+  /usr/local/lib/python3.10/dist-packages
+  /usr/lib/python3/dist-packages</msg>
+<msg time="2025-05-14T15:07:11.776313" level="ERROR">Error in file '/home/userb/Pfee_final/robot-tests/resources/common.resource' on line 3: Importing library 'Browser' failed: ModuleNotFoundError: No module named 'Browser'
+Traceback (most recent call last):
+  None
+PYTHONPATH:
+  /usr/local/bin
+  /usr/lib/python310.zip
+  /usr/lib/python3.10
+  /usr/lib/python3.10/lib-dynload
+  /usr/local/lib/python3.10/dist-packages
+  /usr/lib/python3/dist-packages</msg>
+<msg time="2025-05-14T15:07:11.840897" level="ERROR">Error in file '/home/userb/Pfee_final/robot-tests/resources/common.resource' on line 3: Importing library 'Browser' failed: ModuleNotFoundError: No module named 'Browser'
+Traceback (most recent call last):
+  None
+PYTHONPATH:
+  /usr/local/bin
+  /usr/lib/python310.zip
+  /usr/lib/python3.10
+  /usr/lib/python3.10/lib-dynload
+  /usr/local/lib/python3.10/dist-packages
+  /usr/lib/python3/dist-packages</msg>
+<msg time="2025-05-14T15:07:11.900267" level="ERROR">Error in file '/home/userb/Pfee_final/robot-tests/resources/common.resource' on line 3: Importing library 'Browser' failed: ModuleNotFoundError: No module named 'Browser'
+Traceback (most recent call last):
+  None
+PYTHONPATH:
+  /usr/local/bin
+  /usr/lib/python310.zip
+  /usr/lib/python3.10
+  /usr/lib/python3.10/lib-dynload
+  /usr/local/lib/python3.10/dist-packages
+  /usr/lib/python3/dist-packages</msg>
 </errors>
 </robot>
