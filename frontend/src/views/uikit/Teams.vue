@@ -453,17 +453,16 @@ const handleRemoveProject = async (projectId) => {
 <template>
     <div class="p-4 team-page">
         <div class="card">
-            <Toolbar class="mb-4">
+            <!-- Only show Toolbar for admins -->
+            <Toolbar v-if="isAdmin" class="mb-4">
                 <template #start>
                     <Button
-                        v-if="isAdmin"
                         label="New"
                         icon="pi pi-plus"
                         class="mr-2"
                         @click="openNew"
                     />
                     <Button
-                        v-if="isAdmin"
                         label="Delete"
                         icon="pi pi-trash"
                         severity="danger"

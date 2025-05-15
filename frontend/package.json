@@ -7,10 +7,8 @@
         "preview": "vite preview",
         "lint": "eslint --fix . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
         "test": "jest"
-
     },
     "dependencies": {
-       
         "@apollo/client": "^3.13.5",
         "@fullcalendar/core": "^6.1.15",
         "@fullcalendar/daygrid": "^6.1.15",
@@ -30,6 +28,7 @@
         "graphql-tag": "^2.12.6",
         "lodash": "^4.17.21",
         "lodash-es": "^4.17.21",
+        "pinia": "^3.0.2",
         "primeicons": "^7.0.0",
         "primevue": "^4.3.3",
         "tailwindcss-primeui": "^0.5.1",

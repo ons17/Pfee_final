@@ -28,6 +28,9 @@ const removingTeam = ref(false);
 const dropdownKey = ref(0);
 const adminPassword = ref('');
 
+// Computed property to check if user is admin
+const userIsAdmin = computed(() => isAdmin());
+
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS }
 });
@@ -552,10 +555,17 @@ const getProgressClass = (percentage) => {
 <template>
     <div class="p-4 project-page">
         <div class="card">
-            <Toolbar class="mb-4">
+            <!-- Only show Toolbar for admins -->
+            <Toolbar v-if="userIsAdmin" class="mb-4">
                 <template #start>
                     <Button label="New" icon="pi pi-plus" class="mr-2" @click="openNew" />
-                    <Button label="Delete" icon="pi pi-trash" severity="danger" @click="confirmDeleteSelected" :disabled="!selectedProjects?.length" />
+                    <Button 
+                        label="Delete" 
+                        icon="pi pi-trash" 
+                        severity="danger" 
+                        @click="confirmDeleteSelected" 
+                        :disabled="!selectedProjects?.length" 
+                    />
                 </template>
                 <template #end>
                     <Button label="Export" icon="pi pi-upload" @click="exportCSV" />
@@ -600,7 +610,8 @@ const getProgressClass = (percentage) => {
                     </div>
                 </template>
 
-                <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+                <!-- Only show selection column to admins -->
+                <Column v-if="userIsAdmin" selectionMode="multiple" headerStyle="width: 3rem"></Column>
                 <Column field="nom_projet" header="Name" sortable></Column>
                 <Column field="description_projet" header="Description" sortable></Column>
                 <Column field="date_debut_projet" header="Start Date" sortable>
@@ -651,10 +662,21 @@ const getProgressClass = (percentage) => {
                         </div>
                     </template>
                 </Column>
-                <Column header="Actions" headerStyle="width: 10rem">
+                <!-- Only show Actions column to admins -->
+                <Column v-if="userIsAdmin" header="Actions" headerStyle="width: 10rem">
                     <template #body="{ data }">
-                        <Button icon="pi pi-pencil" class="mr-2" outlined @click="editProject(data)" />
-                        <Button icon="pi pi-trash" severity="danger" outlined @click="confirmDeleteProject(data)" />
+                        <Button 
+                            icon="pi pi-pencil" 
+                            class="mr-2" 
+                            outlined 
+                            @click="editProject(data)" 
+                        />
+                        <Button 
+                            icon="pi pi-trash" 
+                            severity="danger" 
+                            outlined 
+                            @click="confirmDeleteProject(data)" 
+                        />
                     </template>
                 </Column>
             </DataTable>
@@ -733,7 +755,7 @@ const getProgressClass = (percentage) => {
                 <div class="field">
                     <label class="font-bold block mb-2">Teams Management</label>
                     <div class="flex gap-2">
-                        <Dropdown :key="dropdownKey" v-model="selectedTeam" :options="availableTeams" optionLabel="nom_equipe" optionValue="idEquipe" placeholder="Select a team" class="w-full" :loading="teamsLoading" :disabled="teamsLoading" />
+                        <Dropdown :key="dropdownKey" v-model="selectedTeam" :options="availableTeams" optionLabel="nom_equipe" optionValue="idEquipe" placeholder="Select a team" class="w-full" :loading="teamsLoading" :disable></Dropdown>
                         <Button label="Add Team" icon="pi pi-plus" @click="handleAddTeam(selectedTeam)" :disabled="!selectedTeam || teamsLoading" :loading="addingTeam" />
                     </div>
                     <div class="mt-4">
