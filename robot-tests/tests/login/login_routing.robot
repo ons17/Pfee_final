@@ -17,5 +17,6 @@ Unauthorized Access Prevention
     [Documentation]    Tests prevention of unauthorized dashboard access
     [Tags]    security    routing
     Open Browser To Login Page
+    Clear Browser Storage
     Go To    ${SITE_URL}/app
     Get Url    ==    ${SITE_URL}/login    # Updated to match router config

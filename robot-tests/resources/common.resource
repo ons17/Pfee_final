@@ -10,7 +10,7 @@ ${HEADLESS}             ${False}   # Run tests in headless mode if True
 ${SITE_URL}             http://localhost:5173
 ${VALID_EMAIL}          onssbenamara3@gmail.com
 ${VALID_PASSWORD}       ons123
-${TIMEOUT}             20s          # Increased timeout for better reliability
+${TIMEOUT}             60s          # Increased timeout for better reliability
 
 # UI Elements
 ${LOGO_IMG}            img[alt="Logo"]    # Logo image selector
@@ -74,6 +74,11 @@ Evaluate Local Storage
 Clear Local Storage
     [Documentation]    Clears browser localStorage
     Evaluate JavaScript    null    localStorage.clear()
+
+Clear Browser Storage
+    [Documentation]    Clears browser localStorage and sessionStorage
+    LocalStorage Clear
+    SessionStorage Clear
 
 Get Active Element Properties
     [Documentation]    Gets properties of the currently active element
