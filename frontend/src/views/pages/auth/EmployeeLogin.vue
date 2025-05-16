@@ -42,7 +42,7 @@ const login = async () => {
       localStorage.setItem('password', password.value); // Save the password
 
       // Redirect to the dashboard
-      router.push({ name: 'Dashboard' });
+      router.push({ name: 'TimeTracking' });
     } else {
       errorMessage.value = message;
     }
