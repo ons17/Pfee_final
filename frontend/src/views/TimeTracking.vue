@@ -664,7 +664,7 @@ watch(description, (newDescription) => {
     </div>
 
     <!-- Tracking Controls -->
-    <div class="tracker-section">
+    <div class="tracker-section" data-test="tracker-section">
       <Card>
         <template #content>
           <div class="tracker-controls">
@@ -672,6 +672,7 @@ watch(description, (newDescription) => {
               <div class="dropdown-group">
                 <label class="control-label">Project</label>
                 <Dropdown
+                  data-test="project-dropdown"
                   v-model="selectedProject"
                   :options="projects"
                   optionLabel="name"
@@ -686,6 +687,7 @@ watch(description, (newDescription) => {
               <div class="dropdown-group">
                 <label class="control-label">Task</label>
                 <Dropdown
+                  data-test="task-dropdown"
                   v-model="selectedTask"
                   :options="filteredTasks"
                   optionLabel="title"
@@ -706,6 +708,7 @@ watch(description, (newDescription) => {
 
             <div class="timer-group">
               <Button
+                data-test="timer-button"
                 type="button"
                 :label="getTrackingButtonLabel()"
                 :icon="getTrackingButtonIcon()"
@@ -736,7 +739,7 @@ watch(description, (newDescription) => {
                 @click="exportToCSV" 
                 :disabled="timeEntries.length === 0"
               />
-              <div class="current-timer">
+              <div class="current-timer" data-test="timer-display">
                 <span class="timer-label">Current Session:</span>
                 {{ formatTime(timer) }}
                 <Tag 
@@ -782,7 +785,7 @@ watch(description, (newDescription) => {
     </div>
 
     <!-- Time Entries Table -->
-    <div class="time-entries">
+    <div class="time-entries" data-test="time-entries-table">
       <Card>
         <template #title>Time Entries</template>
         <template #content>
@@ -843,11 +846,11 @@ watch(description, (newDescription) => {
       </div>
       <div class="password-input">
         <label for="password">Enter Password:</label>
-        <InputText v-model="password" id="password" type="password" placeholder="Password" />
+        <InputText v-model="password" id="password" type="password" placeholder="Password" data-test="password-confirm-input" />
       </div>
       <template #footer>
         <Button label="Cancel" icon="pi pi-times" @click="showDeleteDialog = false" class="p-button-text" />
-        <Button label="Delete" icon="pi pi-check" @click="deleteEntry" class="p-button-danger" :loading="isDeletingLoading" autofocus />
+        <Button label="Delete" icon="pi pi-check" @click="deleteEntry" class="p-button-danger" :loading="isDeletingLoading" autofocus data-test="confirm-delete-button" />
       </template>
     </Dialog>
   </div>

@@ -11,7 +11,7 @@ Valid Employee Login
     [Tags]    authentication    smoke    critical
     Input Employee Credentials    ${EMPLOYEE_EMAIL}    ${EMPLOYEE_PASSWORD}
     Submit Employee Login Form
-    Wait For Elements State    text="Dashboard"    visible    timeout=${TIMEOUT}
+    Wait For Elements State    xpath=//h1[contains(text(),"Time Tracking")]    visible    timeout=${TIMEOUT}
 
 Invalid Employee Login - Wrong Password
     [Documentation]    Tests employee login failure with incorrect password
@@ -33,7 +33,7 @@ Remember Me Employee Login
     Input Employee Credentials    ${EMPLOYEE_EMAIL}    ${EMPLOYEE_PASSWORD}
     Check Checkbox    ${REMEMBER_ME_CB}
     Submit Employee Login Form
-    Wait For Elements State    text="Dashboard"    visible    timeout=${TIMEOUT}
+    Wait For Elements State    xpath=//h1[contains(text(),"Time Tracking")]    visible    timeout=${TIMEOUT}
     
 
     

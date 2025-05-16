@@ -11,8 +11,8 @@ Successful Employee Login Navigation
     [Tags]    routing    navigation
     Input Employee Credentials    ${EMPLOYEE_EMAIL}    ${EMPLOYEE_PASSWORD}
     Submit Employee Login Form
-    Wait For Elements State    text="Dashboard"    visible    timeout=${TIMEOUT}
-    Get Url    ==    ${SITE_URL}/app    # Updated based on router config for employees
+    Wait For Elements State    xpath=//h1[contains(text(),"Time Tracking")]    visible    timeout=${TIMEOUT}
+    Get Url    ==    ${SITE_URL}/app/TimeTracking    # Updated based on router config for employees
 
 Unauthorized Employee Access Prevention
     [Documentation]    Tests prevention of unauthorized employee dashboard access

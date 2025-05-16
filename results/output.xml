@@ -1,47 +1,955 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generator="Robot 7.2.2 (Python 3.10.12 on linux)" generated="2025-05-16T08:09:34.738246" rpa="false" schemaversion="5">
-<suite id="s1" name="Employee Login" source="/home/usera/Pfee_final/robot-tests/tests/employee_login">
-<suite id="s1-s1" name="Employee Login Accessibility" source="/home/usera/Pfee_final/robot-tests/tests/employee_login/employee_login_accessibility.robot">
-<test id="s1-s1-t1" name="Verify ARIA Labels" line="8">
-<kw name="Open Browser To Employee Login Page" owner="employee_login_keywords" type="SETUP">
+<robot generator="Robot 7.2.2 (Python 3.10.12 on linux)" generated="2025-05-16T13:50:51.556778" rpa="false" schemaversion="5">
+<suite id="s1" name="Time Tracking" source="/home/usera/Pfee_final/robot-tests/tests/time_tracking/time_tracking.robot">
+<test id="s1-t1" name="Start And Stop Time Tracking" line="74">
+<kw name="Open Employee Time Tracking Page" type="SETUP">
 <kw name="New Browser" owner="Browser">
-<msg time="2025-05-16T08:09:35.590417" level="INFO">{"browser": "chromium", "headless": false, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/results/browser/traces/temp/1853ae02-da9a-4515-a0b4-57fd2179af6b"}</msg>
-<msg time="2025-05-16T08:09:35.597756" level="INFO">Starting Browser process /home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js using at 127.0.0.1:56111</msg>
+<msg time="2025-05-16T13:50:51.788162" level="INFO">{"browser": "chromium", "headless": true, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/results/browser/traces/temp/e7378914-c084-4119-8410-4c3a014aca2c"}</msg>
+<msg time="2025-05-16T13:50:51.793321" level="INFO">Starting Browser process /home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js using at 127.0.0.1:46965</msg>
+<msg time="2025-05-16T13:50:52.737361" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":true,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/results/browser/traces/temp/e7378914-c084-4119-8410-4c3a014aca2c"}</msg>
 <arg>browser=${BROWSER}</arg>
 <arg>headless=${HEADLESS}</arg>
 <tag>BrowserControl</tag>
 <tag>Setter</tag>
 <doc>Create a new playwright Browser with specified options.</doc>
-<status status="FAIL" start="2025-05-16T08:09:35.588540" elapsed="1.760518">Execution terminated by signal</status>
-</kw>
-<kw name="New Context" owner="Browser">
-<arg>viewport={'width': 1920, 'height': 1080}</arg>
-<tag>BrowserControl</tag>
-<tag>Setter</tag>
-<doc>Create a new BrowserContext with specified options.</doc>
-<status status="NOT RUN" start="2025-05-16T08:09:37.349556" elapsed="0.000131"/>
+<status status="PASS" start="2025-05-16T13:50:51.786916" elapsed="0.950721"/>
 </kw>
 <kw name="New Page" owner="Browser">
-<arg>${EMPLOYEE_LOGIN_URL}</arg>
+<msg time="2025-05-16T13:50:55.212031" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173/EmployeeLogin</msg>
+<msg time="2025-05-16T13:50:55.212214" level="INFO">No context was open. New context was automatically opened when this page is created.</msg>
+<arg>${SITE_URL}/EmployeeLogin</arg>
 <tag>BrowserControl</tag>
 <tag>Setter</tag>
 <doc>Open a new Page.</doc>
-<status status="NOT RUN" start="2025-05-16T08:09:37.349872" elapsed="0.000083"/>
+<status status="PASS" start="2025-05-16T13:50:52.737985" elapsed="2.474552"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-16T13:50:55.214429" level="INFO">Fills the text 'zeidimohamedtaher13@gmail.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>${EMPLOYEE_EMAIL}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:50:55.213025" elapsed="0.051767"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-16T13:50:55.265978" level="INFO">Fills the text 'mohamed' in the given field.</msg>
+<arg>input#password1</arg>
+<arg>${EMPLOYEE_PASSWORD}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:50:55.265165" elapsed="0.014609"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-16T13:50:55.280717" level="INFO">Clicks the element 'button:has-text("Sign In")'.</msg>
+<arg>button:has-text("Sign In")</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:50:55.280094" elapsed="0.075399"/>
 </kw>
 <kw name="Wait For Elements State" owner="Browser">
-<arg>${LOGO_IMG}</arg>
+<msg time="2025-05-16T13:50:55.615422" level="INFO">Waited for Element with selector xpath=//h1[contains(text(),"Time Tracking")] at state visible</msg>
+<arg>xpath=//h1[contains(text(),"Time Tracking")]</arg>
 <arg>visible</arg>
 <arg>timeout=${TIMEOUT}</arg>
 <tag>PageContent</tag>
 <tag>Wait</tag>
 <doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
-<status status="NOT RUN" start="2025-05-16T08:09:37.350138" elapsed="0.000080"/>
+<status status="PASS" start="2025-05-16T13:50:55.355894" elapsed="0.259812"/>
 </kw>
-<doc>Opens browser and navigates to employee login page</doc>
-<status status="FAIL" start="2025-05-16T08:09:35.586678" elapsed="1.763719">Execution terminated by signal</status>
+<doc>Opens browser and navigates to the time tracking page</doc>
+<status status="PASS" start="2025-05-16T13:50:51.785808" elapsed="3.830169"/>
+</kw>
+<kw name="Select Project And Task">
+<kw name="Click" owner="Browser">
+<msg time="2025-05-16T13:50:55.617640" level="INFO">Clicks the element '[data-test="project-dropdown"]'.</msg>
+<arg>[data-test="project-dropdown"]</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:50:55.616990" elapsed="0.386827"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-16T13:50:56.004878" level="INFO">Clicks the element ':text("rrrrrrrrrrrrrrrrrrrr")'.</msg>
+<msg time="2025-05-16T13:50:56.201470" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="browser/screenshot/fail-screenshot-1.png" target="_blank"&gt;&lt;img src="browser/screenshot/fail-screenshot-1.png" width="800px"/&gt;&lt;/a&gt;</msg>
+<msg time="2025-05-16T13:50:56.201678" level="INFO">See also file:///home/usera/Pfee_final/results/playwright-log.txt for additional details.</msg>
+<msg time="2025-05-16T13:50:56.202464" level="FAIL">Error: locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) &lt;span class="p-select-option-label" data-pc-section="optionlabel"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')
+</msg>
+<arg>:text("${project_name}")</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="FAIL" start="2025-05-16T13:50:56.004165" elapsed="0.200462">Error: locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) &lt;span class="p-select-option-label" data-pc-section="optionlabel"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')
+</status>
+</kw>
+<kw name="Click" owner="Browser">
+<arg>[data-test="task-dropdown"]</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="NOT RUN" start="2025-05-16T13:50:56.205026" elapsed="0.000143"/>
+</kw>
+<kw name="Click" owner="Browser">
+<arg>:text("${task_name}")</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="NOT RUN" start="2025-05-16T13:50:56.205388" elapsed="0.000109"/>
+</kw>
+<arg>rrrrrrrrrrrrrrrrrrrr</arg>
+<arg>rrrrrr</arg>
+<doc>Selects a project and task from dropdowns</doc>
+<status status="FAIL" start="2025-05-16T13:50:55.616426" elapsed="0.589316">Error: locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) &lt;span class="p-select-option-label" data-pc-section="optionlabel"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')
+</status>
+</kw>
+<kw name="Start Time Tracking">
+<doc>Starts time tracking with given description</doc>
+<status status="NOT RUN" start="2025-05-16T13:50:56.206161" elapsed="0.000116"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>3s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-05-16T13:50:56.206540" elapsed="0.000122"/>
+</kw>
+<kw name="Stop Time Tracking">
+<doc>Stops current time tracking session</doc>
+<status status="NOT RUN" start="2025-05-16T13:50:56.207107" elapsed="0.000149"/>
+</kw>
+<kw name="Verify Time Entry In Table">
+<arg>${DESCRIPTION}</arg>
+<arg>rrrrrrrrrrrrrrrrrrrr</arg>
+<arg>rrrrrr</arg>
+<doc>Verifies time entry appears in the table with correct details</doc>
+<status status="NOT RUN" start="2025-05-16T13:50:56.207674" elapsed="0.000154"/>
 </kw>
 <kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-16T13:50:56.274915" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-16T13:50:56.208510" elapsed="0.066683"/>
+</kw>
+<doc>Tests basic time tracking functionality</doc>
+<tag>smoke</tag>
+<tag>time_tracking</tag>
+<status status="FAIL" start="2025-05-16T13:50:51.784516" elapsed="4.490912">Error: locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) &lt;span class="p-select-option-label" data-pc-section="optionlabel"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')
+</status>
+</test>
+<test id="s1-t2" name="Pause And Resume Time Tracking" line="83">
+<kw name="Open Employee Time Tracking Page" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-16T13:50:56.290412" level="INFO">{"browser": "chromium", "headless": true, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/results/browser/traces/temp/16f41461-bbbc-45a5-8ecb-d0eace1db003"}</msg>
+<msg time="2025-05-16T13:50:56.386089" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":true,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/results/browser/traces/temp/16f41461-bbbc-45a5-8ecb-d0eace1db003"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-16T13:50:56.289271" elapsed="0.097150"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-16T13:50:58.656569" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173/EmployeeLogin</msg>
+<msg time="2025-05-16T13:50:58.656720" level="INFO">No context was open. New context was automatically opened when this page is created.</msg>
+<arg>${SITE_URL}/EmployeeLogin</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-16T13:50:56.386854" elapsed="2.270099"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-16T13:50:58.658144" level="INFO">Fills the text 'zeidimohamedtaher13@gmail.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>${EMPLOYEE_EMAIL}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:50:58.657306" elapsed="0.037495"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-16T13:50:58.696277" level="INFO">Fills the text 'mohamed' in the given field.</msg>
+<arg>input#password1</arg>
+<arg>${EMPLOYEE_PASSWORD}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:50:58.695249" elapsed="0.012404"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-16T13:50:58.708991" level="INFO">Clicks the element 'button:has-text("Sign In")'.</msg>
+<arg>button:has-text("Sign In")</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:50:58.708109" elapsed="0.062369"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-16T13:50:58.981397" level="INFO">Waited for Element with selector xpath=//h1[contains(text(),"Time Tracking")] at state visible</msg>
+<arg>xpath=//h1[contains(text(),"Time Tracking")]</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-16T13:50:58.770930" elapsed="0.210840"/>
+</kw>
+<doc>Opens browser and navigates to the time tracking page</doc>
+<status status="PASS" start="2025-05-16T13:50:56.288431" elapsed="2.693630"/>
+</kw>
+<kw name="Select Project And Task">
+<kw name="Click" owner="Browser">
+<msg time="2025-05-16T13:50:58.984587" level="INFO">Clicks the element '[data-test="project-dropdown"]'.</msg>
+<arg>[data-test="project-dropdown"]</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:50:58.983555" elapsed="0.344721"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-16T13:50:59.329332" level="INFO">Clicks the element ':text("rrrrrrrrrrrrrrrrrrrr")'.</msg>
+<msg time="2025-05-16T13:50:59.505297" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="browser/screenshot/fail-screenshot-2.png" target="_blank"&gt;&lt;img src="browser/screenshot/fail-screenshot-2.png" width="800px"/&gt;&lt;/a&gt;</msg>
+<msg time="2025-05-16T13:50:59.505446" level="INFO">See also file:///home/usera/Pfee_final/results/playwright-log.txt for additional details.</msg>
+<msg time="2025-05-16T13:50:59.505617" level="FAIL">Error: locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) &lt;span class="p-select-option-label" data-pc-section="optionlabel"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')
+</msg>
+<arg>:text("${project_name}")</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="FAIL" start="2025-05-16T13:50:59.328588" elapsed="0.177346">Error: locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) &lt;span class="p-select-option-label" data-pc-section="optionlabel"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')
+</status>
+</kw>
+<kw name="Click" owner="Browser">
+<arg>[data-test="task-dropdown"]</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="NOT RUN" start="2025-05-16T13:50:59.506206" elapsed="0.000099"/>
+</kw>
+<kw name="Click" owner="Browser">
+<arg>:text("${task_name}")</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="NOT RUN" start="2025-05-16T13:50:59.506456" elapsed="0.000073"/>
+</kw>
+<arg>rrrrrrrrrrrrrrrrrrrr</arg>
+<arg>rrrrrr</arg>
+<doc>Selects a project and task from dropdowns</doc>
+<status status="FAIL" start="2025-05-16T13:50:58.982615" elapsed="0.524141">Error: locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) &lt;span class="p-select-option-label" data-pc-section="optionlabel"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')
+</status>
+</kw>
+<kw name="Start Time Tracking">
+<arg>Pause test entry</arg>
+<doc>Starts time tracking with given description</doc>
+<status status="NOT RUN" start="2025-05-16T13:50:59.507147" elapsed="0.000094"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-05-16T13:50:59.507490" elapsed="0.000081"/>
+</kw>
+<kw name="Pause Time Tracking">
+<doc>Pauses current time tracking session</doc>
+<status status="NOT RUN" start="2025-05-16T13:50:59.507814" elapsed="0.000112"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-05-16T13:50:59.508139" elapsed="0.000110"/>
+</kw>
+<kw name="Resume Time Tracking">
+<doc>Resumes paused time tracking session</doc>
+<status status="NOT RUN" start="2025-05-16T13:50:59.508474" elapsed="0.000077"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-05-16T13:50:59.508747" elapsed="0.000096"/>
+</kw>
+<kw name="Stop Time Tracking">
+<doc>Stops current time tracking session</doc>
+<status status="NOT RUN" start="2025-05-16T13:50:59.509120" elapsed="0.000082"/>
+</kw>
+<kw name="Verify Time Entry In Table">
+<arg>Pause test entry</arg>
+<arg>rrrrrrrrrrrrrrrrrrrr</arg>
+<arg>rrrrrr</arg>
+<doc>Verifies time entry appears in the table with correct details</doc>
+<status status="NOT RUN" start="2025-05-16T13:50:59.509462" elapsed="0.000085"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-16T13:50:59.558311" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-16T13:50:59.509928" elapsed="0.048733"/>
+</kw>
+<doc>Tests pausing and resuming time tracking</doc>
+<tag>pause_resume</tag>
+<tag>time_tracking</tag>
+<status status="FAIL" start="2025-05-16T13:50:56.283653" elapsed="3.275309">Error: locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) &lt;span class="p-select-option-label" data-pc-section="optionlabel"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')
+</status>
+</test>
+<test id="s1-t3" name="Delete Time Entry" line="96">
+<kw name="Open Employee Time Tracking Page" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-16T13:50:59.578007" level="INFO">{"browser": "chromium", "headless": true, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/results/browser/traces/temp/acd9f51c-803d-4ef8-abb3-43d6661b883c"}</msg>
+<msg time="2025-05-16T13:50:59.676246" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":true,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/results/browser/traces/temp/acd9f51c-803d-4ef8-abb3-43d6661b883c"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-16T13:50:59.576387" elapsed="0.100242"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-16T13:51:02.446334" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173/EmployeeLogin</msg>
+<msg time="2025-05-16T13:51:02.446511" level="INFO">No context was open. New context was automatically opened when this page is created.</msg>
+<arg>${SITE_URL}/EmployeeLogin</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-16T13:50:59.677108" elapsed="2.769764"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-16T13:51:02.448358" level="INFO">Fills the text 'zeidimohamedtaher13@gmail.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>${EMPLOYEE_EMAIL}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:02.447298" elapsed="0.035993"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-16T13:51:02.484746" level="INFO">Fills the text 'mohamed' in the given field.</msg>
+<arg>input#password1</arg>
+<arg>${EMPLOYEE_PASSWORD}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:02.483740" elapsed="0.013414"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-16T13:51:02.498754" level="INFO">Clicks the element 'button:has-text("Sign In")'.</msg>
+<arg>button:has-text("Sign In")</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:02.497626" elapsed="0.067063"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-16T13:51:02.797402" level="INFO">Waited for Element with selector xpath=//h1[contains(text(),"Time Tracking")] at state visible</msg>
+<arg>xpath=//h1[contains(text(),"Time Tracking")]</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-16T13:51:02.565130" elapsed="0.232645"/>
+</kw>
+<doc>Opens browser and navigates to the time tracking page</doc>
+<status status="PASS" start="2025-05-16T13:50:59.575606" elapsed="3.222471"/>
+</kw>
+<kw name="Select Project And Task">
+<kw name="Click" owner="Browser">
+<msg time="2025-05-16T13:51:02.800613" level="INFO">Clicks the element '[data-test="project-dropdown"]'.</msg>
+<arg>[data-test="project-dropdown"]</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:02.799569" elapsed="0.326355"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-16T13:51:03.127011" level="INFO">Clicks the element ':text("rrrrrrrrrrrrrrrrrrrr")'.</msg>
+<msg time="2025-05-16T13:51:03.322306" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="browser/screenshot/fail-screenshot-3.png" target="_blank"&gt;&lt;img src="browser/screenshot/fail-screenshot-3.png" width="800px"/&gt;&lt;/a&gt;</msg>
+<msg time="2025-05-16T13:51:03.322440" level="INFO">See also file:///home/usera/Pfee_final/results/playwright-log.txt for additional details.</msg>
+<msg time="2025-05-16T13:51:03.322660" level="FAIL">Error: locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) &lt;span class="p-select-option-label" data-pc-section="optionlabel"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')
+</msg>
+<arg>:text("${project_name}")</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="FAIL" start="2025-05-16T13:51:03.126263" elapsed="0.196715">Error: locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) &lt;span class="p-select-option-label" data-pc-section="optionlabel"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')
+</status>
+</kw>
+<kw name="Click" owner="Browser">
+<arg>[data-test="task-dropdown"]</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="NOT RUN" start="2025-05-16T13:51:03.323295" elapsed="0.000151"/>
+</kw>
+<kw name="Click" owner="Browser">
+<arg>:text("${task_name}")</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="NOT RUN" start="2025-05-16T13:51:03.323617" elapsed="0.000094"/>
+</kw>
+<arg>rrrrrrrrrrrrrrrrrrrr</arg>
+<arg>rrrrrr</arg>
+<doc>Selects a project and task from dropdowns</doc>
+<status status="FAIL" start="2025-05-16T13:51:02.798625" elapsed="0.525271">Error: locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) &lt;span class="p-select-option-label" data-pc-section="optionlabel"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')
+</status>
+</kw>
+<kw name="Start Time Tracking">
+<arg>Entry to delete</arg>
+<doc>Starts time tracking with given description</doc>
+<status status="NOT RUN" start="2025-05-16T13:51:03.324211" elapsed="0.000115"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-05-16T13:51:03.324575" elapsed="0.000083"/>
+</kw>
+<kw name="Stop Time Tracking">
+<doc>Stops current time tracking session</doc>
+<status status="NOT RUN" start="2025-05-16T13:51:03.324926" elapsed="0.000083"/>
+</kw>
+<kw name="Delete Time Entry">
+<arg>Entry to delete</arg>
+<doc>Deletes a time entry with confirmation</doc>
+<status status="NOT RUN" start="2025-05-16T13:51:03.325295" elapsed="0.000116"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-16T13:51:03.378883" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-16T13:51:03.325896" elapsed="0.053255"/>
+</kw>
+<doc>Tests deleting a time entry</doc>
+<tag>delete</tag>
+<tag>time_tracking</tag>
+<status status="FAIL" start="2025-05-16T13:50:59.570658" elapsed="3.808704">Error: locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) &lt;span class="p-select-option-label" data-pc-section="optionlabel"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')
+</status>
+</test>
+<test id="s1-t4" name="Invalid Delete Password" line="105">
+<kw name="Open Employee Time Tracking Page" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-16T13:51:03.391922" level="INFO">{"browser": "chromium", "headless": true, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/results/browser/traces/temp/cfb40989-c261-47fc-9067-6c91fb67afbd"}</msg>
+<msg time="2025-05-16T13:51:03.491100" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":true,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/results/browser/traces/temp/cfb40989-c261-47fc-9067-6c91fb67afbd"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-16T13:51:03.390889" elapsed="0.100531"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-16T13:51:05.601764" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173/EmployeeLogin</msg>
+<msg time="2025-05-16T13:51:05.601948" level="INFO">No context was open. New context was automatically opened when this page is created.</msg>
+<arg>${SITE_URL}/EmployeeLogin</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-16T13:51:03.491815" elapsed="2.110441"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-16T13:51:05.603623" level="INFO">Fills the text 'zeidimohamedtaher13@gmail.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>${EMPLOYEE_EMAIL}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:05.602639" elapsed="0.045993"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-16T13:51:05.649648" level="INFO">Fills the text 'mohamed' in the given field.</msg>
+<arg>input#password1</arg>
+<arg>${EMPLOYEE_PASSWORD}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:05.648970" elapsed="0.012252"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-16T13:51:05.662464" level="INFO">Clicks the element 'button:has-text("Sign In")'.</msg>
+<arg>button:has-text("Sign In")</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:05.661618" elapsed="0.062706"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-16T13:51:05.962143" level="INFO">Waited for Element with selector xpath=//h1[contains(text(),"Time Tracking")] at state visible</msg>
+<arg>xpath=//h1[contains(text(),"Time Tracking")]</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-16T13:51:05.724824" elapsed="0.237664"/>
+</kw>
+<doc>Opens browser and navigates to the time tracking page</doc>
+<status status="PASS" start="2025-05-16T13:51:03.390240" elapsed="2.572602"/>
+</kw>
+<kw name="Select Project And Task">
+<kw name="Click" owner="Browser">
+<msg time="2025-05-16T13:51:05.965247" level="INFO">Clicks the element '[data-test="project-dropdown"]'.</msg>
+<arg>[data-test="project-dropdown"]</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:05.964237" elapsed="0.443276"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-16T13:51:06.408621" level="INFO">Clicks the element ':text("rrrrrrrrrrrrrrrrrrrr")'.</msg>
+<msg time="2025-05-16T13:51:06.636835" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="browser/screenshot/fail-screenshot-4.png" target="_blank"&gt;&lt;img src="browser/screenshot/fail-screenshot-4.png" width="800px"/&gt;&lt;/a&gt;</msg>
+<msg time="2025-05-16T13:51:06.637039" level="INFO">See also file:///home/usera/Pfee_final/results/playwright-log.txt for additional details.</msg>
+<msg time="2025-05-16T13:51:06.637217" level="FAIL">Error: locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) &lt;span class="p-select-option-label" data-pc-section="optionlabel"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')
+</msg>
+<arg>:text("${project_name}")</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="FAIL" start="2025-05-16T13:51:06.407841" elapsed="0.229680">Error: locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) &lt;span class="p-select-option-label" data-pc-section="optionlabel"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')
+</status>
+</kw>
+<kw name="Click" owner="Browser">
+<arg>[data-test="task-dropdown"]</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="NOT RUN" start="2025-05-16T13:51:06.637791" elapsed="0.000148"/>
+</kw>
+<kw name="Click" owner="Browser">
+<arg>:text("${task_name}")</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="NOT RUN" start="2025-05-16T13:51:06.638090" elapsed="0.000074"/>
+</kw>
+<arg>rrrrrrrrrrrrrrrrrrrr</arg>
+<arg>rrrrrr</arg>
+<doc>Selects a project and task from dropdowns</doc>
+<status status="FAIL" start="2025-05-16T13:51:05.963374" elapsed="0.674949">Error: locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) &lt;span class="p-select-option-label" data-pc-section="optionlabel"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')
+</status>
+</kw>
+<kw name="Start Time Tracking">
+<arg>Invalid delete test</arg>
+<doc>Starts time tracking with given description</doc>
+<status status="NOT RUN" start="2025-05-16T13:51:06.638708" elapsed="0.000111"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-05-16T13:51:06.639062" elapsed="0.000083"/>
+</kw>
+<kw name="Stop Time Tracking">
+<doc>Stops current time tracking session</doc>
+<status status="NOT RUN" start="2025-05-16T13:51:06.639419" elapsed="0.000080"/>
+</kw>
+<kw name="Click" owner="Browser">
+<arg>xpath=//td[contains(text(),'Invalid delete test')]/..//button[contains(@class,'p-button-danger')]</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="NOT RUN" start="2025-05-16T13:51:06.639746" elapsed="0.000075"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<arg>[data-test="password-confirm-input"]</arg>
+<arg>visible</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="NOT RUN" start="2025-05-16T13:51:06.640171" elapsed="0.000076"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<arg>[data-test="password-confirm-input"]</arg>
+<arg>${INVALID_PASSWORD}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="NOT RUN" start="2025-05-16T13:51:06.640559" elapsed="0.000075"/>
+</kw>
+<kw name="Click" owner="Browser">
+<arg>[data-test="confirm-delete-button"]</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="NOT RUN" start="2025-05-16T13:51:06.640891" elapsed="0.000077"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<arg>.p-toast-message-error</arg>
+<arg>visible</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="NOT RUN" start="2025-05-16T13:51:06.641237" elapsed="0.000080"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-16T13:51:06.694960" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-16T13:51:06.641729" elapsed="0.053574"/>
+</kw>
+<doc>Tests delete validation with invalid password</doc>
+<tag>delete</tag>
+<tag>negative</tag>
+<tag>time_tracking</tag>
+<status status="FAIL" start="2025-05-16T13:51:03.387064" elapsed="3.308498">Error: locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) &lt;span data-v-ab55552d="" class="project-name"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) &lt;span class="p-select-option-label" data-pc-section="optionlabel"&gt;rrrrrrrrrrrrrrrrrrrr&lt;/span&gt; aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')
+</status>
+</test>
+<test id="s1-t5" name="Change Time Period Filter" line="118">
+<kw name="Open Employee Time Tracking Page" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-16T13:51:06.710366" level="INFO">{"browser": "chromium", "headless": true, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/results/browser/traces/temp/83245cc9-9885-48e0-a764-73e78ac1b347"}</msg>
+<msg time="2025-05-16T13:51:06.819246" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":true,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/results/browser/traces/temp/83245cc9-9885-48e0-a764-73e78ac1b347"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-16T13:51:06.708860" elapsed="0.110834"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-16T13:51:09.373428" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173/EmployeeLogin</msg>
+<msg time="2025-05-16T13:51:09.373590" level="INFO">No context was open. New context was automatically opened when this page is created.</msg>
+<arg>${SITE_URL}/EmployeeLogin</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-16T13:51:06.820123" elapsed="2.553764"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-16T13:51:09.375097" level="INFO">Fills the text 'zeidimohamedtaher13@gmail.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>${EMPLOYEE_EMAIL}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:09.374176" elapsed="0.059440"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-16T13:51:09.435029" level="INFO">Fills the text 'mohamed' in the given field.</msg>
+<arg>input#password1</arg>
+<arg>${EMPLOYEE_PASSWORD}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:09.434051" elapsed="0.016568"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-16T13:51:09.451707" level="INFO">Clicks the element 'button:has-text("Sign In")'.</msg>
+<arg>button:has-text("Sign In")</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:09.450966" elapsed="0.080558"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-16T13:51:09.944565" level="INFO">Waited for Element with selector xpath=//h1[contains(text(),"Time Tracking")] at state visible</msg>
+<arg>xpath=//h1[contains(text(),"Time Tracking")]</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-16T13:51:09.532041" elapsed="0.412935"/>
+</kw>
+<doc>Opens browser and navigates to the time tracking page</doc>
+<status status="PASS" start="2025-05-16T13:51:06.708030" elapsed="3.237260"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-16T13:51:09.949028" level="INFO">Clicks the element '.filter-dropdown'.</msg>
+<arg>.filter-dropdown</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:09.947924" elapsed="0.479665"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-16T13:51:10.428944" level="INFO">Clicks the element ':text("Day")'.</msg>
+<arg>:text("Day")</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:10.428015" elapsed="0.389989"/>
+</kw>
+<kw name="Get Text" owner="Browser">
+<msg time="2025-05-16T13:51:10.877036" level="INFO">Text: 'May 16, 2025'</msg>
+<arg>.period-range</arg>
+<arg>matches</arg>
+<arg>\\w+ \\d{2}, \\d{4}</arg>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns text attribute of the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:10.818580" elapsed="0.058715"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-16T13:51:10.878706" level="INFO">Clicks the element '.filter-dropdown'.</msg>
+<arg>.filter-dropdown</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:10.877796" elapsed="0.071463"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-16T13:51:10.950445" level="INFO">Clicks the element ':text("Week")'.</msg>
+<arg>:text("Week")</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:10.949753" elapsed="0.236303"/>
+</kw>
+<kw name="Get Text" owner="Browser">
+<msg time="2025-05-16T13:51:11.206549" level="INFO">Text: 'May 12 - May 18, 2025'</msg>
+<arg>.period-range</arg>
+<arg>matches</arg>
+<arg>\\w+ \\d{2} - \\w+ \\d{2}, \\d{4}</arg>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns text attribute of the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:11.186443" elapsed="0.020372"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-16T13:51:11.263588" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-16T13:51:11.207515" elapsed="0.056390"/>
+</kw>
+<doc>Tests time period filter functionality</doc>
+<tag>filter</tag>
+<tag>time_tracking</tag>
+<status status="PASS" start="2025-05-16T13:51:06.703507" elapsed="4.560629"/>
+</test>
+<test id="s1-t6" name="Verify Weekly Summary" line="128">
+<kw name="Open Employee Time Tracking Page" type="SETUP">
+<kw name="New Browser" owner="Browser">
+<msg time="2025-05-16T13:51:11.279271" level="INFO">{"browser": "chromium", "headless": true, "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "/home/usera/Pfee_final/results/browser/traces/temp/d85c3981-e9b2-406d-a3c6-32f18178f625"}</msg>
+<msg time="2025-05-16T13:51:11.375723" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":true,"chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"/home/usera/Pfee_final/results/browser/traces/temp/d85c3981-e9b2-406d-a3c6-32f18178f625"}</msg>
+<arg>browser=${BROWSER}</arg>
+<arg>headless=${HEADLESS}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2025-05-16T13:51:11.277679" elapsed="0.098556"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2025-05-16T13:51:13.280962" level="INFO">Successfully initialized new page object and opened url: http://localhost:5173/EmployeeLogin</msg>
+<msg time="2025-05-16T13:51:13.281080" level="INFO">No context was open. New context was automatically opened when this page is created.</msg>
+<arg>${SITE_URL}/EmployeeLogin</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2025-05-16T13:51:11.376656" elapsed="1.904634"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-16T13:51:13.282277" level="INFO">Fills the text 'zeidimohamedtaher13@gmail.com' in the given field.</msg>
+<arg>input#email1</arg>
+<arg>${EMPLOYEE_EMAIL}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:13.281563" elapsed="0.034150"/>
+</kw>
+<kw name="Fill Text" owner="Browser">
+<msg time="2025-05-16T13:51:13.316762" level="INFO">Fills the text 'mohamed' in the given field.</msg>
+<arg>input#password1</arg>
+<arg>${EMPLOYEE_PASSWORD}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Clears and fills the given ``txt`` into the text field found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:13.316050" elapsed="0.011392"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2025-05-16T13:51:13.328672" level="INFO">Clicks the element 'button:has-text("Sign In")'.</msg>
+<arg>button:has-text("Sign In")</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2025-05-16T13:51:13.327980" elapsed="0.052963"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-16T13:51:13.582932" level="INFO">Waited for Element with selector xpath=//h1[contains(text(),"Time Tracking")] at state visible</msg>
+<arg>xpath=//h1[contains(text(),"Time Tracking")]</arg>
+<arg>visible</arg>
+<arg>timeout=${TIMEOUT}</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-16T13:51:13.381270" elapsed="0.202014"/>
+</kw>
+<doc>Opens browser and navigates to the time tracking page</doc>
+<status status="PASS" start="2025-05-16T13:51:11.276665" elapsed="2.306895"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2025-05-16T13:51:13.670763" level="INFO">Waited for Element with selector .weekly-summary at state visible</msg>
+<arg>.weekly-summary</arg>
+<arg>visible</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2025-05-16T13:51:13.583991" elapsed="0.087354"/>
+</kw>
+<kw name="Get Element" owner="Browser">
+<msg time="2025-05-16T13:51:13.707326" level="INFO">Locator found successfully.</msg>
+<msg time="2025-05-16T13:51:13.708070" level="INFO">${summary_visible} = .weekly-progress-bar</msg>
+<var>${summary_visible}</var>
+<arg>.weekly-progress-bar</arg>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns a reference to a Playwright [https://playwright.dev/docs/api/class-locator|Locator].</doc>
+<status status="PASS" start="2025-05-16T13:51:13.672039" elapsed="0.036104"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2025-05-16T13:51:13.709270" level="INFO">Length is 20.</msg>
+<arg>${summary_visible}</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2025-05-16T13:51:13.708740" elapsed="0.000661"/>
+</kw>
+<kw name="Get Element" owner="Browser">
+<msg time="2025-05-16T13:51:13.874038" level="INFO">Locator found successfully.</msg>
+<msg time="2025-05-16T13:51:13.874367" level="INFO">${hours_visible} = .summary-badge</msg>
+<var>${hours_visible}</var>
+<arg>.summary-badge</arg>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns a reference to a Playwright [https://playwright.dev/docs/api/class-locator|Locator].</doc>
+<status status="PASS" start="2025-05-16T13:51:13.709754" elapsed="0.164670"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2025-05-16T13:51:13.875097" level="INFO">Length is 14.</msg>
+<arg>${hours_visible}</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2025-05-16T13:51:13.874759" elapsed="0.000408"/>
+</kw>
+<kw name="Close Browser" owner="Browser" type="TEARDOWN">
+<msg time="2025-05-16T13:51:13.937978" level="INFO">Closed browser</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-05-16T13:51:13.875466" elapsed="0.062880"/>
+</kw>
+<doc>Tests weekly summary display</doc>
+<tag>summary</tag>
+<tag>time_tracking</tag>
+<status status="PASS" start="2025-05-16T13:51:11.272288" elapsed="2.666343"/>
+</test>
+<doc>Time Tracking Test Suite
+Tests the time tracking functionality including starting, pausing,
+stopping and managing time entries.</doc>
+<status status="FAIL" start="2025-05-16T13:50:51.557980" elapsed="22.386965"/>
+</suite>
+<statistics>
+<total>
+<stat pass="2" fail="4" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="0" fail="2" skip="0">delete</stat>
+<stat pass="1" fail="0" skip="0">filter</stat>
+<stat pass="0" fail="1" skip="0">negative</stat>
+<stat pass="0" fail="1" skip="0">pause_resume</stat>
+<stat pass="0" fail="1" skip="0">smoke</stat>
+<stat pass="1" fail="0" skip="0">summary</stat>
+<stat pass="2" fail="4" skip="0">time_tracking</stat>
+</tag>
+<suite>
+<stat name="Time Tracking" id="s1" pass="2" fail="4" skip="0">Time Tracking</stat>
+</suite>
+</statistics>
 <errors>
-<msg time="2025-05-16T08:09:41.142651" level="ERROR">Execution stopped by user.</msg>
 </errors>
 </robot>
