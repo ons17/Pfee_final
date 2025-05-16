@@ -7,7 +7,11 @@ import ProgressSpinner from 'primevue/progressspinner';
 import { GET_TEAMS, CREATE_TEAM, UPDATE_TEAM, DELETE_TEAM } from '@/graphql';
 import { GET_PROJECTS } from '@/graphql';
 import { ADD_TEAM_TO_PROJECT, REMOVE_TEAM_FROM_PROJECT } from '@/graphql';
-import { isAdmin, validatePassword } from '@/utils/authUtils';
+
+// Determine user role
+const admin = JSON.parse(localStorage.getItem('administrateur'));
+const employee = JSON.parse(localStorage.getItem('employee'));
+const isAdmin = ref(!!admin); // Set to true if the user is an admin
 
 const toast = useToast();
 const dt = ref();
@@ -258,7 +262,7 @@ const confirmDeleteTeam = (t) => {
 };
 
 const deleteTeam = async () => {
-    if (!isAdmin()) {
+    if (!isAdmin.value) {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Only admins can delete teams.', life: 3000 });
         return;
     }
@@ -449,21 +453,27 @@ const handleRemoveProject = async (projectId) => {
 <template>
     <div class="p-4 team-page">
         <div class="card">
-            <Toolbar class="mb-4">
+            <!-- Only show Toolbar for admins -->
+            <Toolbar v-if="isAdmin" class="mb-4">
                 <template #start>
-                    <Button label="New" icon="pi pi-plus" class="mr-2" @click="openNew" />
-                    <Button label="Delete" icon="pi pi-trash" severity="danger" @click="confirmDeleteSelected" :disabled="!selectedTeams?.length" />
+                    <Button
+                        label="New"
+                        icon="pi pi-plus"
+                        class="mr-2"
+                        @click="openNew"
+                    />
+                    <Button
+                        label="Delete"
+                        icon="pi pi-trash"
+                        severity="danger"
+                        @click="confirmDeleteSelected"
+                        :disabled="!selectedTeams?.length"
+                    />
                 </template>
                 <template #end>
                     <Button label="Export" icon="pi pi-upload" @click="exportCSV" />
                 </template>
             </Toolbar>
-
-            <div v-if="teamsError" class="p-mt-3 p-p-3 p-text-center error-message">
-                <i class="pi pi-exclamation-triangle p-mr-2"></i>
-                Error loading teams.
-                <Button label="Retry" icon="pi pi-refresh" class="p-button-text p-ml-2" @click="refetchTeams" />
-            </div>
 
             <DataTable
                 ref="dt"
@@ -507,10 +517,21 @@ const handleRemoveProject = async (projectId) => {
                         </div>
                     </template>
                 </Column>
-                <Column header="Actions" headerStyle="width: 10rem">
+                <!-- Hide Actions column for non-admin users -->
+                <Column v-if="isAdmin" header="Actions" headerStyle="width: 10rem">
                     <template #body="{ data }">
-                        <Button icon="pi pi-pencil" class="mr-2" outlined @click="editTeam(data)" />
-                        <Button icon="pi pi-trash" severity="danger" outlined @click="confirmDeleteTeam(data)" />
+                        <Button
+                            icon="pi pi-pencil"
+                            class="mr-2"
+                            outlined
+                            @click="editTeam(data)"
+                        />
+                        <Button
+                            icon="pi pi-trash"
+                            severity="danger"
+                            outlined
+                            @click="confirmDeleteTeam(data)"
+                        />
                     </template>
                 </Column>
             </DataTable>

@@ -18,7 +18,6 @@ const routes = [
     name: 'EmployeeLogin',
     component: EmployeeLogin, // Employee login page
   },
- 
   {
     path: '/ResetPassword',
     name: 'ResetPassword',
@@ -45,16 +44,17 @@ const routes = [
         component: Dashboard,
         meta: { 
           requiresAuth: true,
-          adminOnly: true
-        }
+          adminOnly: true, // Admin-only route
+        },
       },
       {
         path: 'TimeTracking',
         name: 'TimeTracking',
         component: TimeTracking,
         meta: { 
-          requiresAuth: true
-        }
+          requiresAuth: true,
+          employeeOnly: true, // Employee-only route
+        },
       },
       {
         path: 'Project',
@@ -133,20 +133,48 @@ const router = createRouter({
 // Global Navigation Guard
 router.beforeEach((to, from, next) => {
   const employee = JSON.parse(localStorage.getItem('employee'));
+  const administrator = JSON.parse(localStorage.getItem('administrateur'));
+  const token = localStorage.getItem('token');
 
-  // Protect dashboard route
-  if (to.path.includes('/dashboard')) {
-    if (!employee || employee.role.toLowerCase() !== 'admin') {
-      next('/app/timetracking'); // Redirect non-admins to time tracking
+  // Handle routes that don't require authentication
+  if (to.path === '/login' || to.path === '/EmployeeLogin') {
+    if (administrator) {
+      next('/app'); // Redirect admin to admin dashboard
+      return;
+    } else if (employee) {
+      next('/app/timetracking'); // Redirect employee to time tracking
       return;
     }
+    next();
+    return;
   }
 
   // Check authentication for protected routes
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!localStorage.getItem('token')) {
-      next('/login');
+    if (!token) {
+      // Redirect to the appropriate login page if no token is found
+      if (to.meta.adminOnly) {
+        next('/login'); // Redirect to admin login
+      } else {
+        next('/EmployeeLogin'); // Redirect to employee login
+      }
       return;
+    }
+
+    // Admin-only routes
+    if (to.meta.adminOnly) {
+      if (!administrator) {
+        next('/login'); // Redirect to admin login if unauthorized
+        return;
+      }
+    }
+
+    // Employee-only routes
+    if (to.meta.employeeOnly) {
+      if (!employee) {
+        next('/EmployeeLogin'); // Redirect to employee login if unauthorized
+        return;
+      }
     }
   }
 

@@ -20,7 +20,7 @@ const model = ref([
     {
         label: 'HOME',
         items: [
-            { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/app', roles: ['admin', 'employee'] },
+            { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/app', roles: ['admin'] },
             { label: 'Time Tracking', icon: 'pi pi-fw pi-clock', to: '/app/TimeTracking', roles: ['employee'] }
         ]
     },
@@ -28,9 +28,9 @@ const model = ref([
         label: 'MANAGEMENT',
         items: [
             { label: 'Employee', icon: 'pi pi-fw pi-user', to: '/app/Employee', roles: ['admin'] },
-            { label: 'Teams', icon: 'pi pi-fw pi-users', to: '/app/Teams', roles: ['admin'] },
-            { label: 'Project', icon: 'pi pi-fw pi-folder', to: '/app/Project', roles: ['admin'] },
-            { label: 'Task', icon: 'pi pi-fw pi-list-check', to: '/app/Task', roles: ['admin'] }
+            { label: 'Teams', icon: 'pi pi-fw pi-users', to: '/app/Teams', roles: ['admin', 'employee'] },
+            { label: 'Project', icon: 'pi pi-fw pi-folder', to: '/app/Project', roles: ['admin', 'employee'] },
+            { label: 'Task', icon: 'pi pi-fw pi-list-check', to: '/app/Task', roles: ['admin', 'employee'] }
         ]
     },
     {
@@ -62,17 +62,32 @@ const filteredModel = computed(() => {
         items: section.items.filter(item => item.roles.includes(userRole.value))
     })).filter(section => section.items.length > 0);
 });
+
+// Add new computed property for TimeTracking styling
+const isEmployee = computed(() => userRole.value === 'employee');
 </script>
 
 <template>
     <ul class="layout-menu">
         <template v-for="(item, i) in filteredModel" :key="i">
-            <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
+            <app-menu-item 
+                v-if="!item.separator" 
+                :item="item" 
+                :index="i"
+                :class="{ 
+                    'time-tracking-highlight': isEmployee && item.items.some(menuItem => menuItem.label === 'Time Tracking')
+                }"
+            ></app-menu-item>
             <li v-if="item.separator" class="menu-separator"></li>
         </template>
     </ul>
 </template>
 
 <style lang="scss" scoped>
-/* Add your styles here if needed */
+.time-tracking-highlight {
+    :deep(.router-link-active) {
+        color: #0aa56a !important; /* Blue color - you can change this */
+        font-weight: bold;
+    }
+}
 </style>

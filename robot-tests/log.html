@@ -5,7 +5,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta content="Robot Framework 7.2.2 (Python 3.10.12 on linux)" name="Generator">
+<meta content="Robot Framework 7.0 (Python 3.10.12 on linux)" name="Generator">
 <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKcAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAAqAAAAAAAAAAAAAAAAAAAALIAAAD/AAAA4AAAANwAAADcAAAA3AAAANwAAADcAAAA3AAAANwAAADcAAAA4AAAAP8AAACxAAAAAAAAAKYAAAD/AAAAuwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC/AAAA/wAAAKkAAAD6AAAAzAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAN8AAAD/AAAA+gAAAMMAAAAAAAAAAgAAAGsAAABrAAAAawAAAGsAAABrAAAAawAAAGsAAABrAAAADAAAAAAAAADaAAAA/wAAAPoAAADDAAAAAAAAAIsAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAANEAAAAAAAAA2gAAAP8AAAD6AAAAwwAAAAAAAAAAAAAAMgAAADIAAAAyAAAAMgAAADIAAAAyAAAAMgAAADIAAAAFAAAAAAAAANoAAAD/AAAA+gAAAMMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADaAAAA/wAAAPoAAADDAAAAAAAAADwAAAB8AAAAAAAAAGAAAABcAAAAAAAAAH8AAABKAAAAAAAAAAAAAAAAAAAA2gAAAP8AAAD6AAAAwwAAAAAAAADCAAAA/wAAACkAAADqAAAA4QAAAAAAAAD7AAAA/wAAALAAAAAGAAAAAAAAANoAAAD/AAAA+gAAAMMAAAAAAAAAIwAAAP4AAAD/AAAA/wAAAGAAAAAAAAAAAAAAAMkAAAD/AAAAigAAAAAAAADaAAAA/wAAAPoAAADDAAAAAAAAAAAAAAAIAAAAcAAAABkAAAAAAAAAAAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAA2gAAAP8AAAD7AAAAywAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAN4AAAD/AAAAqwAAAP8AAACvAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALIAAAD/AAAAsgAAAAAAAAC5AAAA/wAAAMoAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMkAAAD/AAAAvAAAAAAAAAAAAAAAAAAAAKwAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAArQAAAAAAAAAAwAMAAIABAAAf+AAAP/wAAD/8AAAgBAAAP/wAAD/8AAA//AAAJIwAADHEAAA//AAAP/wAAB/4AACAAQAAwAMAAA==">
 <style media="all">
 :root {
@@ -1252,48 +1252,58 @@ window.stats = (function () {
             });
     }
     function calculatePercents(total, passed, failed, skipped) {
-        if (total == 0)
+        if (total == 0) {
             return [0.0, 0.0, 0.0];
+        }
         var pass = 100.0 * passed / total;
         var skip = 100.0 * skipped / total;
         var fail = 100.0 * failed / total;
         if (pass > 0 && pass < 0.1)
-            pass = 0.1;
+            pass = 0.1
         if (fail > 0 && fail < 0.1)
-            fail = 0.1;
+            fail = 0.1
         if (skip > 0 && skip < 0.1)
-            skip = 0.1;
+            skip = 0.1
         if (pass > 99.95 && pass < 100)
-            pass = 99.9;
+            pass = 99.9
         if (fail > 99.95 && fail < 100)
-            fail = 99.9;
+            fail = 99.9
         if (skip > 99.95 && skip < 100)
-            skip = 99.9;
-        return [round1(pass), round1(skip), round1(fail)];
+            skip = 99.9
+        return [Math.round(pass*10)/10, Math.round(skip*10)/10, Math.round(fail*10)/10];
     }
     function calculateWidths(num1, num2, num3) {
         if (num1 + num2 + num3 === 0)
             return [0.0, 0.0, 0.0];
         // Make small percentages better visible
         if (num1 > 0 && num1 < 1)
-            num1 = 1.0;
+            num1 = 1
         if (num2 > 0 && num2 < 1)
-            num2 = 1.0;
+            num2 = 1
         if (num3 > 0 && num3 < 1)
-            num3 = 1.0;
+            num3 = 1
         // Handle situation where some are rounded up
         while (num1 + num2 + num3 > 100) {
-            if (num1 >= num2 && num1 >= num3)
-                num1 = round1(num1 - 0.1);
-            else if (num2 >= num1 && num2 >= num3)
-                num2 = round1(num2 - 0.1);
-            else
-                num3 = round1(num3 - 0.1);
+            if (num1 > num2 && num1 > num3)
+                num1 -= 0.1;
+            else if (num2 > num1 && num2 > num3)
+                num2 -= 0.1;
+            else if (num3 > num1 && num3 > num2)
+                num3 -= 0.1;
+            else if (num1 > num3 && num1 == num2) {
+                num1 -= 0.1;
+                num2 -= 0.1;
+            }
+            else if (num1 > num2 && num1 == num3) {
+                num1 -= 0.1;
+                num3 -= 0.1;
+            }
+            else if (num2 > num1 && num2 == num3) {
+                num2 -= 0.1;
+                num3 -= 0.1;
+            }
         }
-        return [num1, num2, num3];
-    }
-    function round1(num) {
-        return Math.round(num*10) / 10;
+        return [Math.ceil(num1*10)/10, Math.ceil(num2*10)/10, Math.ceil(num3*10)/10];
     }
     return {
         Statistics: Statistics
@@ -1512,7 +1522,7 @@ window.testdata = function () {
     var STATUSES = ['FAIL', 'PASS', 'SKIP', 'NOT RUN'];
     var KEYWORD_TYPES = ['KEYWORD', 'SETUP', 'TEARDOWN', 'FOR', 'ITERATION', 'IF',
                          'ELSE IF', 'ELSE', 'RETURN', 'VAR', 'TRY', 'EXCEPT', 'FINALLY',
-                         'WHILE', 'GROUP', 'CONTINUE', 'BREAK', 'ERROR'];
+                         'WHILE', 'CONTINUE', 'BREAK', 'ERROR'];
     function addElement(elem) {
         if (!elem.id)
             elem.id = uniqueId();
@@ -2071,31 +2081,31 @@ storage = function () {
 window.output = {};
 </script>
 <script type="text/javascript">
-window.output["suite"] = [1,2,3,4,[],[1,0,13436],[],[[5,0,6,[7,8,9],[1,176,13252],[[1,10,11,0,12,0,0,0,[1,178,10591],[[0,13,14,0,15,16,0,17,[1,178,2441],[[179,2,18],[186,2,19],[2619,2,20]]],[0,21,14,0,22,23,0,17,[1,2620,477],[[2624,2,24],[3097,2,25],[3097,2,26]]],[0,27,14,0,28,29,0,17,[1,3098,7595],[[10692,2,30]]],[0,31,14,0,32,33,0,34,[1,10693,75],[[10768,2,35]]]]],[0,36,11,0,37,38,0,0,[1,10769,212],[[0,39,14,0,40,41,0,42,[1,10770,53],[[10771,2,43]]],[0,39,14,0,40,44,0,42,[1,10824,39],[[10825,2,45]]],[0,46,14,0,47,48,0,42,[1,10863,118],[[10864,2,49]]]]],[0,31,14,0,32,50,0,34,[1,10982,793],[[11775,2,51]]],[2,52,14,0,53,0,0,17,[1,11776,1652],[[13428,2,54]]]]]],[],[1,1,0,0]];
+window.output["suite"] = [1,2,3,0,[],[0,0,366],[[4,5,6,7,[],[0,31,24],[],[[8,0,9,[10,11],[0,42,12,12],[[1,13,14,0,15,0,0,0,[0,43,8],[[0,16,0,0,0,17,0,0,[0,45,0],[[46,5,18]]],[0,19,0,0,0,20,0,0,[3,47,0],[]],[0,21,0,0,0,22,0,0,[3,49,0],[]],[0,23,0,0,0,24,0,0,[3,51,0],[]]]],[2,25,0,0,0,0,0,0,[0,54,0],[[54,5,26]]]]]],[],[1,0,1,0]],[27,28,29,30,[],[0,56,57],[],[[31,0,32,[33,34,35],[0,72,8,12],[[1,13,14,0,15,0,0,0,[0,73,6],[[0,16,0,0,0,17,0,0,[0,75,0],[[75,5,18]]],[0,19,0,0,0,20,0,0,[3,76,0],[]],[0,21,0,0,0,22,0,0,[3,77,0],[]],[0,23,0,0,0,24,0,0,[3,78,0],[]]]],[2,25,0,0,0,0,0,0,[0,80,0],[[80,5,26]]]]],[36,0,37,[33,38],[0,80,7,12],[[1,13,14,0,15,0,0,0,[0,81,5],[[0,16,0,0,0,17,0,0,[0,82,0],[[82,5,18]]],[0,19,0,0,0,20,0,0,[3,83,0],[]],[0,21,0,0,0,22,0,0,[3,84,0],[]],[0,23,0,0,0,24,0,0,[3,85,0],[]]]],[2,25,0,0,0,0,0,0,[0,87,0],[[88,5,26]]]]],[39,0,40,[33,38],[0,88,12,12],[[1,13,14,0,15,0,0,0,[0,89,8],[[0,16,0,0,0,17,0,0,[0,91,0],[[91,5,18]]],[0,19,0,0,0,20,0,0,[3,93,0],[]],[0,21,0,0,0,22,0,0,[3,95,0],[]],[0,23,0,0,0,24,0,0,[3,97,0],[]]]],[2,25,0,0,0,0,0,0,[0,100,0],[[100,5,26]]]]],[41,0,42,[33,43],[0,101,12,12],[[1,13,14,0,15,0,0,0,[0,102,9],[[0,16,0,0,0,17,0,0,[0,104,0],[[104,5,18]]],[0,19,0,0,0,20,0,0,[3,106,0],[]],[0,21,0,0,0,22,0,0,[3,108,0],[]],[0,23,0,0,0,24,0,0,[3,110,0],[]]]],[2,25,0,0,0,0,0,0,[0,112,0],[[113,5,26]]]]]],[],[4,0,4,0]],[44,45,46,47,[],[0,114,34],[],[[48,0,49,[50,51],[0,119,15,18],[[0,13,14,0,15,0,0,0,[0,120,9],[[0,16,0,0,0,17,0,0,[0,122,0],[[122,5,18]]],[0,19,0,0,0,20,0,0,[3,124,0],[]],[0,21,0,0,0,22,0,0,[3,126,0],[]],[0,23,0,0,0,24,0,0,[3,128,0],[]]]],[0,52,14,0,53,54,0,0,[3,129,0],[]],[0,55,56,0,57,0,0,0,[3,129,0],[]],[0,23,0,0,0,58,0,0,[3,132,0],[]],[0,59,0,0,0,60,0,0,[3,134,0],[]]]],[61,0,62,[51,63],[0,135,13,18],[[0,13,14,0,15,0,0,0,[0,135,9],[[0,16,0,0,0,17,0,0,[0,138,0],[[138,5,18]]],[0,19,0,0,0,20,0,0,[3,140,0],[]],[0,21,0,0,0,22,0,0,[3,142,0],[]],[0,23,0,0,0,24,0,0,[3,144,0],[]]]],[0,64,0,0,0,65,0,0,[3,146,0],[]],[0,59,0,0,0,66,0,0,[3,148,0],[]]]]],[],[2,0,2,0]],[67,68,69,70,[],[0,150,63],[],[[71,0,72,[73,63],[0,155,11,12],[[1,13,14,0,15,0,0,0,[0,156,8],[[0,16,0,0,0,17,0,0,[0,158,0],[[159,5,18]]],[0,19,0,0,0,20,0,0,[3,160,0],[]],[0,21,0,0,0,22,0,0,[3,162,0],[]],[0,23,0,0,0,24,0,0,[3,164,0],[]]]],[2,25,0,0,0,0,0,0,[0,166,0],[[166,5,26]]]]],[74,0,75,[76,63],[0,167,12,12],[[1,13,14,0,15,0,0,0,[0,167,8],[[0,16,0,0,0,17,0,0,[0,170,0],[[170,5,18]]],[0,19,0,0,0,20,0,0,[3,172,0],[]],[0,21,0,0,0,22,0,0,[3,173,0],[]],[0,23,0,0,0,24,0,0,[3,175,0],[]]]],[2,25,0,0,0,0,0,0,[0,178,0],[[178,5,26]]]]],[77,0,78,[79,63],[0,179,10,12],[[1,13,14,0,15,0,0,0,[0,180,7],[[0,16,0,0,0,17,0,0,[0,181,0],[[181,5,18]]],[0,19,0,0,0,20,0,0,[3,183,0],[]],[0,21,0,0,0,22,0,0,[3,184,0],[]],[0,23,0,0,0,24,0,0,[3,186,0],[]]]],[2,25,0,0,0,0,0,0,[0,189,0],[[189,5,26]]]]],[80,0,81,[43,63],[0,190,9,12],[[1,13,14,0,15,0,0,0,[0,191,7],[[0,16,0,0,0,17,0,0,[0,193,0],[[193,5,18]]],[0,19,0,0,0,20,0,0,[3,195,0],[]],[0,21,0,0,0,22,0,0,[3,196,0],[]],[0,23,0,0,0,24,0,0,[3,197,0],[]]]],[2,25,0,0,0,0,0,0,[0,199,0],[[199,5,26]]]]],[82,0,83,[84,63],[0,200,13,12],[[1,13,14,0,15,0,0,0,[0,201,9],[[0,16,0,0,0,17,0,0,[0,203,0],[[203,5,18]]],[0,19,0,0,0,20,0,0,[3,206,0],[]],[0,21,0,0,0,22,0,0,[3,207,0],[]],[0,23,0,0,0,24,0,0,[3,210,0],[]]]],[2,25,0,0,0,0,0,0,[0,212,0],[[212,5,26]]]]]],[],[5,0,5,0]],[85,86,87,88,[],[0,214,58],[],[[89,0,90,[35,91],[0,221,14,12],[[1,13,14,0,15,0,0,0,[0,222,10],[[0,16,0,0,0,17,0,0,[0,224,0],[[225,5,18]]],[0,19,0,0,0,20,0,0,[3,227,0],[]],[0,21,0,0,0,22,0,0,[3,229,0],[]],[0,23,0,0,0,24,0,0,[3,232,0],[]]]],[2,25,0,0,0,0,0,0,[0,234,0],[[235,5,26]]]]],[92,0,93,[73,91],[0,236,13,12],[[1,13,14,0,15,0,0,0,[0,237,9],[[0,16,0,0,0,17,0,0,[0,239,0],[[239,5,18]]],[0,19,0,0,0,20,0,0,[3,242,0],[]],[0,21,0,0,0,22,0,0,[3,244,0],[]],[0,23,0,0,0,24,0,0,[3,246,0],[]]]],[2,25,0,0,0,0,0,0,[0,248,0],[[248,5,26]]]]],[94,0,95,[96,91],[0,249,11,12],[[1,13,14,0,15,0,0,0,[0,250,8],[[0,16,0,0,0,17,0,0,[0,252,0],[[252,5,18]]],[0,19,0,0,0,20,0,0,[3,254,0],[]],[0,21,0,0,0,22,0,0,[3,255,0],[]],[0,23,0,0,0,24,0,0,[3,257,0],[]]]],[2,25,0,0,0,0,0,0,[0,260,0],[[260,5,26]]]]],[97,0,98,[99,91],[0,261,11,12],[[1,13,14,0,15,0,0,0,[0,262,8],[[0,16,0,0,0,17,0,0,[0,263,0],[[263,5,18]]],[0,19,0,0,0,20,0,0,[3,265,0],[]],[0,21,0,0,0,22,0,0,[3,267,0],[]],[0,23,0,0,0,24,0,0,[3,269,0],[]]]],[2,25,0,0,0,0,0,0,[0,271,0],[[271,5,26]]]]]],[],[4,0,4,0]],[100,101,102,103,[],[0,274,91],[],[[104,0,105,[38,106],[0,280,13,12],[[1,13,14,0,15,0,0,0,[0,281,9],[[0,16,0,0,0,17,0,0,[0,283,0],[[283,5,18]]],[0,19,0,0,0,20,0,0,[3,285,0],[]],[0,21,0,0,0,22,0,0,[3,287,0],[]],[0,23,0,0,0,24,0,0,[3,289,0],[]]]],[2,25,0,0,0,0,0,0,[0,292,0],[[292,5,26]]]]],[107,0,108,[109,106],[0,293,10,12],[[1,13,14,0,15,0,0,0,[0,294,8],[[0,16,0,0,0,17,0,0,[0,297,0],[[297,5,18]]],[0,19,0,0,0,20,0,0,[3,299,0],[]],[0,21,0,0,0,22,0,0,[3,300,0],[]],[0,23,0,0,0,24,0,0,[3,302,0],[]]]],[2,25,0,0,0,0,0,0,[0,303,0],[[303,5,26]]]]],[110,0,111,[63,106],[0,304,9,12],[[1,13,14,0,15,0,0,0,[0,304,6],[[0,16,0,0,0,17,0,0,[0,306,0],[[306,5,18]]],[0,19,0,0,0,20,0,0,[3,307,0],[]],[0,21,0,0,0,22,0,0,[3,308,0],[]],[0,23,0,0,0,24,0,0,[3,310,0],[]]]],[2,25,0,0,0,0,0,0,[0,312,0],[[312,5,26]]]]],[112,0,113,[109,106],[0,313,11,12],[[1,13,14,0,15,0,0,0,[0,314,8],[[0,16,0,0,0,17,0,0,[0,316,0],[[316,5,18]]],[0,19,0,0,0,20,0,0,[3,318,0],[]],[0,21,0,0,0,22,0,0,[3,319,0],[]],[0,23,0,0,0,24,0,0,[3,321,0],[]]]],[2,25,0,0,0,0,0,0,[0,324,0],[[324,5,26]]]]],[114,0,115,[73,106],[0,324,11,12],[[1,13,14,0,15,0,0,0,[0,325,7],[[0,16,0,0,0,17,0,0,[0,327,0],[[327,5,18]]],[0,19,0,0,0,20,0,0,[3,328,0],[]],[0,21,0,0,0,22,0,0,[3,330,0],[]],[0,23,0,0,0,24,0,0,[3,332,0],[]]]],[2,25,0,0,0,0,0,0,[0,335,0],[[335,5,26]]]]],[116,0,117,[],[0,336,16,12],[[1,13,14,0,15,0,0,0,[0,337,9],[[0,16,0,0,0,17,0,0,[0,339,0],[[339,5,18]]],[0,19,0,0,0,20,0,0,[3,341,0],[]],[0,21,0,0,0,22,0,0,[3,343,0],[]],[0,23,0,0,0,24,0,0,[3,346,0],[]]]],[2,25,0,0,0,0,0,0,[0,352,0],[[352,5,26]]]]],[118,0,119,[],[0,353,11,12],[[1,13,14,0,15,0,0,0,[0,353,8],[[0,16,0,0,0,17,0,0,[0,355,0],[[355,5,18]]],[0,19,0,0,0,20,0,0,[3,357,0],[]],[0,21,0,0,0,22,0,0,[3,359,0],[]],[0,23,0,0,0,24,0,0,[3,361,0],[]]]],[2,25,0,0,0,0,0,0,[0,364,0],[[364,5,26]]]]]],[],[7,0,7,0]]],[],[],[23,0,23,0]];
 </script>
 <script type="text/javascript">
 window.output["strings"] = [];
 </script>
 <script type="text/javascript">
-window.output["strings"] = window.output["strings"].concat(["*","*Login","*/home/usera/Pfee_final/robot-tests/login.robot","*login.robot","*<p>Login Test Suite A test suite for verifying the login functionality including manual login, Google login, and form validation.\x3c/p>","*Valid Login","*<p>Tests successful login with valid credentials\x3c/p>","*critical","*login","*smoke","*Open Browser To Login Page","*common","*<p>Opens browser and navigates to the login page Waits for the logo to be visible to ensure page is loaded\x3c/p>","*New Browser","*Browser","*<p>Create a new playwright Browser with specified options.\x3c/p>","*browser=${BROWSER}    headless=${HEADLESS}","*BrowserControl, Setter","eNptj8sKAjEMRX9FurZ2ygy+1oq6UMTHWtpOyhRaI21HBfHfDSqoYHb35ARyb0xHvCSIbNxh1kWweGXdDmtA1R5SImyVT0DINBGDa8NWHWtN1mdTwzkj+m+5IcnDdjGb79eEc2x/6GK1+0N3083yg5PHyxIpF72CYnYBsM2Uy4LmxaIykCbu+b1oMIBoqYsSawtwsO6ovIioMfMMKSfx7ipedyJDOAkjjdQgh7xf9ke8UhVwXY0G3JYDa0ot5bBW7P4ABoZfMw==","*Starting Browser process /home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js using at 127.0.0.1:51715","*Successfully created browser with options: {\"browser\":\"firefox\",\"headless\":false,\"chromiumSandbox\":false,\"devtools\":false,\"handleSIGHUP\":true,\"handleSIGINT\":true,\"handleSIGTERM\":true,\"slowMo\":0,\"timeout\":30000,\"tracesDir\":\"/home/usera/Pfee_final/robot-tests/browser/traces/temp/c1c1be18-6369-4a4e-b497-f37fc3b118da\"}","*New Context","*<p>Create a new BrowserContext with specified options.\x3c/p>","*viewport={'width': 1920, 'height': 1080}","eNpNjsEOgjAMhu8+BeGMCXpSr0jixYQEEs9j62C6rEs3IIbw7g5nIsd+X//+nXdJkjLOwforTkYjEy69JJ4GyFbVvi1zrqirACXTLlKJxEEUqJHW7dSggfRrVGeQ4NY0VV0SRf3PPdnIak7K+tKwVoPYVqGUWoU72wCBGELTHb1CE5v2lkACgeG/Sgc0Kg4PpBfEd5jWOEU5Kpgskg94DnMgPaiuX+dDfsqzyCYlfL+i8zEPZNktH3orVT0=","*Successfully created context. ","*{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'height': 1080, 'width': 1920}}","*New Page","*<p>Open a new Page.\x3c/p>","*${SITE_URL}","*Successfully initialized new page object and opened url: <a href=\"http://localhost:5173\">http://localhost:5173\x3c/a>","*Wait For Elements State","*<p>Waits for the element found by <code>selector\x3c/code> to satisfy state option.\x3c/p>","*img[alt=\"Logo\"]    visible    timeout=${TIMEOUT}","*PageContent, Wait","*Waited for Element with selector img[alt=\"Logo\"] at state visible","*Login With Credentials","*<p>Performs login with given credentials\x3c/p>","*${VALID_EMAIL}    ${VALID_PASSWORD}","*Fill Text","*<p>Clears and fills the given <code>txt\x3c/code> into the text field found by <code>selector\x3c/code>.\x3c/p>","*input#email1    ${email}","*PageContent, Setter","*Fills the text 'onssbenamara3@gmail.com' in the given field.","*.p-password input    ${password}","*Fills the text 'ons123' in the given field.","*Click","*<p>Simulates mouse click on the element found by <code>selector\x3c/code>.\x3c/p>","*\"Sign In\"","*Clicks the element '\"Sign In\"'.","*text=\"Dashboard\"    visible    timeout=${TIMEOUT}","*Waited for Element with selector text=\"Dashboard\" at state visible","*Close Browser","*<p>Closes the current browser.\x3c/p>","*Closed browser"]);
+window.output["strings"] = window.output["strings"].concat(["*","*Login","*/home/userb/Pfee_final/robot-tests/tests/login","*tests/login","*Login Accessibility","*/home/userb/Pfee_final/robot-tests/tests/login/login_accessibility.robot","*tests/login/login_accessibility.robot","*<p>Accessibility Test Suite for Login Page\x3c/p>","*ARIA Labels Test","*<p>Verifies ARIA labels are present\x3c/p>","*accessibility","*aria","*Setup failed:\nNo keyword with name 'New Browser' found.\n\nAlso teardown failed:\nNo keyword with name 'Close Browser' found.","*Open Browser To Login Page","*common","*<p>Opens browser and navigates to the login page\x3c/p>","*New Browser","*browser=${BROWSER}    headless=${HEADLESS}","*No keyword with name 'New Browser' found.","*New Context","*viewport={'width': 1920, 'height': 1080}","*New Page","*${SITE_URL}","*Wait For Elements State","*${LOGO_IMG}    visible    timeout=${TIMEOUT}","*Close Browser","*No keyword with name 'Close Browser' found.","*Login Authentication","*/home/userb/Pfee_final/robot-tests/tests/login/login_authentication.robot","*tests/login/login_authentication.robot","*<p>Authentication Test Suite for Login Page Tests various login scenarios and authentication flows\x3c/p>","*Valid Login","*<p>Tests successful login with valid credentials\x3c/p>","*authentication","*critical","*smoke","*Invalid Login - Wrong Password","*<p>Tests login failure with incorrect password\x3c/p>","*negative","*Invalid Login - Wrong Email","*<p>Tests login failure with incorrect email\x3c/p>","*Remember Me Login","*<p>Tests login with remember me functionality\x3c/p>","*remember-me","*Login Routing","*/home/userb/Pfee_final/robot-tests/tests/login/login_routing.robot","*tests/login/login_routing.robot","*<p>Navigation Test Suite Tests navigation and routing after login\x3c/p>","*Successful Login Navigation","*<p>Tests navigation to dashboard after successful login\x3c/p>","*navigation","*routing","*Login With Credentials","*<p>Performs login with given credentials\x3c/p>","*${VALID_EMAIL}    ${VALID_PASSWORD}","*Submit Login Form","*login_keywords","*<p>Submits the login form\x3c/p>","*text=\"Dashboard\"    visible    timeout=${TIMEOUT}","*Get Url","*==    ${SITE_URL}/app","*Unauthorized Access Prevention","*<p>Tests prevention of unauthorized dashboard access\x3c/p>","*security","*Go To","*${SITE_URL}/app","*==    ${SITE_URL}/login","*Login Security","*/home/userb/Pfee_final/robot-tests/tests/login/login_security.robot","*tests/login/login_security.robot","*<p>Security Test Suite Tests security features of the login page\x3c/p>","*Password Masking Test","*<p>Verifies password field is masked by default\x3c/p>","*password","*CSRF Protection Test","*<p>Verifies CSRF token is present in requests\x3c/p>","*csrf","*Password Strength Validation","*<p>Tests password strength requirements\x3c/p>","*password-strength","*Remember Me Test","*<p>Tests remember me functionality\x3c/p>","*Login Failure Rate Limit","*<p>Tests rate limiting on failed login attempts\x3c/p>","*rate-limit","*Login Ui","*/home/userb/Pfee_final/robot-tests/tests/login/login_ui.robot","*tests/login/login_ui.robot","*<p>UI Test Suite for Login Page Tests the visual elements and interactions of the login page\x3c/p>","*Verify All UI Elements Present","*<p>Verifies all UI elements are present and visible\x3c/p>","*ui","*Test Password Visibility Toggle","*<p>Tests password visibility toggle functionality\x3c/p>","*Test Remember Me Checkbox","*<p>Tests remember me checkbox functionality\x3c/p>","*checkbox","*Test Form Field Clearing","*<p>Tests clearing form fields\x3c/p>","*form","*Login Validation","*/home/userb/Pfee_final/robot-tests/tests/login/login_validation.robot","*tests/login/login_validation.robot","*<p>Form Validation Test Suite Tests input validation and error handling\x3c/p>","*Empty Form Submission","*<p>Tests submission with empty form\x3c/p>","*validation","*Invalid Email Format","*<p>Tests email format validation\x3c/p>","*email","*Multiple Failed Login Attempts","*<p>Tests behavior with multiple failed attempts\x3c/p>","*Email Field Validation","*<p>Tests email field validation\x3c/p>","*Password Field Validation","*<p>Tests password field validation\x3c/p>","*XSS Prevention Test","*<p>Tests XSS prevention in input fields\x3c/p>","*SQL Injection Prevention Test","*<p>Tests SQL injection prevention\x3c/p>","eNptjzFPxDAMhff+Cm+Foc2dbusG0p2OgdKhCxNKGvcuIrErJxUqv54UCdChjv783vPzUYQFHMHoPEKprhxQzRHFqG5EfBsdaa+EDacqYUxRCUaeZcCoBg6Bqf4BJTCBd4RwaOApTCzJ0SUTI1oWKB+FP3JwCaPOt2wDz2xnjy2nE89kj2uTBlqG8M2BdED7Zyt60QMaPbzDXeCYQHBASjBo78HrmO6bArKdsOhe+/NL2z305xXld0R5zjplHP0CZ9S0pCvTYb+rP920saj3u226jpVdyLO2txf+6ayLqZpyZ33BuJF1K/gCGTeIoA=="]);
 </script>
 <script type="text/javascript">
-window.output["stats"] = [[{"elapsed":"00:00:13","fail":0,"label":"All Tests","pass":1,"skip":0}],[{"elapsed":"00:00:13","fail":0,"label":"critical","pass":1,"skip":0},{"elapsed":"00:00:13","fail":0,"label":"login","pass":1,"skip":0},{"elapsed":"00:00:13","fail":0,"label":"smoke","pass":1,"skip":0}],[{"elapsed":"00:00:13","fail":0,"id":"s1","label":"Login","name":"Login","pass":1,"skip":0}]];
+window.output["stats"] = [[{"elapsed":"00:00:00","fail":23,"label":"All Tests","pass":0,"skip":0}],[{"elapsed":"00:00:00","fail":1,"label":"accessibility","pass":0,"skip":0},{"elapsed":"00:00:00","fail":1,"label":"aria","pass":0,"skip":0},{"elapsed":"00:00:00","fail":4,"label":"authentication","pass":0,"skip":0},{"elapsed":"00:00:00","fail":1,"label":"checkbox","pass":0,"skip":0},{"elapsed":"00:00:00","fail":1,"label":"critical","pass":0,"skip":0},{"elapsed":"00:00:00","fail":1,"label":"csrf","pass":0,"skip":0},{"elapsed":"00:00:00","fail":2,"label":"email","pass":0,"skip":0},{"elapsed":"00:00:00","fail":1,"label":"form","pass":0,"skip":0},{"elapsed":"00:00:00","fail":1,"label":"navigation","pass":0,"skip":0},{"elapsed":"00:00:00","fail":3,"label":"negative","pass":0,"skip":0},{"elapsed":"00:00:00","fail":3,"label":"password","pass":0,"skip":0},{"elapsed":"00:00:00","fail":1,"label":"password-strength","pass":0,"skip":0},{"elapsed":"00:00:00","fail":1,"label":"rate-limit","pass":0,"skip":0},{"elapsed":"00:00:00","fail":2,"label":"remember-me","pass":0,"skip":0},{"elapsed":"00:00:00","fail":2,"label":"routing","pass":0,"skip":0},{"elapsed":"00:00:00","fail":7,"label":"security","pass":0,"skip":0},{"elapsed":"00:00:00","fail":2,"label":"smoke","pass":0,"skip":0},{"elapsed":"00:00:00","fail":4,"label":"ui","pass":0,"skip":0},{"elapsed":"00:00:00","fail":5,"label":"validation","pass":0,"skip":0}],[{"elapsed":"00:00:00","fail":23,"id":"s1","label":"Login","name":"Login","pass":0,"skip":0},{"elapsed":"00:00:00","fail":1,"id":"s1-s1","label":"Login.Login Accessibility","name":"Login Accessibility","pass":0,"skip":0},{"elapsed":"00:00:00","fail":4,"id":"s1-s2","label":"Login.Login Authentication","name":"Login Authentication","pass":0,"skip":0},{"elapsed":"00:00:00","fail":2,"id":"s1-s3","label":"Login.Login Routing","name":"Login Routing","pass":0,"skip":0},{"elapsed":"00:00:00","fail":5,"id":"s1-s4","label":"Login.Login Security","name":"Login Security","pass":0,"skip":0},{"elapsed":"00:00:00","fail":4,"id":"s1-s5","label":"Login.Login Ui","name":"Login Ui","pass":0,"skip":0},{"elapsed":"00:00:00","fail":7,"id":"s1-s6","label":"Login.Login Validation","name":"Login Validation","pass":0,"skip":0}]];
 </script>
 <script type="text/javascript">
-window.output["errors"] = [];
+window.output["errors"] = [[40,4,120],[67,4,120],[117,4,120],[153,4,120],[218,4,120],[277,4,120]];
 </script>
 <script type="text/javascript">
-window.output["baseMillis"] = 1747219086345;
+window.output["baseMillis"] = 1747231631623;
 </script>
 <script type="text/javascript">
-window.output["generated"] = 13452;
+window.output["generated"] = 401;
 </script>
 <script type="text/javascript">
 window.output["expand_keywords"] = null;
 </script>
 <script type="text/javascript">
-window.settings = {"defaultLevel":"INFO","minLevel":"INFO","reportURL":"report.html","rpa":false,"splitLogBase":"log","title":""};
+window.settings = {"defaultLevel":"INFO","minLevel":"FAIL","reportURL":"report.html","rpa":false,"splitLogBase":"log","title":""};
 </script>
 <title></title>
 </head>
@@ -2204,7 +2214,7 @@ function addExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="tagStatisticsRowTemplate">
   <tr class="row-${$item.index}">
-    <td class="stats-col-name" title="${doc}">
+    <td class="stats-col-name" title="{{html doc}}">
       <div class="stat-name">
         <span>{{html label}}</span>
         {{if info}}(${info}){{/if}}
