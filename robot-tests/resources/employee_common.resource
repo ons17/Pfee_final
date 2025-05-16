@@ -10,7 +10,7 @@ ${HEADLESS}             ${False}
 ${SITE_URL}             http://localhost:5173
 ${EMPLOYEE_EMAIL}       zeidimohamedtaher13@gmail.com
 ${EMPLOYEE_PASSWORD}    mohamed
-${TIMEOUT}             60s
+${TIMEOUT}             6s
 
 # UI Elements
 ${LOGO_IMG}            img[alt="Logo"]

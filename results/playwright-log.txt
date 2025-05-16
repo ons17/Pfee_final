@@ -1,0 +1,387 @@
+{"level":30,"time":"2025-05-16T12:50:52.526Z","pid":359749,"hostname":"pfe24","msg":"Listening on 127.0.0.1:46965"}
+(node:359749) DeprecationWarning: Calling start() is no longer necessary. It can be safely omitted.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"level":30,"time":"2025-05-16T12:50:52.652Z","pid":359749,"hostname":"pfe24","msg":"Start of node method newBrowser"}
+{"level":30,"time":"2025-05-16T12:50:52.734Z","pid":359749,"hostname":"pfe24","msg":"Adding browser to stack: chromium, version: 136.0.7103.25"}
+{"level":30,"time":"2025-05-16T12:50:52.735Z","pid":359749,"hostname":"pfe24","msg":"End of node method newBrowser"}
+{"level":30,"time":"2025-05-16T12:50:52.735Z","pid":359749,"hostname":"pfe24","msg":"Adding 0 contexts to browser"}
+{"level":30,"time":"2025-05-16T12:50:52.741Z","pid":359749,"hostname":"pfe24","msg":"Start of node method newPage"}
+{"level":30,"time":"2025-05-16T12:50:52.742Z","pid":359749,"hostname":"pfe24","msg":"currentBrowser: [object Object]"}
+{"level":30,"time":"2025-05-16T12:50:52.753Z","pid":359749,"hostname":"pfe24","msg":"Changed active context"}
+{"level":30,"time":"2025-05-16T12:50:52.813Z","pid":359749,"hostname":"pfe24","msg":"Video path: undefined"}
+{"level":30,"time":"2025-05-16T12:50:52.814Z","pid":359749,"hostname":"pfe24","msg":"Changed active page"}
+{"level":30,"time":"2025-05-16T12:50:55.210Z","pid":359749,"hostname":"pfe24","msg":"End of node method newPage"}
+{"level":30,"time":"2025-05-16T12:50:55.218Z","pid":359749,"hostname":"pfe24","msg":"Start of node method fillText"}
+{"level":30,"time":"2025-05-16T12:50:55.218Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with input#email1 in page."}
+{"level":30,"time":"2025-05-16T12:50:55.263Z","pid":359749,"hostname":"pfe24","msg":"End of node method fillText"}
+{"level":30,"time":"2025-05-16T12:50:55.268Z","pid":359749,"hostname":"pfe24","msg":"Start of node method fillText"}
+{"level":30,"time":"2025-05-16T12:50:55.268Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with input#password1 in page."}
+{"level":30,"time":"2025-05-16T12:50:55.278Z","pid":359749,"hostname":"pfe24","msg":"End of node method fillText"}
+{"level":30,"time":"2025-05-16T12:50:55.282Z","pid":359749,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T12:50:55.283Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with button:has-text(\"Sign In\") in page."}
+{"level":30,"time":"2025-05-16T12:50:55.353Z","pid":359749,"hostname":"pfe24","msg":"End of node method click"}
+{"level":30,"time":"2025-05-16T12:50:55.359Z","pid":359749,"hostname":"pfe24","msg":"Start of node method waitForElementState"}
+{"level":30,"time":"2025-05-16T12:50:55.360Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with xpath=//h1[contains(text(),\"Time Tracking\")] in page."}
+{"level":30,"time":"2025-05-16T12:50:55.614Z","pid":359749,"hostname":"pfe24","msg":"End of node method waitForElementState"}
+{"level":30,"time":"2025-05-16T12:50:55.620Z","pid":359749,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T12:50:55.620Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with [data-test=\"project-dropdown\"] in page."}
+{"level":30,"time":"2025-05-16T12:50:56.001Z","pid":359749,"hostname":"pfe24","msg":"End of node method click"}
+{"level":30,"time":"2025-05-16T12:50:56.007Z","pid":359749,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T12:50:56.007Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with :text(\"rrrrrrrrrrrrrrrrrrrr\") in page."}
+{"level":30,"time":"2025-05-16T12:50:56.076Z","pid":359749,"hostname":"pfe24","msg":"Error of node method  click"}
+================= Original suppressed error =================
+locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) <span data-v-ab55552d="" class="project-name">rrrrrrrrrrrrrrrrrrrr</span> aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) <span data-v-ab55552d="" class="project-name">rrrrrrrrrrrrrrrrrrrr</span> aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) <span class="p-select-option-label" data-pc-section="optionlabel">rrrrrrrrrrrrrrrrrrrr</span> aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+[2m  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')[22m
+
+    at internalClick (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:11893:19)
+    at async click (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:11874:18)
+    at async PlaywrightServer.click (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13135:28)
+=============================================================
+{"level":30,"time":"2025-05-16T12:50:56.082Z","pid":359749,"hostname":"pfe24","msg":"Start of node method takeScreenshot"}
+{"level":30,"time":"2025-05-16T12:50:56.083Z","pid":359749,"hostname":"pfe24","Take screenshot with options: ":{"path":"/home/usera/Pfee_final/results/browser/screenshot/fail-screenshot-1.png","fileType":"png","fullPage":false,"timeout":10000,"omitBackground":false}}
+{"level":30,"time":"2025-05-16T12:50:56.198Z","pid":359749,"hostname":"pfe24","msg":"End of node method takeScreenshot"}
+{"level":30,"time":"2025-05-16T12:50:56.212Z","pid":359749,"hostname":"pfe24","msg":"Start of node method closeBrowser"}
+{"level":30,"time":"2025-05-16T12:50:56.221Z","pid":359749,"hostname":"pfe24","msg":"Removed page=54d02d35-dcf3-4dc6-9632-f7db002c0842 from context=e67802e3-65ea-4176-a40f-aa62a76a8b2b page stack"}
+{"level":30,"time":"2025-05-16T12:50:56.273Z","pid":359749,"hostname":"pfe24","msg":"End of node method closeBrowser"}
+================= Original suppressed error =================
+Error: Browser has been closed.
+    at PlaywrightState.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
+    at PlaywrightServer.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
+    at PlaywrightServer.setTimeout (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
+    at Object.onReceiveHalfClose (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
+    at BaseServerInterceptingCall.maybePushNextMessage (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
+    at BaseServerInterceptingCall.handleEndEvent (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
+    at ServerHttp2Stream.<anonymous> (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
+    at ServerHttp2Stream.emit (node:events:519:35)
+    at endReadableNT (node:internal/streams/readable:1696:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+=============================================================
+{"level":30,"time":"2025-05-16T12:50:56.281Z","pid":359749,"hostname":"pfe24","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:50:56.281Z","pid":359749,"hostname":"pfe24","msg":"End of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:50:56.286Z","pid":359749,"hostname":"pfe24","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:50:56.287Z","pid":359749,"hostname":"pfe24","msg":"End of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:50:56.292Z","pid":359749,"hostname":"pfe24","msg":"Start of node method newBrowser"}
+{"level":30,"time":"2025-05-16T12:50:56.384Z","pid":359749,"hostname":"pfe24","msg":"Adding browser to stack: chromium, version: 136.0.7103.25"}
+{"level":30,"time":"2025-05-16T12:50:56.384Z","pid":359749,"hostname":"pfe24","msg":"End of node method newBrowser"}
+{"level":30,"time":"2025-05-16T12:50:56.384Z","pid":359749,"hostname":"pfe24","msg":"Adding 0 contexts to browser"}
+{"level":30,"time":"2025-05-16T12:50:56.391Z","pid":359749,"hostname":"pfe24","msg":"Start of node method newPage"}
+{"level":30,"time":"2025-05-16T12:50:56.391Z","pid":359749,"hostname":"pfe24","msg":"currentBrowser: [object Object]"}
+{"level":30,"time":"2025-05-16T12:50:56.399Z","pid":359749,"hostname":"pfe24","msg":"Changed active context"}
+{"level":30,"time":"2025-05-16T12:50:56.468Z","pid":359749,"hostname":"pfe24","msg":"Video path: undefined"}
+{"level":30,"time":"2025-05-16T12:50:56.469Z","pid":359749,"hostname":"pfe24","msg":"Changed active page"}
+{"level":30,"time":"2025-05-16T12:50:58.655Z","pid":359749,"hostname":"pfe24","msg":"End of node method newPage"}
+{"level":30,"time":"2025-05-16T12:50:58.660Z","pid":359749,"hostname":"pfe24","msg":"Start of node method fillText"}
+{"level":30,"time":"2025-05-16T12:50:58.660Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with input#email1 in page."}
+{"level":30,"time":"2025-05-16T12:50:58.693Z","pid":359749,"hostname":"pfe24","msg":"End of node method fillText"}
+{"level":30,"time":"2025-05-16T12:50:58.698Z","pid":359749,"hostname":"pfe24","msg":"Start of node method fillText"}
+{"level":30,"time":"2025-05-16T12:50:58.698Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with input#password1 in page."}
+{"level":30,"time":"2025-05-16T12:50:58.706Z","pid":359749,"hostname":"pfe24","msg":"End of node method fillText"}
+{"level":30,"time":"2025-05-16T12:50:58.712Z","pid":359749,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T12:50:58.712Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with button:has-text(\"Sign In\") in page."}
+{"level":30,"time":"2025-05-16T12:50:58.769Z","pid":359749,"hostname":"pfe24","msg":"End of node method click"}
+{"level":30,"time":"2025-05-16T12:50:58.774Z","pid":359749,"hostname":"pfe24","msg":"Start of node method waitForElementState"}
+{"level":30,"time":"2025-05-16T12:50:58.774Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with xpath=//h1[contains(text(),\"Time Tracking\")] in page."}
+{"level":30,"time":"2025-05-16T12:50:58.980Z","pid":359749,"hostname":"pfe24","msg":"End of node method waitForElementState"}
+{"level":30,"time":"2025-05-16T12:50:58.987Z","pid":359749,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T12:50:58.988Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with [data-test=\"project-dropdown\"] in page."}
+{"level":30,"time":"2025-05-16T12:50:59.327Z","pid":359749,"hostname":"pfe24","msg":"End of node method click"}
+{"level":30,"time":"2025-05-16T12:50:59.330Z","pid":359749,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T12:50:59.331Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with :text(\"rrrrrrrrrrrrrrrrrrrr\") in page."}
+{"level":30,"time":"2025-05-16T12:50:59.391Z","pid":359749,"hostname":"pfe24","msg":"Error of node method  click"}
+================= Original suppressed error =================
+locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) <span data-v-ab55552d="" class="project-name">rrrrrrrrrrrrrrrrrrrr</span> aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) <span data-v-ab55552d="" class="project-name">rrrrrrrrrrrrrrrrrrrr</span> aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) <span class="p-select-option-label" data-pc-section="optionlabel">rrrrrrrrrrrrrrrrrrrr</span> aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+[2m  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')[22m
+
+    at internalClick (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:11893:19)
+    at async click (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:11874:18)
+    at async PlaywrightServer.click (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13135:28)
+=============================================================
+{"level":30,"time":"2025-05-16T12:50:59.397Z","pid":359749,"hostname":"pfe24","msg":"Start of node method takeScreenshot"}
+{"level":30,"time":"2025-05-16T12:50:59.397Z","pid":359749,"hostname":"pfe24","Take screenshot with options: ":{"path":"/home/usera/Pfee_final/results/browser/screenshot/fail-screenshot-2.png","fileType":"png","fullPage":false,"timeout":10000,"omitBackground":false}}
+{"level":30,"time":"2025-05-16T12:50:59.504Z","pid":359749,"hostname":"pfe24","msg":"End of node method takeScreenshot"}
+{"level":30,"time":"2025-05-16T12:50:59.512Z","pid":359749,"hostname":"pfe24","msg":"Start of node method closeBrowser"}
+{"level":30,"time":"2025-05-16T12:50:59.515Z","pid":359749,"hostname":"pfe24","msg":"Removed page=6c00610f-6feb-4ccd-9c55-8e05b56b6fea from context=e6125bf8-65f9-4589-b117-55c1270b004a page stack"}
+{"level":30,"time":"2025-05-16T12:50:59.557Z","pid":359749,"hostname":"pfe24","msg":"End of node method closeBrowser"}
+================= Original suppressed error =================
+Error: Browser has been closed.
+    at PlaywrightState.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
+    at PlaywrightServer.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
+    at PlaywrightServer.setTimeout (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
+    at Object.onReceiveHalfClose (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
+    at BaseServerInterceptingCall.maybePushNextMessage (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
+    at BaseServerInterceptingCall.handleEndEvent (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
+    at ServerHttp2Stream.<anonymous> (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
+    at ServerHttp2Stream.emit (node:events:519:35)
+    at endReadableNT (node:internal/streams/readable:1696:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+=============================================================
+{"level":30,"time":"2025-05-16T12:50:59.568Z","pid":359749,"hostname":"pfe24","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:50:59.568Z","pid":359749,"hostname":"pfe24","msg":"End of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:50:59.573Z","pid":359749,"hostname":"pfe24","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:50:59.574Z","pid":359749,"hostname":"pfe24","msg":"End of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:50:59.580Z","pid":359749,"hostname":"pfe24","msg":"Start of node method newBrowser"}
+{"level":30,"time":"2025-05-16T12:50:59.674Z","pid":359749,"hostname":"pfe24","msg":"Adding browser to stack: chromium, version: 136.0.7103.25"}
+{"level":30,"time":"2025-05-16T12:50:59.674Z","pid":359749,"hostname":"pfe24","msg":"End of node method newBrowser"}
+{"level":30,"time":"2025-05-16T12:50:59.674Z","pid":359749,"hostname":"pfe24","msg":"Adding 0 contexts to browser"}
+{"level":30,"time":"2025-05-16T12:50:59.681Z","pid":359749,"hostname":"pfe24","msg":"Start of node method newPage"}
+{"level":30,"time":"2025-05-16T12:50:59.681Z","pid":359749,"hostname":"pfe24","msg":"currentBrowser: [object Object]"}
+{"level":30,"time":"2025-05-16T12:50:59.688Z","pid":359749,"hostname":"pfe24","msg":"Changed active context"}
+{"level":30,"time":"2025-05-16T12:50:59.754Z","pid":359749,"hostname":"pfe24","msg":"Video path: undefined"}
+{"level":30,"time":"2025-05-16T12:50:59.754Z","pid":359749,"hostname":"pfe24","msg":"Changed active page"}
+{"level":30,"time":"2025-05-16T12:51:02.445Z","pid":359749,"hostname":"pfe24","msg":"End of node method newPage"}
+{"level":30,"time":"2025-05-16T12:51:02.450Z","pid":359749,"hostname":"pfe24","msg":"Start of node method fillText"}
+{"level":30,"time":"2025-05-16T12:51:02.450Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with input#email1 in page."}
+{"level":30,"time":"2025-05-16T12:51:02.482Z","pid":359749,"hostname":"pfe24","msg":"End of node method fillText"}
+{"level":30,"time":"2025-05-16T12:51:02.486Z","pid":359749,"hostname":"pfe24","msg":"Start of node method fillText"}
+{"level":30,"time":"2025-05-16T12:51:02.487Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with input#password1 in page."}
+{"level":30,"time":"2025-05-16T12:51:02.495Z","pid":359749,"hostname":"pfe24","msg":"End of node method fillText"}
+{"level":30,"time":"2025-05-16T12:51:02.501Z","pid":359749,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T12:51:02.502Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with button:has-text(\"Sign In\") in page."}
+{"level":30,"time":"2025-05-16T12:51:02.563Z","pid":359749,"hostname":"pfe24","msg":"End of node method click"}
+{"level":30,"time":"2025-05-16T12:51:02.568Z","pid":359749,"hostname":"pfe24","msg":"Start of node method waitForElementState"}
+{"level":30,"time":"2025-05-16T12:51:02.568Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with xpath=//h1[contains(text(),\"Time Tracking\")] in page."}
+{"level":30,"time":"2025-05-16T12:51:02.796Z","pid":359749,"hostname":"pfe24","msg":"End of node method waitForElementState"}
+{"level":30,"time":"2025-05-16T12:51:02.803Z","pid":359749,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T12:51:02.804Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with [data-test=\"project-dropdown\"] in page."}
+{"level":30,"time":"2025-05-16T12:51:03.124Z","pid":359749,"hostname":"pfe24","msg":"End of node method click"}
+{"level":30,"time":"2025-05-16T12:51:03.129Z","pid":359749,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T12:51:03.129Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with :text(\"rrrrrrrrrrrrrrrrrrrr\") in page."}
+{"level":30,"time":"2025-05-16T12:51:03.195Z","pid":359749,"hostname":"pfe24","msg":"Error of node method  click"}
+================= Original suppressed error =================
+locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) <span data-v-ab55552d="" class="project-name">rrrrrrrrrrrrrrrrrrrr</span> aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) <span data-v-ab55552d="" class="project-name">rrrrrrrrrrrrrrrrrrrr</span> aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) <span class="p-select-option-label" data-pc-section="optionlabel">rrrrrrrrrrrrrrrrrrrr</span> aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+[2m  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')[22m
+
+    at internalClick (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:11893:19)
+    at async click (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:11874:18)
+    at async PlaywrightServer.click (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13135:28)
+=============================================================
+{"level":30,"time":"2025-05-16T12:51:03.201Z","pid":359749,"hostname":"pfe24","msg":"Start of node method takeScreenshot"}
+{"level":30,"time":"2025-05-16T12:51:03.201Z","pid":359749,"hostname":"pfe24","Take screenshot with options: ":{"path":"/home/usera/Pfee_final/results/browser/screenshot/fail-screenshot-3.png","fileType":"png","fullPage":false,"timeout":10000,"omitBackground":false}}
+{"level":30,"time":"2025-05-16T12:51:03.321Z","pid":359749,"hostname":"pfe24","msg":"End of node method takeScreenshot"}
+{"level":30,"time":"2025-05-16T12:51:03.328Z","pid":359749,"hostname":"pfe24","msg":"Start of node method closeBrowser"}
+{"level":30,"time":"2025-05-16T12:51:03.331Z","pid":359749,"hostname":"pfe24","msg":"Removed page=0a2e92c4-30b7-4d61-bf4d-5f073b75cc2d from context=5255c061-1621-487e-a912-c0811013cf09 page stack"}
+{"level":30,"time":"2025-05-16T12:51:03.377Z","pid":359749,"hostname":"pfe24","msg":"End of node method closeBrowser"}
+================= Original suppressed error =================
+Error: Browser has been closed.
+    at PlaywrightState.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
+    at PlaywrightServer.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
+    at PlaywrightServer.setTimeout (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
+    at Object.onReceiveHalfClose (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
+    at BaseServerInterceptingCall.maybePushNextMessage (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
+    at BaseServerInterceptingCall.handleEndEvent (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
+    at ServerHttp2Stream.<anonymous> (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
+    at ServerHttp2Stream.emit (node:events:519:35)
+    at endReadableNT (node:internal/streams/readable:1696:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+=============================================================
+{"level":30,"time":"2025-05-16T12:51:03.385Z","pid":359749,"hostname":"pfe24","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:51:03.385Z","pid":359749,"hostname":"pfe24","msg":"End of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:51:03.389Z","pid":359749,"hostname":"pfe24","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:51:03.389Z","pid":359749,"hostname":"pfe24","msg":"End of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:51:03.394Z","pid":359749,"hostname":"pfe24","msg":"Start of node method newBrowser"}
+{"level":30,"time":"2025-05-16T12:51:03.488Z","pid":359749,"hostname":"pfe24","msg":"Adding browser to stack: chromium, version: 136.0.7103.25"}
+{"level":30,"time":"2025-05-16T12:51:03.489Z","pid":359749,"hostname":"pfe24","msg":"End of node method newBrowser"}
+{"level":30,"time":"2025-05-16T12:51:03.489Z","pid":359749,"hostname":"pfe24","msg":"Adding 0 contexts to browser"}
+{"level":30,"time":"2025-05-16T12:51:03.495Z","pid":359749,"hostname":"pfe24","msg":"Start of node method newPage"}
+{"level":30,"time":"2025-05-16T12:51:03.495Z","pid":359749,"hostname":"pfe24","msg":"currentBrowser: [object Object]"}
+{"level":30,"time":"2025-05-16T12:51:03.506Z","pid":359749,"hostname":"pfe24","msg":"Changed active context"}
+{"level":30,"time":"2025-05-16T12:51:03.573Z","pid":359749,"hostname":"pfe24","msg":"Video path: undefined"}
+{"level":30,"time":"2025-05-16T12:51:03.573Z","pid":359749,"hostname":"pfe24","msg":"Changed active page"}
+{"level":30,"time":"2025-05-16T12:51:05.600Z","pid":359749,"hostname":"pfe24","msg":"End of node method newPage"}
+{"level":30,"time":"2025-05-16T12:51:05.605Z","pid":359749,"hostname":"pfe24","msg":"Start of node method fillText"}
+{"level":30,"time":"2025-05-16T12:51:05.605Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with input#email1 in page."}
+{"level":30,"time":"2025-05-16T12:51:05.647Z","pid":359749,"hostname":"pfe24","msg":"End of node method fillText"}
+{"level":30,"time":"2025-05-16T12:51:05.651Z","pid":359749,"hostname":"pfe24","msg":"Start of node method fillText"}
+{"level":30,"time":"2025-05-16T12:51:05.651Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with input#password1 in page."}
+{"level":30,"time":"2025-05-16T12:51:05.659Z","pid":359749,"hostname":"pfe24","msg":"End of node method fillText"}
+{"level":30,"time":"2025-05-16T12:51:05.664Z","pid":359749,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T12:51:05.664Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with button:has-text(\"Sign In\") in page."}
+{"level":30,"time":"2025-05-16T12:51:05.723Z","pid":359749,"hostname":"pfe24","msg":"End of node method click"}
+{"level":30,"time":"2025-05-16T12:51:05.730Z","pid":359749,"hostname":"pfe24","msg":"Start of node method waitForElementState"}
+{"level":30,"time":"2025-05-16T12:51:05.730Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with xpath=//h1[contains(text(),\"Time Tracking\")] in page."}
+{"level":30,"time":"2025-05-16T12:51:05.961Z","pid":359749,"hostname":"pfe24","msg":"End of node method waitForElementState"}
+{"level":30,"time":"2025-05-16T12:51:05.969Z","pid":359749,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T12:51:05.969Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with [data-test=\"project-dropdown\"] in page."}
+{"level":30,"time":"2025-05-16T12:51:06.406Z","pid":359749,"hostname":"pfe24","msg":"End of node method click"}
+{"level":30,"time":"2025-05-16T12:51:06.410Z","pid":359749,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T12:51:06.410Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with :text(\"rrrrrrrrrrrrrrrrrrrr\") in page."}
+{"level":30,"time":"2025-05-16T12:51:06.483Z","pid":359749,"hostname":"pfe24","msg":"Error of node method  click"}
+================= Original suppressed error =================
+locator.click: Error: strict mode violation: locator(':text("rrrrrrrrrrrrrrrrrrrr")') resolved to 3 elements:
+    1) <span data-v-ab55552d="" class="project-name">rrrrrrrrrrrrrrrrrrrr</span> aka getByText('rrrrrrrrrrrrrrrrrrrr').first()
+    2) <span data-v-ab55552d="" class="project-name">rrrrrrrrrrrrrrrrrrrr</span> aka getByText('rrrrrrrrrrrrrrrrrrrr').nth(1)
+    3) <span class="p-select-option-label" data-pc-section="optionlabel">rrrrrrrrrrrrrrrrrrrr</span> aka getByLabel('rrrrrrrrrrrrrrrrrrrr').getByText('rrrrrrrrrrrrrrrrrrrr')
+
+Call log:
+[2m  - waiting for locator(':text("rrrrrrrrrrrrrrrrrrrr")')[22m
+
+    at internalClick (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:11893:19)
+    at async click (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:11874:18)
+    at async PlaywrightServer.click (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13135:28)
+=============================================================
+{"level":30,"time":"2025-05-16T12:51:06.489Z","pid":359749,"hostname":"pfe24","msg":"Start of node method takeScreenshot"}
+{"level":30,"time":"2025-05-16T12:51:06.490Z","pid":359749,"hostname":"pfe24","Take screenshot with options: ":{"path":"/home/usera/Pfee_final/results/browser/screenshot/fail-screenshot-4.png","fileType":"png","fullPage":false,"timeout":10000,"omitBackground":false}}
+{"level":30,"time":"2025-05-16T12:51:06.635Z","pid":359749,"hostname":"pfe24","msg":"End of node method takeScreenshot"}
+{"level":30,"time":"2025-05-16T12:51:06.644Z","pid":359749,"hostname":"pfe24","msg":"Start of node method closeBrowser"}
+{"level":30,"time":"2025-05-16T12:51:06.647Z","pid":359749,"hostname":"pfe24","msg":"Removed page=357d242c-24f7-400b-8866-63eaeb8e6e51 from context=56f7e8cc-3f32-4bdc-bfac-35056a3a1e09 page stack"}
+{"level":30,"time":"2025-05-16T12:51:06.693Z","pid":359749,"hostname":"pfe24","msg":"End of node method closeBrowser"}
+================= Original suppressed error =================
+Error: Browser has been closed.
+    at PlaywrightState.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
+    at PlaywrightServer.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
+    at PlaywrightServer.setTimeout (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
+    at Object.onReceiveHalfClose (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
+    at BaseServerInterceptingCall.maybePushNextMessage (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
+    at BaseServerInterceptingCall.handleEndEvent (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
+    at ServerHttp2Stream.<anonymous> (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
+    at ServerHttp2Stream.emit (node:events:519:35)
+    at endReadableNT (node:internal/streams/readable:1696:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+=============================================================
+{"level":30,"time":"2025-05-16T12:51:06.700Z","pid":359749,"hostname":"pfe24","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:51:06.700Z","pid":359749,"hostname":"pfe24","msg":"End of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:51:06.706Z","pid":359749,"hostname":"pfe24","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:51:06.706Z","pid":359749,"hostname":"pfe24","msg":"End of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:51:06.713Z","pid":359749,"hostname":"pfe24","msg":"Start of node method newBrowser"}
+{"level":30,"time":"2025-05-16T12:51:06.815Z","pid":359749,"hostname":"pfe24","msg":"Adding browser to stack: chromium, version: 136.0.7103.25"}
+{"level":30,"time":"2025-05-16T12:51:06.815Z","pid":359749,"hostname":"pfe24","msg":"End of node method newBrowser"}
+{"level":30,"time":"2025-05-16T12:51:06.815Z","pid":359749,"hostname":"pfe24","msg":"Adding 0 contexts to browser"}
+{"level":30,"time":"2025-05-16T12:51:06.827Z","pid":359749,"hostname":"pfe24","msg":"Start of node method newPage"}
+{"level":30,"time":"2025-05-16T12:51:06.827Z","pid":359749,"hostname":"pfe24","msg":"currentBrowser: [object Object]"}
+{"level":30,"time":"2025-05-16T12:51:06.831Z","pid":359749,"hostname":"pfe24","msg":"Changed active context"}
+{"level":30,"time":"2025-05-16T12:51:06.902Z","pid":359749,"hostname":"pfe24","msg":"Video path: undefined"}
+{"level":30,"time":"2025-05-16T12:51:06.902Z","pid":359749,"hostname":"pfe24","msg":"Changed active page"}
+{"level":30,"time":"2025-05-16T12:51:09.372Z","pid":359749,"hostname":"pfe24","msg":"End of node method newPage"}
+{"level":30,"time":"2025-05-16T12:51:09.379Z","pid":359749,"hostname":"pfe24","msg":"Start of node method fillText"}
+{"level":30,"time":"2025-05-16T12:51:09.380Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with input#email1 in page."}
+{"level":30,"time":"2025-05-16T12:51:09.425Z","pid":359749,"hostname":"pfe24","msg":"End of node method fillText"}
+{"level":30,"time":"2025-05-16T12:51:09.439Z","pid":359749,"hostname":"pfe24","msg":"Start of node method fillText"}
+{"level":30,"time":"2025-05-16T12:51:09.439Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with input#password1 in page."}
+{"level":30,"time":"2025-05-16T12:51:09.449Z","pid":359749,"hostname":"pfe24","msg":"End of node method fillText"}
+{"level":30,"time":"2025-05-16T12:51:09.453Z","pid":359749,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T12:51:09.453Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with button:has-text(\"Sign In\") in page."}
+{"level":30,"time":"2025-05-16T12:51:09.529Z","pid":359749,"hostname":"pfe24","msg":"End of node method click"}
+{"level":30,"time":"2025-05-16T12:51:09.535Z","pid":359749,"hostname":"pfe24","msg":"Start of node method waitForElementState"}
+{"level":30,"time":"2025-05-16T12:51:09.536Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with xpath=//h1[contains(text(),\"Time Tracking\")] in page."}
+{"level":30,"time":"2025-05-16T12:51:09.942Z","pid":359749,"hostname":"pfe24","msg":"End of node method waitForElementState"}
+{"level":30,"time":"2025-05-16T12:51:09.959Z","pid":359749,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T12:51:09.959Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with .filter-dropdown in page."}
+{"level":30,"time":"2025-05-16T12:51:10.426Z","pid":359749,"hostname":"pfe24","msg":"End of node method click"}
+{"level":30,"time":"2025-05-16T12:51:10.431Z","pid":359749,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T12:51:10.431Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with :text(\"Day\") in page."}
+{"level":30,"time":"2025-05-16T12:51:10.815Z","pid":359749,"hostname":"pfe24","msg":"End of node method click"}
+{"level":30,"time":"2025-05-16T12:51:10.823Z","pid":359749,"hostname":"pfe24","msg":"Start of node method getText"}
+{"level":30,"time":"2025-05-16T12:51:10.824Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with .period-range in page."}
+{"level":30,"time":"2025-05-16T12:51:10.875Z","pid":359749,"hostname":"pfe24","msg":"Retrieved text for element .period-range containing May 16, 2025"}
+{"level":30,"time":"2025-05-16T12:51:10.875Z","pid":359749,"hostname":"pfe24","msg":"End of node method getText"}
+{"level":30,"time":"2025-05-16T12:51:10.886Z","pid":359749,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T12:51:10.887Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with .filter-dropdown in page."}
+{"level":30,"time":"2025-05-16T12:51:10.947Z","pid":359749,"hostname":"pfe24","msg":"End of node method click"}
+{"level":30,"time":"2025-05-16T12:51:10.952Z","pid":359749,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T12:51:10.952Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with :text(\"Week\") in page."}
+{"level":30,"time":"2025-05-16T12:51:11.185Z","pid":359749,"hostname":"pfe24","msg":"End of node method click"}
+{"level":30,"time":"2025-05-16T12:51:11.188Z","pid":359749,"hostname":"pfe24","msg":"Start of node method getText"}
+{"level":30,"time":"2025-05-16T12:51:11.188Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with .period-range in page."}
+{"level":30,"time":"2025-05-16T12:51:11.204Z","pid":359749,"hostname":"pfe24","msg":"Retrieved text for element .period-range containing May 12 - May 18, 2025"}
+{"level":30,"time":"2025-05-16T12:51:11.204Z","pid":359749,"hostname":"pfe24","msg":"End of node method getText"}
+{"level":30,"time":"2025-05-16T12:51:11.211Z","pid":359749,"hostname":"pfe24","msg":"Start of node method closeBrowser"}
+{"level":30,"time":"2025-05-16T12:51:11.222Z","pid":359749,"hostname":"pfe24","msg":"Removed page=f5c73d16-8246-4c8d-80bf-58a432222a8a from context=8b2d9adb-54d1-4f6d-b000-9f4578da6e0c page stack"}
+{"level":30,"time":"2025-05-16T12:51:11.262Z","pid":359749,"hostname":"pfe24","msg":"End of node method closeBrowser"}
+================= Original suppressed error =================
+Error: Browser has been closed.
+    at PlaywrightState.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
+    at PlaywrightServer.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
+    at PlaywrightServer.setTimeout (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
+    at Object.onReceiveHalfClose (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
+    at BaseServerInterceptingCall.maybePushNextMessage (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
+    at BaseServerInterceptingCall.handleEndEvent (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
+    at ServerHttp2Stream.<anonymous> (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
+    at ServerHttp2Stream.emit (node:events:519:35)
+    at endReadableNT (node:internal/streams/readable:1696:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+=============================================================
+{"level":30,"time":"2025-05-16T12:51:11.269Z","pid":359749,"hostname":"pfe24","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:51:11.269Z","pid":359749,"hostname":"pfe24","msg":"End of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:51:11.275Z","pid":359749,"hostname":"pfe24","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:51:11.275Z","pid":359749,"hostname":"pfe24","msg":"End of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:51:11.282Z","pid":359749,"hostname":"pfe24","msg":"Start of node method newBrowser"}
+{"level":30,"time":"2025-05-16T12:51:11.371Z","pid":359749,"hostname":"pfe24","msg":"Adding browser to stack: chromium, version: 136.0.7103.25"}
+{"level":30,"time":"2025-05-16T12:51:11.372Z","pid":359749,"hostname":"pfe24","msg":"End of node method newBrowser"}
+{"level":30,"time":"2025-05-16T12:51:11.371Z","pid":359749,"hostname":"pfe24","msg":"Adding 0 contexts to browser"}
+{"level":30,"time":"2025-05-16T12:51:11.383Z","pid":359749,"hostname":"pfe24","msg":"Start of node method newPage"}
+{"level":30,"time":"2025-05-16T12:51:11.383Z","pid":359749,"hostname":"pfe24","msg":"currentBrowser: [object Object]"}
+{"level":30,"time":"2025-05-16T12:51:11.393Z","pid":359749,"hostname":"pfe24","msg":"Changed active context"}
+{"level":30,"time":"2025-05-16T12:51:11.447Z","pid":359749,"hostname":"pfe24","msg":"Video path: undefined"}
+{"level":30,"time":"2025-05-16T12:51:11.447Z","pid":359749,"hostname":"pfe24","msg":"Changed active page"}
+{"level":30,"time":"2025-05-16T12:51:13.280Z","pid":359749,"hostname":"pfe24","msg":"End of node method newPage"}
+{"level":30,"time":"2025-05-16T12:51:13.284Z","pid":359749,"hostname":"pfe24","msg":"Start of node method fillText"}
+{"level":30,"time":"2025-05-16T12:51:13.284Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with input#email1 in page."}
+{"level":30,"time":"2025-05-16T12:51:13.314Z","pid":359749,"hostname":"pfe24","msg":"End of node method fillText"}
+{"level":30,"time":"2025-05-16T12:51:13.318Z","pid":359749,"hostname":"pfe24","msg":"Start of node method fillText"}
+{"level":30,"time":"2025-05-16T12:51:13.318Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with input#password1 in page."}
+{"level":30,"time":"2025-05-16T12:51:13.326Z","pid":359749,"hostname":"pfe24","msg":"End of node method fillText"}
+{"level":30,"time":"2025-05-16T12:51:13.330Z","pid":359749,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T12:51:13.330Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with button:has-text(\"Sign In\") in page."}
+{"level":30,"time":"2025-05-16T12:51:13.379Z","pid":359749,"hostname":"pfe24","msg":"End of node method click"}
+{"level":30,"time":"2025-05-16T12:51:13.383Z","pid":359749,"hostname":"pfe24","msg":"Start of node method waitForElementState"}
+{"level":30,"time":"2025-05-16T12:51:13.384Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with xpath=//h1[contains(text(),\"Time Tracking\")] in page."}
+{"level":30,"time":"2025-05-16T12:51:13.581Z","pid":359749,"hostname":"pfe24","msg":"End of node method waitForElementState"}
+{"level":30,"time":"2025-05-16T12:51:13.587Z","pid":359749,"hostname":"pfe24","msg":"Start of node method waitForElementState"}
+{"level":30,"time":"2025-05-16T12:51:13.587Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with .weekly-summary in page."}
+{"level":30,"time":"2025-05-16T12:51:13.669Z","pid":359749,"hostname":"pfe24","msg":"End of node method waitForElementState"}
+{"level":30,"time":"2025-05-16T12:51:13.675Z","pid":359749,"hostname":"pfe24","msg":"Start of node method getElement"}
+{"level":30,"time":"2025-05-16T12:51:13.675Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with .weekly-progress-bar in page."}
+{"level":30,"time":"2025-05-16T12:51:13.706Z","pid":359749,"hostname":"pfe24","msg":"End of node method getElement"}
+{"level":30,"time":"2025-05-16T12:51:13.713Z","pid":359749,"hostname":"pfe24","msg":"Start of node method getElement"}
+{"level":30,"time":"2025-05-16T12:51:13.714Z","pid":359749,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with .summary-badge in page."}
+{"level":30,"time":"2025-05-16T12:51:13.873Z","pid":359749,"hostname":"pfe24","msg":"End of node method getElement"}
+{"level":30,"time":"2025-05-16T12:51:13.877Z","pid":359749,"hostname":"pfe24","msg":"Start of node method closeBrowser"}
+{"level":30,"time":"2025-05-16T12:51:13.880Z","pid":359749,"hostname":"pfe24","msg":"Removed page=e95c2350-ce74-49db-9e81-87541762c89c from context=f432b775-9fae-4c2a-b101-d89c0e47ca9f page stack"}
+{"level":30,"time":"2025-05-16T12:51:13.937Z","pid":359749,"hostname":"pfe24","msg":"End of node method closeBrowser"}
+================= Original suppressed error =================
+Error: Browser has been closed.
+    at PlaywrightState.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
+    at PlaywrightServer.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
+    at PlaywrightServer.setTimeout (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
+    at Object.onReceiveHalfClose (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
+    at BaseServerInterceptingCall.maybePushNextMessage (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
+    at BaseServerInterceptingCall.handleEndEvent (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
+    at ServerHttp2Stream.<anonymous> (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
+    at ServerHttp2Stream.emit (node:events:519:35)
+    at endReadableNT (node:internal/streams/readable:1696:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+=============================================================
+{"level":30,"time":"2025-05-16T12:51:13.943Z","pid":359749,"hostname":"pfe24","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:51:13.943Z","pid":359749,"hostname":"pfe24","msg":"End of node method getBrowserCatalog"}
+================= Original suppressed error =================
+Error: Browser has been closed.
+    at PlaywrightState.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
+    at PlaywrightServer.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
+    at PlaywrightServer.setTimeout (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
+    at Object.onReceiveHalfClose (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
+    at BaseServerInterceptingCall.maybePushNextMessage (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
+    at BaseServerInterceptingCall.handleEndEvent (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
+    at ServerHttp2Stream.<anonymous> (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
+    at ServerHttp2Stream.emit (node:events:519:35)
+    at endReadableNT (node:internal/streams/readable:1696:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+=============================================================
+{"level":30,"time":"2025-05-16T12:51:13.951Z","pid":359749,"hostname":"pfe24","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:51:13.952Z","pid":359749,"hostname":"pfe24","msg":"End of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T12:51:14.011Z","pid":359749,"hostname":"pfe24","msg":"Start of node method closeAllBrowsers"}
+{"level":30,"time":"2025-05-16T12:51:14.011Z","pid":359749,"hostname":"pfe24","msg":"End of node method closeAllBrowsers"}

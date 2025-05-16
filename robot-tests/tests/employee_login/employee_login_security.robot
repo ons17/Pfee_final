@@ -18,7 +18,7 @@ Session Timeout Test
     Submit Employee Login Form
     Sleep    2s    # Simulating session timeout
     Reload
-    Get Url    ==    ${SITE_URL}/login
+    Get Url    ==    ${SITE_URL}/EmployeeLogin
 
 XSS Prevention
     [Documentation]    Tests XSS prevention in login fields
