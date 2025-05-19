@@ -141,47 +141,47 @@ const initializeCharts = () => {
     ]
   };
 
-  // Chart 3: Time tracking by day of week
+  // Chart 3: Time tracking by day of week with individual employee curves
   lineData.value = {
     labels: displayedDays.value.map(day => format(day.date, 'EEE')),
-    datasets: [
-      {
-        label: 'Heures travaillées',
+    datasets: employeeData.value
+      .filter(emp => selectedRole.value === 'all' || emp.role === selectedRole.value)
+      .map((employee, index) => ({
+        label: employee.nomEmployee,
         data: displayedDays.value.map(day => {
           const dayEntries = timeTrackingData.value
             .filter(entry => {
               if (!entry.heure_debut_suivi) return false;
               const entryDate = new Date(entry.heure_debut_suivi);
               const dayDate = day.date;
-              // Add role filtering
-              const matchesRole = selectedRole.value === 'all' || 
-                employeeData.value.find(emp => 
-                  emp.idEmployee === entry.employee.idEmployee && 
-                  emp.role === selectedRole.value
-                );
               return (
+                entry.employee.idEmployee === employee.idEmployee &&
                 entryDate.getDate() === dayDate.getDate() &&
                 entryDate.getMonth() === dayDate.getMonth() &&
-                entryDate.getFullYear() === dayDate.getFullYear() &&
-                matchesRole
+                entryDate.getFullYear() === dayDate.getFullYear()
               );
             });
 
           const totalHours = dayEntries.reduce((total, entry) => {
-            // Make sure duree_suivi is a number and convert from seconds to hours
             const duration = entry.duree_suivi ? Number(entry.duree_suivi) / 3600 : 0;
-            return total + duration;
+            return Math.min(total + duration, 9);
           }, 0);
 
-          console.log(`Day ${format(day.date, 'EEE')}: ${totalHours.toFixed(2)} hours`);
           return totalHours.toFixed(2);
         }),
-        fill: false,
-        backgroundColor: documentStyle.getPropertyValue('--p-primary-500'),
-        borderColor: documentStyle.getPropertyValue('--p-primary-500'),
-        tension: 0.4
-      }
-    ]
+        fill: true,
+        tension: 0.4,
+        borderWidth: 3,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        // New green color palette
+        borderColor: `hsl(${142 + (index * 20)}, 70%, ${45 + (index * 5)}%)`,
+        backgroundColor: `hsla(${142 + (index * 20)}, 70%, ${45 + (index * 5)}%, 0.1)`,
+        pointBackgroundColor: `hsl(${142 + (index * 20)}, 70%, ${45 + (index * 5)}%)`,
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointStyle: 'circle'
+      }))
   };
 
   // Chart options
@@ -236,74 +236,90 @@ const initializeCharts = () => {
   lineOptions.value = {
     plugins: {
       legend: {
+        position: 'bottom',
         labels: {
-          color: textColor
+          color: textColor,
+          usePointStyle: true,
+          padding: 20,
+          font: {
+            size: 13,
+            weight: 600
+          },
+          generateLabels: function(chart) {
+            const datasets = chart.data.datasets;
+            return datasets.map((dataset, i) => ({
+              text: dataset.label,
+              fillStyle: dataset.backgroundColor,
+              strokeStyle: dataset.borderColor,
+              lineWidth: 2,
+              pointStyle: 'circle',
+              fontColor: textColor,
+              datasetIndex: i
+            }));
+          }
         }
       },
-      title: {
-        display: true,
-        text: 'Heures Travaillées par Jour',
-        color: textColor
+      tooltip: {
+        mode: 'index',
+        intersect: false,
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        titleColor: '#000',
+        bodyColor: '#000',
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+        borderWidth: 1,
+        padding: 10,
+        callbacks: {
+          label: function(context) {
+            return `${context.dataset.label}: ${context.parsed.y}h`;
+          }
+        }
       }
     },
     scales: {
       x: {
+        grid: {
+          color: surfaceBorder,
+          drawBorder: false,
+          lineWidth: 1
+        },
         ticks: {
           color: textColorSecondary,
           font: {
-            size: 14 // Increased font size
+            size: 14,
+            weight: '600'
           }
-        },
-        grid: {
-          color: surfaceBorder,
-          drawBorder: false
         }
       },
       y: {
         type: 'linear',
         beginAtZero: true,
         min: 0,
-        max: 24,
-        ticks: {
-          color: textColorSecondary,
-          stepSize: 1,
-          callback: function(value) {
-            return value + 'h';
-          },
-          font: {
-            size: 14 // Increased font size
-          },
-          autoSkip: false,
-          maxRotation: 0,
-          padding: 10 // Added padding for better visibility
-        },
+        max: 9,
         grid: {
           color: surfaceBorder,
           drawBorder: false,
           lineWidth: 1
+        },
+        ticks: {
+          color: textColorSecondary,
+          stepSize: 1,
+          font: {
+            size: 14,
+            weight: '600'
+          },
+          callback: function(value) {
+            return value + 'h';
+          }
         }
       }
     },
-    responsive: true,
-    maintainAspectRatio: false,
     interaction: {
-      mode: 'index',
+      mode: 'nearest',
+      axis: 'x',
       intersect: false
     },
-    plugins: {
-      tooltip: {
-        enabled: true,
-        mode: 'index',
-        intersect: false,
-        padding: 10,
-        titleFont: {
-          size: 14
-        },
-        bodyFont: {
-          size: 14
-        }
-      }
-    }
+    responsive: true,
+    maintainAspectRatio: false
   };
 };
 

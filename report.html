@@ -5,7 +5,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta content="Robot Framework 7.2.2 (Python 3.10.12 on linux)" name="Generator">
+<meta content="Robot Framework 7.0 (Python 3.10.12 on linux)" name="Generator">
 <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKcAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAAqAAAAAAAAAAAAAAAAAAAALIAAAD/AAAA4AAAANwAAADcAAAA3AAAANwAAADcAAAA3AAAANwAAADcAAAA4AAAAP8AAACxAAAAAAAAAKYAAAD/AAAAuwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC/AAAA/wAAAKkAAAD6AAAAzAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAN8AAAD/AAAA+gAAAMMAAAAAAAAAAgAAAGsAAABrAAAAawAAAGsAAABrAAAAawAAAGsAAABrAAAADAAAAAAAAADaAAAA/wAAAPoAAADDAAAAAAAAAIsAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAANEAAAAAAAAA2gAAAP8AAAD6AAAAwwAAAAAAAAAAAAAAMgAAADIAAAAyAAAAMgAAADIAAAAyAAAAMgAAADIAAAAFAAAAAAAAANoAAAD/AAAA+gAAAMMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADaAAAA/wAAAPoAAADDAAAAAAAAADwAAAB8AAAAAAAAAGAAAABcAAAAAAAAAH8AAABKAAAAAAAAAAAAAAAAAAAA2gAAAP8AAAD6AAAAwwAAAAAAAADCAAAA/wAAACkAAADqAAAA4QAAAAAAAAD7AAAA/wAAALAAAAAGAAAAAAAAANoAAAD/AAAA+gAAAMMAAAAAAAAAIwAAAP4AAAD/AAAA/wAAAGAAAAAAAAAAAAAAAMkAAAD/AAAAigAAAAAAAADaAAAA/wAAAPoAAADDAAAAAAAAAAAAAAAIAAAAcAAAABkAAAAAAAAAAAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAA2gAAAP8AAAD7AAAAywAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAN4AAAD/AAAAqwAAAP8AAACvAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALIAAAD/AAAAsgAAAAAAAAC5AAAA/wAAAMoAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMkAAAD/AAAAvAAAAAAAAAAAAAAAAAAAAKwAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAArQAAAAAAAAAAwAMAAIABAAAf+AAAP/wAAD/8AAAgBAAAP/wAAD/8AAA//AAAJIwAADHEAAA//AAAP/wAAB/4AACAAQAAwAMAAA==">
 <style media="all">
 :root {
@@ -1068,48 +1068,58 @@ window.stats = (function () {
             });
     }
     function calculatePercents(total, passed, failed, skipped) {
-        if (total == 0)
+        if (total == 0) {
             return [0.0, 0.0, 0.0];
+        }
         var pass = 100.0 * passed / total;
         var skip = 100.0 * skipped / total;
         var fail = 100.0 * failed / total;
         if (pass > 0 && pass < 0.1)
-            pass = 0.1;
+            pass = 0.1
         if (fail > 0 && fail < 0.1)
-            fail = 0.1;
+            fail = 0.1
         if (skip > 0 && skip < 0.1)
-            skip = 0.1;
+            skip = 0.1
         if (pass > 99.95 && pass < 100)
-            pass = 99.9;
+            pass = 99.9
         if (fail > 99.95 && fail < 100)
-            fail = 99.9;
+            fail = 99.9
         if (skip > 99.95 && skip < 100)
-            skip = 99.9;
-        return [round1(pass), round1(skip), round1(fail)];
+            skip = 99.9
+        return [Math.round(pass*10)/10, Math.round(skip*10)/10, Math.round(fail*10)/10];
     }
     function calculateWidths(num1, num2, num3) {
         if (num1 + num2 + num3 === 0)
             return [0.0, 0.0, 0.0];
         // Make small percentages better visible
         if (num1 > 0 && num1 < 1)
-            num1 = 1.0;
+            num1 = 1
         if (num2 > 0 && num2 < 1)
-            num2 = 1.0;
+            num2 = 1
         if (num3 > 0 && num3 < 1)
-            num3 = 1.0;
+            num3 = 1
         // Handle situation where some are rounded up
         while (num1 + num2 + num3 > 100) {
-            if (num1 >= num2 && num1 >= num3)
-                num1 = round1(num1 - 0.1);
-            else if (num2 >= num1 && num2 >= num3)
-                num2 = round1(num2 - 0.1);
-            else
-                num3 = round1(num3 - 0.1);
+            if (num1 > num2 && num1 > num3)
+                num1 -= 0.1;
+            else if (num2 > num1 && num2 > num3)
+                num2 -= 0.1;
+            else if (num3 > num1 && num3 > num2)
+                num3 -= 0.1;
+            else if (num1 > num3 && num1 == num2) {
+                num1 -= 0.1;
+                num2 -= 0.1;
+            }
+            else if (num1 > num2 && num1 == num3) {
+                num1 -= 0.1;
+                num3 -= 0.1;
+            }
+            else if (num2 > num1 && num2 == num3) {
+                num2 -= 0.1;
+                num3 -= 0.1;
+            }
         }
-        return [num1, num2, num3];
-    }
-    function round1(num) {
-        return Math.round(num*10) / 10;
+        return [Math.ceil(num1*10)/10, Math.ceil(num2*10)/10, Math.ceil(num3*10)/10];
     }
     return {
         Statistics: Statistics
@@ -1328,7 +1338,7 @@ window.testdata = function () {
     var STATUSES = ['FAIL', 'PASS', 'SKIP', 'NOT RUN'];
     var KEYWORD_TYPES = ['KEYWORD', 'SETUP', 'TEARDOWN', 'FOR', 'ITERATION', 'IF',
                          'ELSE IF', 'ELSE', 'RETURN', 'VAR', 'TRY', 'EXCEPT', 'FINALLY',
-                         'WHILE', 'GROUP', 'CONTINUE', 'BREAK', 'ERROR'];
+                         'WHILE', 'CONTINUE', 'BREAK', 'ERROR'];
     function addElement(elem) {
         if (!elem.id)
             elem.id = uniqueId();
@@ -1887,22 +1897,22 @@ storage = function () {
 window.output = {};
 </script>
 <script type="text/javascript">
-window.output["suite"] = [1,2,3,0,[],[1,0,98054],[[4,5,6,7,[],[1,22,4832],[],[[8,0,9,[10,11],[1,181,4663],[]]],[],[1,1,0,0]],[12,13,14,15,[],[1,4863,17009],[],[[16,0,17,[18,19,20],[1,4885,4633],[]],[21,0,22,[18,23],[1,9528,3848],[]],[24,0,25,[18,23],[1,13385,3650],[]],[26,0,27,[18,28],[1,17041,4824],[]]],[],[4,4,0,0]],[29,30,31,32,[],[1,21878,8014],[],[[33,0,34,[35,36],[1,21887,3401],[]],[37,0,38,[36,39],[1,25807,4012],[]]],[],[2,2,0,0]],[40,41,42,43,[],[1,29902,19625],[],[[44,0,45,[46,39],[1,29921,3224],[]],[47,0,48,[49,39],[1,33151,4013],[]],[50,0,51,[52,39],[1,37173,4047],[]],[53,0,54,[28,39],[1,41225,4246],[]],[55,0,56,[57,39],[1,45476,4042],[]]],[],[5,5,0,0]],[58,59,60,61,[],[1,49533,15472],[],[[62,0,63,[20,64],[1,49545,3931],[]],[65,0,66,[46,64],[1,53485,3782],[]],[67,0,68,[69,64],[1,57275,3616],[]],[70,0,71,[72,64],[1,60896,4100],[]]],[],[4,4,0,0]],[73,74,75,76,[],[1,65015,33032],[],[[77,0,78,[23,79],[1,65027,4298],[]],[80,0,81,[82,79],[1,69334,3735],[]],[83,0,84,[39,79],[1,73074,3951],[]],[85,0,86,[82,79],[1,77034,6294],[]],[87,0,88,[46,79],[1,83335,6713],[]],[89,0,90,[],[1,90056,3689],[]],[91,0,92,[],[1,93750,4292],[]]],[],[7,7,0,0]]],[],[],[23,23,0,0]];
+window.output["suite"] = [1,2,3,0,[],[0,0,193912],[[4,5,6,7,[],[1,26,4815],[],[[8,0,9,[10,11],[1,210,4619],[]]],[],[1,1,0,0]],[12,13,14,15,[],[0,4850,75535],[],[[16,0,17,[18,19,20],[0,4871,23722,21],[]],[22,0,23,[18,24],[0,28601,24208,25],[]],[26,0,27,[18,24],[1,52817,3621],[]],[28,0,29,[18,30],[0,56446,23931,21],[]]],[],[4,1,3,0]],[31,32,33,34,[],[0,80392,28574],[],[[35,0,36,[37,38],[0,80403,23846,21],[]],[39,0,40,[38,41],[1,104342,4547],[]]],[],[2,1,1,0]],[42,43,44,45,[],[0,108993,38476],[],[[46,0,47,[48,41],[1,109006,3035],[]],[49,0,50,[51,41],[1,112048,3562],[]],[52,0,53,[54,41],[1,115616,3764],[]],[55,0,56,[30,41],[0,119387,24013,21],[]],[57,0,58,[59,41],[1,143422,4041],[]]],[],[5,4,1,0]],[60,61,62,63,[],[1,147477,14824],[],[[64,0,65,[20,66],[1,147487,3475],[]],[67,0,68,[48,66],[1,150970,3671],[]],[69,0,70,[71,66],[1,154646,3560],[]],[72,0,73,[74,66],[1,158213,4081],[]]],[],[4,4,0,0]],[75,76,77,78,[],[1,162307,31601],[],[[79,0,80,[24,81],[1,162319,3493],[]],[82,0,83,[84,81],[1,165820,3643],[]],[85,0,86,[41,81],[1,169469,3827],[]],[87,0,88,[84,81],[1,173302,6593],[]],[89,0,90,[48,81],[1,179907,6614],[]],[91,0,92,[],[1,186529,3598],[]],[93,0,94,[],[1,190135,3766],[]]],[],[7,7,0,0]]],[],[],[23,18,5,0]];
 </script>
 <script type="text/javascript">
 window.output["strings"] = [];
 </script>
 <script type="text/javascript">
-window.output["strings"] = window.output["strings"].concat(["*","*Login","*/home/usera/Pfee_final/robot-tests/tests/login","*robot-tests/tests/login","*Login Accessibility","*/home/usera/Pfee_final/robot-tests/tests/login/login_accessibility.robot","*robot-tests/tests/login/login_accessibility.robot","*<p>Accessibility Test Suite for Login Page\x3c/p>","*ARIA Labels Test","*<p>Verifies ARIA labels are present\x3c/p>","*accessibility","*aria","*Login Authentication","*/home/usera/Pfee_final/robot-tests/tests/login/login_authentication.robot","*robot-tests/tests/login/login_authentication.robot","*<p>Authentication Test Suite for Login Page Tests various login scenarios and authentication flows\x3c/p>","*Valid Login","*<p>Tests successful login with valid credentials\x3c/p>","*authentication","*critical","*smoke","*Invalid Login - Wrong Password","*<p>Tests login failure with incorrect password\x3c/p>","*negative","*Invalid Login - Wrong Email","*<p>Tests login failure with incorrect email\x3c/p>","*Remember Me Login","*<p>Tests login with remember me functionality\x3c/p>","*remember-me","*Login Routing","*/home/usera/Pfee_final/robot-tests/tests/login/login_routing.robot","*robot-tests/tests/login/login_routing.robot","*<p>Navigation Test Suite Tests navigation and routing after login\x3c/p>","*Successful Login Navigation","*<p>Tests navigation to dashboard after successful login\x3c/p>","*navigation","*routing","*Unauthorized Access Prevention","*<p>Tests prevention of unauthorized dashboard access\x3c/p>","*security","*Login Security","*/home/usera/Pfee_final/robot-tests/tests/login/login_security.robot","*robot-tests/tests/login/login_security.robot","*<p>Security Test Suite Tests security features of the login page\x3c/p>","*Password Masking Test","*<p>Verifies password field is masked by default\x3c/p>","*password","*CSRF Protection Test","*<p>Verifies CSRF token is present in requests\x3c/p>","*csrf","*Password Strength Validation","*<p>Tests password strength requirements\x3c/p>","*password-strength","*Remember Me Test","*<p>Tests remember me functionality\x3c/p>","*Login Failure Rate Limit","*<p>Tests rate limiting on failed login attempts\x3c/p>","*rate-limit","*Login Ui","*/home/usera/Pfee_final/robot-tests/tests/login/login_ui.robot","*robot-tests/tests/login/login_ui.robot","*<p>UI Test Suite for Login Page Tests the visual elements and interactions of the login page\x3c/p>","*Verify All UI Elements Present","*<p>Verifies all UI elements are present and visible\x3c/p>","*ui","*Test Password Visibility Toggle","*<p>Tests password visibility toggle functionality\x3c/p>","*Test Remember Me Checkbox","*<p>Tests remember me checkbox functionality\x3c/p>","*checkbox","*Test Form Field Clearing","*<p>Tests clearing form fields\x3c/p>","*form","*Login Validation","*/home/usera/Pfee_final/robot-tests/tests/login/login_validation.robot","*robot-tests/tests/login/login_validation.robot","*<p>Form Validation Test Suite Tests input validation and error handling\x3c/p>","*Empty Form Submission","*<p>Tests submission with empty form\x3c/p>","*validation","*Invalid Email Format","*<p>Tests email format validation\x3c/p>","*email","*Multiple Failed Login Attempts","*<p>Tests behavior with multiple failed attempts\x3c/p>","*Email Field Validation","*<p>Tests email field validation\x3c/p>","*Password Field Validation","*<p>Tests password field validation\x3c/p>","*XSS Prevention Test","*<p>Tests XSS prevention in input fields\x3c/p>","*SQL Injection Prevention Test","*<p>Tests SQL injection prevention\x3c/p>"]);
+window.output["strings"] = window.output["strings"].concat(["*","*Login","*/home/userb/Pfee_final/robot-tests/tests/login","*robot-tests/tests/login","*Login Accessibility","*/home/userb/Pfee_final/robot-tests/tests/login/login_accessibility.robot","*robot-tests/tests/login/login_accessibility.robot","*<p>Accessibility Test Suite for Login Page\x3c/p>","*ARIA Labels Test","*<p>Verifies ARIA labels are present\x3c/p>","*accessibility","*aria","*Login Authentication","*/home/userb/Pfee_final/robot-tests/tests/login/login_authentication.robot","*robot-tests/tests/login/login_authentication.robot","*<p>Authentication Test Suite for Login Page Tests various login scenarios and authentication flows\x3c/p>","*Valid Login","*<p>Tests successful login with valid credentials\x3c/p>","*authentication","*critical","*smoke","*TimeoutError: locator.waitFor: Timeout 20000ms exceeded.\nCall log:\n  - waiting for locator('text=\"Dashboard\"') to be visible\n","*Invalid Login - Wrong Password","*<p>Tests login failure with incorrect password\x3c/p>","*negative","*TimeoutError: locator.waitFor: Timeout 20000ms exceeded.\nCall log:\n  - waiting for locator('text=\"Email ou mot de passe incorrect\"') to be visible\n","*Invalid Login - Wrong Email","*<p>Tests login failure with incorrect email\x3c/p>","*Remember Me Login","*<p>Tests login with remember me functionality\x3c/p>","*remember-me","*Login Routing","*/home/userb/Pfee_final/robot-tests/tests/login/login_routing.robot","*robot-tests/tests/login/login_routing.robot","*<p>Navigation Test Suite Tests navigation and routing after login\x3c/p>","*Successful Login Navigation","*<p>Tests navigation to dashboard after successful login\x3c/p>","*navigation","*routing","*Unauthorized Access Prevention","*<p>Tests prevention of unauthorized dashboard access\x3c/p>","*security","*Login Security","*/home/userb/Pfee_final/robot-tests/tests/login/login_security.robot","*robot-tests/tests/login/login_security.robot","*<p>Security Test Suite Tests security features of the login page\x3c/p>","*Password Masking Test","*<p>Verifies password field is masked by default\x3c/p>","*password","*CSRF Protection Test","*<p>Verifies CSRF token is present in requests\x3c/p>","*csrf","*Password Strength Validation","*<p>Tests password strength requirements\x3c/p>","*password-strength","*Remember Me Test","*<p>Tests remember me functionality\x3c/p>","*Login Failure Rate Limit","*<p>Tests rate limiting on failed login attempts\x3c/p>","*rate-limit","*Login Ui","*/home/userb/Pfee_final/robot-tests/tests/login/login_ui.robot","*robot-tests/tests/login/login_ui.robot","*<p>UI Test Suite for Login Page Tests the visual elements and interactions of the login page\x3c/p>","*Verify All UI Elements Present","*<p>Verifies all UI elements are present and visible\x3c/p>","*ui","*Test Password Visibility Toggle","*<p>Tests password visibility toggle functionality\x3c/p>","*Test Remember Me Checkbox","*<p>Tests remember me checkbox functionality\x3c/p>","*checkbox","*Test Form Field Clearing","*<p>Tests clearing form fields\x3c/p>","*form","*Login Validation","*/home/userb/Pfee_final/robot-tests/tests/login/login_validation.robot","*robot-tests/tests/login/login_validation.robot","*<p>Form Validation Test Suite Tests input validation and error handling\x3c/p>","*Empty Form Submission","*<p>Tests submission with empty form\x3c/p>","*validation","*Invalid Email Format","*<p>Tests email format validation\x3c/p>","*email","*Multiple Failed Login Attempts","*<p>Tests behavior with multiple failed attempts\x3c/p>","*Email Field Validation","*<p>Tests email field validation\x3c/p>","*Password Field Validation","*<p>Tests password field validation\x3c/p>","*XSS Prevention Test","*<p>Tests XSS prevention in input fields\x3c/p>","*SQL Injection Prevention Test","*<p>Tests SQL injection prevention\x3c/p>"]);
 </script>
 <script type="text/javascript">
-window.output["stats"] = [[{"elapsed":"00:01:37","fail":0,"label":"All Tests","pass":23,"skip":0}],[{"elapsed":"00:00:05","fail":0,"label":"accessibility","pass":1,"skip":0},{"elapsed":"00:00:05","fail":0,"label":"aria","pass":1,"skip":0},{"elapsed":"00:00:17","fail":0,"label":"authentication","pass":4,"skip":0},{"elapsed":"00:00:04","fail":0,"label":"checkbox","pass":1,"skip":0},{"elapsed":"00:00:05","fail":0,"label":"critical","pass":1,"skip":0},{"elapsed":"00:00:04","fail":0,"label":"csrf","pass":1,"skip":0},{"elapsed":"00:00:10","fail":0,"label":"email","pass":2,"skip":0},{"elapsed":"00:00:04","fail":0,"label":"form","pass":1,"skip":0},{"elapsed":"00:00:03","fail":0,"label":"navigation","pass":1,"skip":0},{"elapsed":"00:00:12","fail":0,"label":"negative","pass":3,"skip":0},{"elapsed":"00:00:14","fail":0,"label":"password","pass":3,"skip":0},{"elapsed":"00:00:04","fail":0,"label":"password-strength","pass":1,"skip":0},{"elapsed":"00:00:04","fail":0,"label":"rate-limit","pass":1,"skip":0},{"elapsed":"00:00:09","fail":0,"label":"remember-me","pass":2,"skip":0},{"elapsed":"00:00:07","fail":0,"label":"routing","pass":2,"skip":0},{"elapsed":"00:00:28","fail":0,"label":"security","pass":7,"skip":0},{"elapsed":"00:00:09","fail":0,"label":"smoke","pass":2,"skip":0},{"elapsed":"00:00:15","fail":0,"label":"ui","pass":4,"skip":0},{"elapsed":"00:00:25","fail":0,"label":"validation","pass":5,"skip":0}],[{"elapsed":"00:01:38","fail":0,"id":"s1","label":"Login","name":"Login","pass":23,"skip":0},{"elapsed":"00:00:05","fail":0,"id":"s1-s1","label":"Login.Login Accessibility","name":"Login Accessibility","pass":1,"skip":0},{"elapsed":"00:00:17","fail":0,"id":"s1-s2","label":"Login.Login Authentication","name":"Login Authentication","pass":4,"skip":0},{"elapsed":"00:00:08","fail":0,"id":"s1-s3","label":"Login.Login Routing","name":"Login Routing","pass":2,"skip":0},{"elapsed":"00:00:20","fail":0,"id":"s1-s4","label":"Login.Login Security","name":"Login Security","pass":5,"skip":0},{"elapsed":"00:00:15","fail":0,"id":"s1-s5","label":"Login.Login Ui","name":"Login Ui","pass":4,"skip":0},{"elapsed":"00:00:33","fail":0,"id":"s1-s6","label":"Login.Login Validation","name":"Login Validation","pass":7,"skip":0}]];
+window.output["stats"] = [[{"elapsed":"00:03:13","fail":5,"label":"All Tests","pass":18,"skip":0}],[{"elapsed":"00:00:05","fail":0,"label":"accessibility","pass":1,"skip":0},{"elapsed":"00:00:05","fail":0,"label":"aria","pass":1,"skip":0},{"elapsed":"00:01:15","fail":3,"label":"authentication","pass":1,"skip":0},{"elapsed":"00:00:04","fail":0,"label":"checkbox","pass":1,"skip":0},{"elapsed":"00:00:24","fail":1,"label":"critical","pass":0,"skip":0},{"elapsed":"00:00:04","fail":0,"label":"csrf","pass":1,"skip":0},{"elapsed":"00:00:10","fail":0,"label":"email","pass":2,"skip":0},{"elapsed":"00:00:04","fail":0,"label":"form","pass":1,"skip":0},{"elapsed":"00:00:24","fail":1,"label":"navigation","pass":0,"skip":0},{"elapsed":"00:00:31","fail":1,"label":"negative","pass":2,"skip":0},{"elapsed":"00:00:13","fail":0,"label":"password","pass":3,"skip":0},{"elapsed":"00:00:04","fail":0,"label":"password-strength","pass":1,"skip":0},{"elapsed":"00:00:04","fail":0,"label":"rate-limit","pass":1,"skip":0},{"elapsed":"00:00:48","fail":2,"label":"remember-me","pass":0,"skip":0},{"elapsed":"00:00:28","fail":1,"label":"routing","pass":1,"skip":0},{"elapsed":"00:00:47","fail":1,"label":"security","pass":6,"skip":0},{"elapsed":"00:00:27","fail":1,"label":"smoke","pass":1,"skip":0},{"elapsed":"00:00:15","fail":0,"label":"ui","pass":4,"skip":0},{"elapsed":"00:00:24","fail":0,"label":"validation","pass":5,"skip":0}],[{"elapsed":"00:03:14","fail":5,"id":"s1","label":"Login","name":"Login","pass":18,"skip":0},{"elapsed":"00:00:05","fail":0,"id":"s1-s1","label":"Login.Login Accessibility","name":"Login Accessibility","pass":1,"skip":0},{"elapsed":"00:01:16","fail":3,"id":"s1-s2","label":"Login.Login Authentication","name":"Login Authentication","pass":1,"skip":0},{"elapsed":"00:00:29","fail":1,"id":"s1-s3","label":"Login.Login Routing","name":"Login Routing","pass":1,"skip":0},{"elapsed":"00:00:38","fail":1,"id":"s1-s4","label":"Login.Login Security","name":"Login Security","pass":4,"skip":0},{"elapsed":"00:00:15","fail":0,"id":"s1-s5","label":"Login.Login Ui","name":"Login Ui","pass":4,"skip":0},{"elapsed":"00:00:32","fail":0,"id":"s1-s6","label":"Login.Login Validation","name":"Login Validation","pass":7,"skip":0}]];
 </script>
 <script type="text/javascript">
-window.output["baseMillis"] = 1747229545272;
+window.output["baseMillis"] = 1747317904546;
 </script>
 <script type="text/javascript">
-window.output["generated"] = 98130;
+window.output["generated"] = 193990;
 </script>
 <script type="text/javascript">
 window.output["expand_keywords"] = null;
@@ -2354,7 +2364,7 @@ function hideHiddenDetailsColumns(elem) {
 
 <script type="text/x-jquery-tmpl" id="tagStatisticsRowTemplate">
   <tr onclick="tagDetailSelected('${label}')" class="row-${$item.index}">
-    <td class="stats-col-name" title="${doc}">
+    <td class="stats-col-name" title="{{html doc}}">
       <div class="stat-name">
         <a href="#tags?${label}">{{html label}}</a>
         {{if info}}(${info}){{/if}}
