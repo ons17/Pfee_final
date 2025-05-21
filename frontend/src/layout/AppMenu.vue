@@ -16,36 +16,36 @@ onMounted(() => {
     }
 });
 
-// Update the menu model to explicitly specify admin (not supervisor)
+// Update the menu model to include supervisor roles
 const model = ref([
     {
         label: 'HOME',
         items: [
-            { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/app', roles: ['admin'] },
+            { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/app', roles: ['admin', 'supervisor'] },
             { label: 'Time Tracking', icon: 'pi pi-fw pi-clock', to: '/app/TimeTracking', roles: ['employee'] }
         ]
     },
     {
         label: 'MANAGEMENT',
         items: [
-            { label: 'Employee', icon: 'pi pi-fw pi-user', to: '/app/Employee', roles: ['admin'] },
-            { label: 'Teams', icon: 'pi pi-fw pi-users', to: '/app/Teams', roles: ['admin', 'employee'] },
-            { label: 'Project', icon: 'pi pi-fw pi-folder', to: '/app/Project', roles: ['admin', 'employee'] },
-            { label: 'Task', icon: 'pi pi-fw pi-list-check', to: '/app/Task', roles: ['admin', 'employee'] }
+            { label: 'Employee', icon: 'pi pi-fw pi-user', to: '/app/Employee', roles: ['admin', 'supervisor'] },
+            { label: 'Teams', icon: 'pi pi-fw pi-users', to: '/app/Teams', roles: ['admin', 'supervisor', 'employee'] },
+            { label: 'Project', icon: 'pi pi-fw pi-folder', to: '/app/Project', roles: ['admin', 'supervisor', 'employee'] },
+            { label: 'Task', icon: 'pi pi-fw pi-list-check', to: '/app/Task', roles: ['admin', 'supervisor', 'employee'] }
         ]
     },
     {
         label: 'UTILITIES',
         items: [
-            { label: 'Calendar', icon: 'pi pi-fw pi-calendar', to: '/app/Calendar', roles: ['admin', 'employee'] },
-            { label: 'Reports', icon: 'pi pi-fw pi-chart-line', to: '/app/Reports', roles: ['admin'] }
+            { label: 'Calendar', icon: 'pi pi-fw pi-calendar', to: '/app/Calendar', roles: ['admin', 'supervisor', 'employee'] },
+            { label: 'Reports', icon: 'pi pi-fw pi-chart-line', to: '/app/Reports', roles: ['admin', 'supervisor'] }
         ]
     },
     {
         label: 'SETTINGS',
         items: [
-            { label: 'Performance', icon: 'pi pi-fw pi-chart-pie', to: '/app/Performance', roles: ['admin'] },
-            { label: 'Notifications', icon: 'pi pi-fw pi-bell', to: '/app/Notifications', roles: ['admin'] }
+            { label: 'Performance', icon: 'pi pi-fw pi-chart-pie', to: '/app/Performance', roles: ['admin', 'supervisor'] },
+            { label: 'Notifications', icon: 'pi pi-fw pi-bell', to: '/app/Notifications', roles: ['admin', 'supervisor'] }
         ]
     },
     {
@@ -55,8 +55,8 @@ const model = ref([
                 label: 'Add Superviseur', 
                 icon: 'pi pi-fw pi-user-plus', 
                 to: '/app/AddAdmin', 
-                roles: ['admin'], // Only admin, not supervisor
-                requiresAdmin: true // Add this flag to explicitly require admin role
+                roles: ['admin'],
+                requiresAdmin: true
             }
         ]
     }

@@ -837,7 +837,7 @@ onMounted(() => {
         <Column field="nomEmployee" header="Name" sortable></Column>
         <Column field="emailEmployee" header="Email" sortable></Column>
         <Column field="role" header="Role" sortable></Column>
-        <Column field="disabledUntil" header="Disabled Until" sortable>
+        <Column v-if="isAdmin()" field="disabledUntil" header="Disabled Until" sortable>
           <template #body="{ data }">
             <div class="inline-flex align-items-center">
               <InputSwitch
@@ -867,7 +867,7 @@ onMounted(() => {
             </div>
           </template>
         </Column>
-        <Column header="Actions" headerStyle="width: 14rem">
+        <Column v-if="isAdmin()" header="Actions" headerStyle="width: 14rem">
           <template #body="{ data }">
             <Button 
               icon="pi pi-pencil" 

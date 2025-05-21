@@ -93,34 +93,52 @@ const initializeCharts = () => {
   const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 
   // Chart 1: Employee role distribution
+  const uniqueRoles = computed(() => {
+    return [...new Set(employeeData.value.map(emp => emp.role))];
+  });
+
+  // Calculate total employees for percentage
+  const totalEmployees = employeeData.value.length;
+
   pieData.value = {
-    labels: ['Développeur', 'Chef de projet', 'Designer', 'Testeur'],
+    labels: uniqueRoles.value.map(role => {
+      const count = employeeData.value.filter(emp => emp.role === role).length;
+      const percentage = ((count / totalEmployees) * 100).toFixed(1);
+      return `${role} (${percentage}%)`;
+    }),
     datasets: [
       {
-        data: [
-          employeeData.value.filter(emp => emp.role === 'Développeur').length,
-          employeeData.value.filter(emp => emp.role === 'Chef de projet').length,
-          employeeData.value.filter(emp => emp.role === 'Designer').length,
-          employeeData.value.filter(emp => emp.role === 'Testeur').length
-        ],
-        backgroundColor: [
-          documentStyle.getPropertyValue('--p-indigo-500'),
-          documentStyle.getPropertyValue('--p-purple-500'),
-          documentStyle.getPropertyValue('--p-teal-500'),
-          documentStyle.getPropertyValue('--p-orange-500')
-        ],
-        hoverBackgroundColor: [
-          documentStyle.getPropertyValue('--p-indigo-400'),
-          documentStyle.getPropertyValue('--p-purple-400'),
-          documentStyle.getPropertyValue('--p-teal-400'),
-          documentStyle.getPropertyValue('--p-orange-400')
-        ]
+        data: uniqueRoles.value.map(role => 
+          employeeData.value.filter(emp => emp.role === role).length
+        ),
+        backgroundColor: uniqueRoles.value.map((_, index) => {
+          const colors = [
+            documentStyle.getPropertyValue('--p-indigo-500'),
+            documentStyle.getPropertyValue('--p-purple-500'),
+            documentStyle.getPropertyValue('--p-teal-500'),
+            documentStyle.getPropertyValue('--p-orange-500'),
+            documentStyle.getPropertyValue('--p-blue-500'),
+            documentStyle.getPropertyValue('--p-green-500')
+          ];
+          return colors[index % colors.length];
+        }),
+        hoverBackgroundColor: uniqueRoles.value.map((_, index) => {
+          const colors = [
+            documentStyle.getPropertyValue('--p-indigo-400'),
+            documentStyle.getPropertyValue('--p-purple-400'),
+            documentStyle.getPropertyValue('--p-teal-400'),
+            documentStyle.getPropertyValue('--p-orange-400'),
+            documentStyle.getPropertyValue('--p-blue-400'),
+            documentStyle.getPropertyValue('--p-green-400')
+          ];
+          return colors[index % colors.length];
+        })
       }
     ]
   };
 
   // Chart 2: Employee status by role
-  const roles = ['Développeur', 'Chef de projet', 'Designer', 'Testeur'];
+  const roles = uniqueRoles.value;
   barData.value = {
     labels: roles,
     datasets: [
@@ -188,11 +206,34 @@ const initializeCharts = () => {
   pieOptions.value = {
     plugins: {
       legend: {
-        labels: { color: textColor }
+        labels: { 
+          color: textColor,
+          generateLabels: (chart) => {
+            const data = chart.data;
+            return data.labels.map((label, index) => ({
+              text: label,
+              fillStyle: data.datasets[0].backgroundColor[index],
+              strokeStyle: data.datasets[0].backgroundColor[index],
+              lineWidth: 1,
+              hidden: false,
+              index: index
+            }));
+          }
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: (context) => {
+            const label = context.label || '';
+            const value = context.parsed || 0;
+            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+            const percentage = ((value / total) * 100).toFixed(1);
+            return `${label}: ${value} (${percentage}%)`;
+          }
+        }
       },
       title: { 
         display: true,
-        text: 'Distribution des Rôles',
         color: textColor 
       }
     }
