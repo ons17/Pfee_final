@@ -92,7 +92,11 @@ export const superviseurResolvers = {
           }
         };
       } catch (error) {
-        if (transaction.isActive()) await transaction.rollback();
+        try {
+          await transaction.rollback();
+        } catch (rollbackError) {
+          console.error('Error during transaction rollback:', rollbackError);
+        }
         throw error;
       }
     },
