@@ -34,8 +34,9 @@ import SelectButton from 'primevue/selectbutton';
 import ProgressBar from 'primevue/progressbar';
 import Calendar from 'primevue/calendar';
 import { useQuery } from '@vue/apollo-composable';
-import { GET_EMPLOYEES, GET_PROJECTS_FOR_EMPLOYEE, GET_TACHES, SUIVIS_DE_TEMP } from '@/graphql';
+import { GET_EMPLOYEES, GET_PROJECTS, GET_PROJECTS_FOR_EMPLOYEE, GET_TACHES, SUIVIS_DE_TEMP } from '@/graphql';
 import debounce from 'lodash-es/debounce';
+import { isAdmin } from '@/utils/authUtils';
 
 // Initialize with a default date
 const currentDate = ref(new Date());
@@ -133,7 +134,24 @@ endDate: format(end, 'yyyy-MM-dd'),
 
 // Apollo queries
 const { result: employeesResult, loading: employeesLoading } = useQuery(GET_EMPLOYEES);
-const { result: projectsResult, loading: projectsLoading } = useQuery(GET_PROJECTS_FOR_EMPLOYEE, { idEmploye: EMPLOYEE_ID });
+
+// Split the projects query based on user role
+const { result: projectsResult, loading: projectsLoading } = useQuery(
+GET_PROJECTS_FOR_EMPLOYEE,
+() => ({ idEmploye: EMPLOYEE_ID }),
+{
+enabled: !isAdmin()
+}
+);
+
+const { result: adminProjectsResult, loading: adminProjectsLoading } = useQuery(
+GET_PROJECTS,
+null,
+{
+enabled: isAdmin()
+}
+);
+
 const { result: tasksResult, loading: tasksLoading } = useQuery(GET_TACHES);
 const { result: timeEntriesResult, loading: timeEntriesLoading, refetch: refetchTimeEntries } = useQuery(
 SUIVIS_DE_TEMP,
@@ -155,8 +173,12 @@ capacity: emp.capacity || 40
 })) || []
 );
 
-const projects = computed(() =>
-projectsResult.value?.getProjetsForEmployee || []
+const projects = computed(() => {
+if (isAdmin()) {
+return adminProjectsResult.value?.projets || [];
+}
+return projectsResult.value?.getProjetsForEmployee || [];
+}
 );
 
 const tasks = computed(() =>
@@ -315,12 +337,21 @@ result = result.filter(e => e.employee.idEmployee === selectedEmployee.value);
 return result;
 });
 
+// First, update the computed property for filtered employees
 const filteredEmployees = computed(() => {
-let result = [...employees.value];
-if (selectedEmployee.value) {
-result = result.filter(emp => emp.idEmployee === selectedEmployee.value);
-}
-return result;
+  let result = [...employees.value];
+  
+  // If not admin, only show the connected employee
+  if (!isAdmin()) {
+    result = result.filter(emp => emp.idEmployee === EMPLOYEE_ID);
+  }
+  
+  // If there's a selected employee (for admin only)
+  if (isAdmin() && selectedEmployee.value) {
+    result = result.filter(emp => emp.idEmployee === selectedEmployee.value);
+  }
+  
+  return result;
 });
 
 const timelineEntries = computed(() => {
@@ -562,8 +593,10 @@ return Array.from(uniqueTeams.values());
 });
 
 const clearAllFilters = () => {
-selectedProject.value = null;
-selectedEmployee.value = null;
+  selectedProject.value = null;
+  if (isAdmin()) {
+    selectedEmployee.value = null;
+  }
 };
 
 const getProjectEntryCount = (projectId: string) => {
@@ -904,8 +937,10 @@ class="project-count"
 </div>
 </template>
 </Dropdown>
-<!-- Employee Filter -->
+
+<!-- Employee Filter (only for admins) -->
 <Dropdown
+v-if="isAdmin()"
 v-model="selectedEmployee"
 :options="employees"
 optionLabel="nomEmployee"
@@ -933,6 +968,7 @@ size="small"
 
 <!-- Clear Filters Button -->
 <Button 
+v-if="isAdmin()"
 icon="pi pi-filter-slash"
 class="p-button-secondary p-button-sm clear-filters-btn" 
 @click="clearAllFilters"
