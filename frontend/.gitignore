@@ -12,3 +12,10 @@ dist
 .eslintcache
 api-generator/typedoc.json
 **/.DS_Store
+results
+interactive_consol_output.xml
+log.html
+output.xml
+playwright-log.txt
+report.html
+

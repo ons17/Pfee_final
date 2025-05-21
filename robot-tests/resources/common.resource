@@ -6,7 +6,7 @@ Library           BuiltIn
 *** Variables ***
 # Browser configuration
 ${BROWSER}              chromium
-${HEADLESS}             ${True}
+${HEADLESS}             ${False}
 ${SITE_URL}             http://localhost:5173
 ${TIMEOUT}              10s
 
@@ -14,6 +14,9 @@ ${TIMEOUT}              10s
 ${EMPLOYEE_EMAIL}       zeidimohamedtaher13@gmail.com
 ${EMPLOYEE_PASSWORD}    mohamed
 
+
+${VALID_EMAIL}          onssbenamara3@gmail.com
+${VALID_PASSWORD}       ons123
 # UI Elements
 ${LOGO_IMG}            img[alt="Logo"]    # Logo image selector
 

@@ -1,7 +1,8 @@
 *** Settings ***
-Documentation     Common resources and keywords for employee login testing
+Documentation     Common resources for employee functionality
 Library           Browser
 Library           BuiltIn
+Resource          common.resource
 
 *** Variables ***
 # Browser configuration
@@ -20,6 +21,9 @@ ${REMEMBER_ME_CB}      input#rememberme1
 ${SIGNIN_BUTTON}       button.w-full
 ${ERROR_MESSAGE}       .text-red-500
 ${DASHBOARD_TEXT}      text="Dashboard"
+
+${EMPLOYEE_NAME}         Mohamed Taher
+${EMPLOYEE_ROLE}         Employee
 
 *** Keywords ***
 Open Browser To Employee Login Page
@@ -101,3 +105,10 @@ Get Focused Element
     [Documentation]    Gets the currently focused element
     ${focused}=    Evaluate JavaScript    document.activeElement
     RETURN    ${focused}
+
+Verify Employee Dashboard Elements
+    [Documentation]    Verifies all essential elements are present on employee dashboard
+    Wait For Elements State    h1:has-text("Time Tracking")    visible    timeout=${TIMEOUT}
+    Wait For Elements State    ${PROJECT_DROPDOWN}    visible    timeout=${TIMEOUT}
+    Wait For Elements State    ${TASK_DROPDOWN}    visible    timeout=${TIMEOUT}
+    Wait For Elements State    ${TIMER_BUTTON}    visible    timeout=${TIMEOUT}
