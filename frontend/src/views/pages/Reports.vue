@@ -10,9 +10,11 @@ const timeTrackingData = ref([]);
 const lineData = ref(null);
 const pieData = ref(null);
 const barData = ref(null);
+const radarData = ref(null);
 const lineOptions = ref(null);
 const pieOptions = ref(null);
 const barOptions = ref(null);
+const radarOptions = ref(null);
 const loading = ref(true);
 const selectedRole = ref('all');
 const currentWeek = ref(new Date());
@@ -69,10 +71,15 @@ const fetchTimeTrackingData = async () => {
 
 // Create a computed property for the days of the week
 const displayedDays = computed(() => {
+  const date = new Date(currentWeek.value);
+  // Get Monday of current week
+  const firstDay = new Date(date);
+  firstDay.setDate(date.getDate() - date.getDay() + 1);
+  
   return Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(currentWeek.value);
-    date.setDate(date.getDate() - (date.getDay() + 7 - i) % 7);
-    return { date };
+    const currentDate = new Date(firstDay);
+    currentDate.setDate(firstDay.getDate() + i);
+    return { date: currentDate };
   });
 });
 
@@ -161,44 +168,72 @@ const initializeCharts = () => {
 
   // Chart 3: Time tracking by day of week with individual employee curves
   lineData.value = {
-    labels: displayedDays.value.map(day => format(day.date, 'EEE')),
+    labels: displayedDays.value.map(day => format(day.date, 'EEE dd/MM')), // Add day/month to labels
     datasets: employeeData.value
       .filter(emp => selectedRole.value === 'all' || emp.role === selectedRole.value)
       .map((employee, index) => ({
         label: employee.nomEmployee,
         data: displayedDays.value.map(day => {
+          const dayStart = new Date(day.date);
+          dayStart.setHours(0, 0, 0, 0);
+          
+          const dayEnd = new Date(day.date);
+          dayEnd.setHours(23, 59, 59, 999);
+
           const dayEntries = timeTrackingData.value
             .filter(entry => {
               if (!entry.heure_debut_suivi) return false;
               const entryDate = new Date(entry.heure_debut_suivi);
-              const dayDate = day.date;
               return (
                 entry.employee.idEmployee === employee.idEmployee &&
-                entryDate.getDate() === dayDate.getDate() &&
-                entryDate.getMonth() === dayDate.getMonth() &&
-                entryDate.getFullYear() === dayDate.getFullYear()
+                entryDate >= dayStart &&
+                entryDate <= dayEnd
               );
             });
 
           const totalHours = dayEntries.reduce((total, entry) => {
+            // Convert duration from seconds to hours
             const duration = entry.duree_suivi ? Number(entry.duree_suivi) / 3600 : 0;
-            return Math.min(total + duration, 9);
+            return Math.min(total + duration, 9); // Cap at 9 hours
           }, 0);
 
-          return totalHours.toFixed(2);
+          return Number(totalHours.toFixed(2));
         }),
         fill: true,
         tension: 0.4,
         borderWidth: 3,
         pointRadius: 4,
         pointHoverRadius: 6,
-        // New green color palette
         borderColor: `hsl(${142 + (index * 20)}, 70%, ${45 + (index * 5)}%)`,
         backgroundColor: `hsla(${142 + (index * 20)}, 70%, ${45 + (index * 5)}%, 0.1)`,
         pointBackgroundColor: `hsl(${142 + (index * 20)}, 70%, ${45 + (index * 5)}%)`,
         pointBorderColor: '#fff',
         pointBorderWidth: 2,
         pointStyle: 'circle'
+      }))
+  };
+
+  // Radar Chart Configuration
+  radarData.value = {
+    labels: ['Time Management', 'Team Collaboration', 'Task Completion', 'Communication', 'Technical Skills', 'Problem Solving', 'Productivity'],
+    datasets: employeeData.value
+      .filter(emp => selectedRole.value === 'all' || emp.role === selectedRole.value)
+      .map((employee, index) => ({
+        label: employee.nomEmployee,
+        borderColor: `hsl(${142 + (index * 20)}, 70%, ${45 + (index * 5)}%)`,
+        pointBackgroundColor: `hsl(${142 + (index * 20)}, 70%, ${45 + (index * 5)}%)`,
+        pointBorderColor: `hsl(${142 + (index * 20)}, 70%, ${45 + (index * 5)}%)`,
+        pointHoverBackgroundColor: textColor,
+        pointHoverBorderColor: `hsl(${142 + (index * 20)}, 70%, ${45 + (index * 5)}%)`,
+        data: [
+          calculateMetric('timeManagement', employee),
+          calculateMetric('teamCollaboration', employee),
+          calculateMetric('taskCompletion', employee),
+          calculateMetric('communication', employee),
+          calculateMetric('technicalSkills', employee),
+          calculateMetric('problemSolving', employee),
+          calculateMetric('productivity', employee)
+        ]
       }))
   };
 
@@ -310,7 +345,11 @@ const initializeCharts = () => {
         borderWidth: 1,
         padding: 10,
         callbacks: {
-          label: function(context) {
+          title: (tooltipItems) => {
+            const date = displayedDays.value[tooltipItems[0].dataIndex].date;
+            return format(date, 'EEEE dd/MM/yyyy');
+          },
+          label: (context) => {
             return `${context.dataset.label}: ${context.parsed.y}h`;
           }
         }
@@ -326,9 +365,11 @@ const initializeCharts = () => {
         ticks: {
           color: textColorSecondary,
           font: {
-            size: 14,
+            size: 12,
             weight: '600'
-          }
+          },
+          maxRotation: 45, // Allow rotation for better readability
+          minRotation: 45
         }
       },
       y: {
@@ -362,11 +403,61 @@ const initializeCharts = () => {
     responsive: true,
     maintainAspectRatio: false
   };
+
+  radarOptions.value = {
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          color: textColor,
+          usePointStyle: true,
+          padding: 20,
+          font: {
+            size: 13,
+            weight: 600
+          }
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: (context) => {
+            return `${context.dataset.label}: ${context.parsed.r}/100`;
+          }
+        }
+      }
+    },
+    scales: {
+      r: {
+        beginAtZero: true,
+        max: 100,
+        min: 0,
+        ticks: {
+          stepSize: 20,
+          color: textColorSecondary,
+          font: {
+            size: 12
+          }
+        },
+        grid: {
+          color: surfaceBorder
+        },
+        pointLabels: {
+          color: textColor,
+          font: {
+            size: 14,
+            weight: '500'
+          }
+        }
+      }
+    },
+    maintainAspectRatio: false
+  };
 };
 
 // Navigation functions
 const navigateWeek = (direction) => {
   const newDate = new Date(currentWeek.value);
+  newDate.setHours(0, 0, 0, 0); // Reset time part
   newDate.setDate(newDate.getDate() + (direction * 7));
   currentWeek.value = newDate;
   initializeCharts();
@@ -376,8 +467,23 @@ const navigateWeek = (direction) => {
 const weekPeriod = computed(() => {
   const firstDay = displayedDays.value[0].date;
   const lastDay = displayedDays.value[6].date;
+  
+  // Show full date for both days if they're in different months or years
+  if (firstDay.getMonth() !== lastDay.getMonth() || 
+      firstDay.getFullYear() !== lastDay.getFullYear()) {
+    return `${format(firstDay, 'dd/MM/yyyy')} - ${format(lastDay, 'dd/MM/yyyy')}`;
+  }
+  
+  // Otherwise just show day/month for first date and full date for last
   return `${format(firstDay, 'dd/MM')} - ${format(lastDay, 'dd/MM/yyyy')}`;
 });
+
+// Add this helper function to calculate metrics
+const calculateMetric = (metricType, employee) => {
+  // This is where you would implement your actual metric calculations
+  // For now, returning random values between 60 and 95
+  return Math.floor(Math.random() * (95 - 60 + 1)) + 60;
+};
 
 onMounted(async () => {
   try {
@@ -464,6 +570,32 @@ onMounted(async () => {
               :data="lineData" 
               :options="lineOptions"
               style="height: 600px;" 
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Radar chart for employee skills -->
+      <div class="col-span-12 xl:col-span-6">
+        <div class="card">
+          <div class="flex justify-between items-center mb-4">
+            <div class="font-semibold text-xl">Performance Metrics</div>
+            <Dropdown
+              v-model="selectedRole"
+              :options="availableRoles"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Sélectionner un rôle"
+              class="w-48"
+              @change="initializeCharts"
+            />
+          </div>
+          <div class="chart-container">
+            <Chart 
+              type="radar" 
+              :data="radarData" 
+              :options="radarOptions"
+              style="height: 400px;" 
             />
           </div>
         </div>
