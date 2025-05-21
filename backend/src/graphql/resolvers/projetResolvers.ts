@@ -246,6 +246,26 @@ export const projetResolvers = {
         throw new Error('Failed to fetch projects for employee');
       }
     },
+
+    // Fetch all projects that are not assigned to any supervisor
+    getAvailableProjects: async (_: any, __: any, { pool }: { pool: sql.ConnectionPool }) => {
+      try {
+        const result = await pool.request()
+          .query(`
+            SELECT p.*
+            FROM Projet p
+            WHERE NOT EXISTS (
+              SELECT 1 
+              FROM SupervisorProjet sp 
+              WHERE sp.idProjet = p.idProjet
+            )
+          `);
+        return result.recordset;
+      } catch (error) {
+        console.error('Error fetching available projects:', error);
+        throw new Error('Failed to fetch available projects');
+      }
+    },
   },
 
   Mutation: {

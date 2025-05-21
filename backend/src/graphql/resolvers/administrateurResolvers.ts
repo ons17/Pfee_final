@@ -25,7 +25,11 @@ type Admin = {
 // JWT Token generationz
 const generateToken = (admin: Admin) => {
   return jwt.sign(
-    { id: admin.idAdministrateur, email: admin.email_administrateur, role: 'ADMIN' },
+    { 
+      id: admin.idAdministrateur, 
+      email: admin.email_administrateur, 
+      role: admin.role // This will use the actual role from database
+    },
     process.env.JWT_SECRET as string,
     { expiresIn: '7d' }
   );
@@ -90,7 +94,19 @@ export const adminResolvers = {
         console.error("Erreur lors de la récupération de l'administrateur:", error);
         return { success: false, message: "Erreur interne", administrateur: null };
       }
-    }
+    },
+
+    allAdministrateurs: async (_: any, __: any, { pool }: { pool: sql.ConnectionPool }) => {
+      try {
+        const result = await pool.request()
+          .query("SELECT idAdministrateur, nom_administrateur, email_administrateur, role FROM Administrateur");
+        
+        return result.recordset;
+      } catch (error) {
+        console.error('Error fetching administrators:', error);
+        throw new Error('Failed to fetch administrators');
+      }
+    },
   },
   Mutation: {
     loginAdministrateur: async (_: any, { email_administrateur, password_administrateur }: any, { pool }: { pool: sql.ConnectionPool }) => {
@@ -110,11 +126,6 @@ export const adminResolvers = {
           return { success: false, message: "Email ou mot de passe incorrect", administrateur: null, token: null };
         }
 
-        // Allow both ADMIN and SUPERVISOR roles
-        if (admin.role !== 'ADMIN' && admin.role !== 'SUPERVISOR') {
-          return { success: false, message: "Accès non autorisé", administrateur: null, token: null };
-        }
-
         const token = generateToken(admin);
 
         return {
@@ -124,9 +135,9 @@ export const adminResolvers = {
             idAdministrateur: admin.idAdministrateur,
             nom_administrateur: admin.nom_administrateur,
             email_administrateur: admin.email_administrateur,
-            role: admin.role,
+            role: admin.role // Keep the original role from database
           },
-          token,
+          token
         };
       } catch (error) {
         console.error('Erreur lors de la connexion:', error);

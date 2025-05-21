@@ -2708,13 +2708,13 @@ Call log:
 {"level":30,"time":"2025-05-20T06:57:15.796Z","pid":15325,"hostname":"pfe24","msg":"End of node method closeBrowser"}
 ================= Original suppressed error =================
 Error: Browser has been closed.
-    at PlaywrightState.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
-    at PlaywrightServer.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
-    at PlaywrightServer.setTimeout (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
-    at Object.onReceiveHalfClose (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
-    at BaseServerInterceptingCall.maybePushNextMessage (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
-    at BaseServerInterceptingCall.handleEndEvent (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
-    at ServerHttp2Stream.<anonymous> (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
+    at PlaywrightState.getActiveBrowser (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
+    at PlaywrightServer.getActiveBrowser (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
+    at PlaywrightServer.setTimeout (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
+    at Object.onReceiveHalfClose (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
+    at BaseServerInterceptingCall.maybePushNextMessage (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
+    at BaseServerInterceptingCall.handleEndEvent (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
+    at ServerHttp2Stream.<anonymous> (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
     at ServerHttp2Stream.emit (node:events:519:35)
     at endReadableNT (node:internal/streams/readable:1696:12)
     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
@@ -2957,13 +2957,13 @@ Call log:
 {"level":30,"time":"2025-05-20T06:57:39.387Z","pid":15325,"hostname":"pfe24","msg":"End of node method closeBrowser"}
 ================= Original suppressed error =================
 Error: Browser has been closed.
-    at PlaywrightState.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
-    at PlaywrightServer.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
-    at PlaywrightServer.setTimeout (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
-    at Object.onReceiveHalfClose (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
-    at BaseServerInterceptingCall.maybePushNextMessage (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
-    at BaseServerInterceptingCall.handleEndEvent (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
-    at ServerHttp2Stream.<anonymous> (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
+    at PlaywrightState.getActiveBrowser (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
+    at PlaywrightServer.getActiveBrowser (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
+    at PlaywrightServer.setTimeout (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
+    at Object.onReceiveHalfClose (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
+    at BaseServerInterceptingCall.maybePushNextMessage (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
+    at BaseServerInterceptingCall.handleEndEvent (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
+    at ServerHttp2Stream.<anonymous> (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
     at ServerHttp2Stream.emit (node:events:519:35)
     at endReadableNT (node:internal/streams/readable:1696:12)
     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
@@ -3081,10 +3081,52 @@ Call log:
 {"level":30,"time":"2025-05-20T06:57:48.305Z","pid":15325,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with .p-select-overlay in page."}
 {"level":30,"time":"2025-05-20T06:57:48.330Z","pid":15325,"hostname":"pfe24","msg":"Error of node method  waitForElementState"}
 ================= Original suppressed error =================
-locator.waitFor: Error: strict mode violation: locator('.p-select-overlay') resolved to 2 elements:
-    1) <div pc0_1_0="" data-p="portal-body" data-pc-section="overlay" class="p-select-overlay p-component p-connected-overlay-leave-active p-connected-overlay-leave-to">…</div> aka getByText('results are availablerrrrrrrrrrrrrrrrrrrrzzzzzzddd1 items selected')
-    2) <div pc0_2_0="" data-p="portal-body" data-pc-section="overlay" class="p-select-overlay p-component p-connected-overlay-enter-active p-connected-overlay-enter-to">…</div> aka getByText('rrrrrrNo selected item')
-
+Error: Browser has been closed.
+    at PlaywrightState.getActiveBrowser (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
+    at PlaywrightServer.getActiveBrowser (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
+    at PlaywrightServer.setTimeout (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
+    at Object.onReceiveHalfClose (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
+    at BaseServerInterceptingCall.maybePushNextMessage (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
+    at BaseServerInterceptingCall.handleEndEvent (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
+    at ServerHttp2Stream.<anonymous> (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
+    at ServerHttp2Stream.emit (node:events:519:35)
+    at endReadableNT (node:internal/streams/readable:1696:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+=============================================================
+{"level":30,"time":"2025-05-16T13:01:20.426Z","pid":370527,"hostname":"pfe24","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T13:01:20.427Z","pid":370527,"hostname":"pfe24","msg":"End of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T13:01:20.432Z","pid":370527,"hostname":"pfe24","msg":"Start of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T13:01:20.432Z","pid":370527,"hostname":"pfe24","msg":"End of node method getBrowserCatalog"}
+{"level":30,"time":"2025-05-16T13:01:20.439Z","pid":370527,"hostname":"pfe24","msg":"Start of node method newBrowser"}
+{"level":30,"time":"2025-05-16T13:01:20.530Z","pid":370527,"hostname":"pfe24","msg":"Adding browser to stack: chromium, version: 136.0.7103.25"}
+{"level":30,"time":"2025-05-16T13:01:20.530Z","pid":370527,"hostname":"pfe24","msg":"End of node method newBrowser"}
+{"level":30,"time":"2025-05-16T13:01:20.530Z","pid":370527,"hostname":"pfe24","msg":"Adding 0 contexts to browser"}
+{"level":30,"time":"2025-05-16T13:01:20.536Z","pid":370527,"hostname":"pfe24","msg":"Start of node method newPage"}
+{"level":30,"time":"2025-05-16T13:01:20.537Z","pid":370527,"hostname":"pfe24","msg":"currentBrowser: [object Object]"}
+{"level":30,"time":"2025-05-16T13:01:20.541Z","pid":370527,"hostname":"pfe24","msg":"Changed active context"}
+{"level":30,"time":"2025-05-16T13:01:20.605Z","pid":370527,"hostname":"pfe24","msg":"Video path: undefined"}
+{"level":30,"time":"2025-05-16T13:01:20.605Z","pid":370527,"hostname":"pfe24","msg":"Changed active page"}
+{"level":30,"time":"2025-05-16T13:01:22.539Z","pid":370527,"hostname":"pfe24","msg":"End of node method newPage"}
+{"level":30,"time":"2025-05-16T13:01:22.549Z","pid":370527,"hostname":"pfe24","msg":"Start of node method fillText"}
+{"level":30,"time":"2025-05-16T13:01:22.549Z","pid":370527,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with input#email1 in page."}
+{"level":30,"time":"2025-05-16T13:01:22.607Z","pid":370527,"hostname":"pfe24","msg":"End of node method fillText"}
+{"level":30,"time":"2025-05-16T13:01:22.613Z","pid":370527,"hostname":"pfe24","msg":"Start of node method fillText"}
+{"level":30,"time":"2025-05-16T13:01:22.613Z","pid":370527,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with input#password1 in page."}
+{"level":30,"time":"2025-05-16T13:01:22.627Z","pid":370527,"hostname":"pfe24","msg":"End of node method fillText"}
+{"level":30,"time":"2025-05-16T13:01:22.634Z","pid":370527,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T13:01:22.634Z","pid":370527,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with button:has-text(\"Sign In\") in page."}
+{"level":30,"time":"2025-05-16T13:01:22.702Z","pid":370527,"hostname":"pfe24","msg":"End of node method click"}
+{"level":30,"time":"2025-05-16T13:01:22.707Z","pid":370527,"hostname":"pfe24","msg":"Start of node method waitForElementState"}
+{"level":30,"time":"2025-05-16T13:01:22.707Z","pid":370527,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with xpath=//h1[contains(text(),\"Time Tracking\")] in page."}
+{"level":30,"time":"2025-05-16T13:01:22.940Z","pid":370527,"hostname":"pfe24","msg":"End of node method waitForElementState"}
+{"level":30,"time":"2025-05-16T13:01:22.946Z","pid":370527,"hostname":"pfe24","msg":"Start of node method click"}
+{"level":30,"time":"2025-05-16T13:01:22.946Z","pid":370527,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with [data-test=\"project-dropdown\"] in page."}
+{"level":30,"time":"2025-05-16T13:01:23.278Z","pid":370527,"hostname":"pfe24","msg":"End of node method click"}
+{"level":30,"time":"2025-05-16T13:01:23.283Z","pid":370527,"hostname":"pfe24","msg":"Start of node method waitForElementState"}
+{"level":30,"time":"2025-05-16T13:01:23.283Z","pid":370527,"hostname":"pfe24","msg":"Strict mode is enabled, find Locator with .p-dropdown-panel in page."}
+{"level":30,"time":"2025-05-16T13:01:33.283Z","pid":370527,"hostname":"pfe24","msg":"Error of node method  waitForElementState"}
+================= Original suppressed error =================
+locator.waitFor: Timeout 10000ms exceeded.
 Call log:
 [2m  - waiting for locator('.p-select-overlay') to be visible[22m
 
@@ -3130,13 +3172,13 @@ Call log:
 {"level":30,"time":"2025-05-20T06:57:53.783Z","pid":15325,"hostname":"pfe24","msg":"End of node method closeBrowser"}
 ================= Original suppressed error =================
 Error: Browser has been closed.
-    at PlaywrightState.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
-    at PlaywrightServer.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
-    at PlaywrightServer.setTimeout (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
-    at Object.onReceiveHalfClose (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
-    at BaseServerInterceptingCall.maybePushNextMessage (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
-    at BaseServerInterceptingCall.handleEndEvent (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
-    at ServerHttp2Stream.<anonymous> (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
+    at PlaywrightState.getActiveBrowser (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
+    at PlaywrightServer.getActiveBrowser (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
+    at PlaywrightServer.setTimeout (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
+    at Object.onReceiveHalfClose (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
+    at BaseServerInterceptingCall.maybePushNextMessage (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
+    at BaseServerInterceptingCall.handleEndEvent (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
+    at ServerHttp2Stream.<anonymous> (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
     at ServerHttp2Stream.emit (node:events:519:35)
     at endReadableNT (node:internal/streams/readable:1696:12)
     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
@@ -3317,13 +3359,13 @@ Call log:
 {"level":30,"time":"2025-05-20T06:58:06.135Z","pid":15325,"hostname":"pfe24","msg":"End of node method closeBrowser"}
 ================= Original suppressed error =================
 Error: Browser has been closed.
-    at PlaywrightState.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
-    at PlaywrightServer.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
-    at PlaywrightServer.setTimeout (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
-    at Object.onReceiveHalfClose (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
-    at BaseServerInterceptingCall.maybePushNextMessage (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
-    at BaseServerInterceptingCall.handleEndEvent (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
-    at ServerHttp2Stream.<anonymous> (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
+    at PlaywrightState.getActiveBrowser (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
+    at PlaywrightServer.getActiveBrowser (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
+    at PlaywrightServer.setTimeout (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
+    at Object.onReceiveHalfClose (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
+    at BaseServerInterceptingCall.maybePushNextMessage (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
+    at BaseServerInterceptingCall.handleEndEvent (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
+    at ServerHttp2Stream.<anonymous> (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
     at ServerHttp2Stream.emit (node:events:519:35)
     at endReadableNT (node:internal/streams/readable:1696:12)
     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
@@ -3332,13 +3374,13 @@ Error: Browser has been closed.
 {"level":30,"time":"2025-05-20T06:58:06.143Z","pid":15325,"hostname":"pfe24","msg":"End of node method getBrowserCatalog"}
 ================= Original suppressed error =================
 Error: Browser has been closed.
-    at PlaywrightState.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
-    at PlaywrightServer.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
-    at PlaywrightServer.setTimeout (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
-    at Object.onReceiveHalfClose (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
-    at BaseServerInterceptingCall.maybePushNextMessage (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
-    at BaseServerInterceptingCall.handleEndEvent (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
-    at ServerHttp2Stream.<anonymous> (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
+    at PlaywrightState.getActiveBrowser (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
+    at PlaywrightServer.getActiveBrowser (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
+    at PlaywrightServer.setTimeout (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
+    at Object.onReceiveHalfClose (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
+    at BaseServerInterceptingCall.maybePushNextMessage (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
+    at BaseServerInterceptingCall.handleEndEvent (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
+    at ServerHttp2Stream.<anonymous> (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
     at ServerHttp2Stream.emit (node:events:519:35)
     at endReadableNT (node:internal/streams/readable:1696:12)
     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
@@ -3488,13 +3530,13 @@ Call log:
 {"level":30,"time":"2025-05-20T06:58:14.567Z","pid":15325,"hostname":"pfe24","msg":"End of node method closeBrowser"}
 ================= Original suppressed error =================
 Error: Browser has been closed.
-    at PlaywrightState.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
-    at PlaywrightServer.getActiveBrowser (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
-    at PlaywrightServer.setTimeout (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
-    at Object.onReceiveHalfClose (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
-    at BaseServerInterceptingCall.maybePushNextMessage (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
-    at BaseServerInterceptingCall.handleEndEvent (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
-    at ServerHttp2Stream.<anonymous> (/home/usera/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
+    at PlaywrightState.getActiveBrowser (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:12226:15)
+    at PlaywrightServer.getActiveBrowser (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13122:59)
+    at PlaywrightServer.setTimeout (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/index.js:13370:57)
+    at Object.onReceiveHalfClose (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server.js:1461:25)
+    at BaseServerInterceptingCall.maybePushNextMessage (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:575:31)
+    at BaseServerInterceptingCall.handleEndEvent (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:615:14)
+    at ServerHttp2Stream.<anonymous> (/home/userb/.local/lib/python3.10/site-packages/Browser/wrapper/node_modules/@grpc/grpc-js/build/src/server-interceptors.js:382:18)
     at ServerHttp2Stream.emit (node:events:519:35)
     at endReadableNT (node:internal/streams/readable:1696:12)
     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)

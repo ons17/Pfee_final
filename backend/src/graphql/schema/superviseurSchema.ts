@@ -33,4 +33,27 @@ export const superviseurTypeDefs = gql`
     ): Superviseur
     deleteSuperviseur(id: String!): String
   }
+
+  type SupervisorProjet {
+    idSupervisorProjet: ID!
+    supervisor: Administrateur!
+    projet: Projet!
+    dateAssigned: DateTime!
+  }
+
+  extend type Administrateur {
+    projets: [Projet]
+  }
+
+  extend type Mutation {
+    assignProjetToSupervisor(
+      idAdministrateur: ID!
+      idProjet: ID!
+    ): SupervisorProjet!
+
+    removeProjetFromSupervisor(
+      idAdministrateur: ID!
+      idProjet: ID!
+    ): Boolean!
+  }
 `;

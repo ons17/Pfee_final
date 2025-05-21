@@ -39,12 +39,16 @@ const login = async () => {
     if (success) {
       localStorage.clear(); // Clear any existing auth data
       localStorage.setItem('token', token);
-      localStorage.setItem('administrateur', JSON.stringify(administrateur));
-      localStorage.setItem('userType', 'admin'); // Set user type
+      localStorage.setItem('administrateur', JSON.stringify({
+        ...administrateur,
+        role: administrateur.role // Store the exact role from database
+      }));
+      localStorage.setItem('userType', administrateur.role.toLowerCase());
       
+      // Navigate based on role
       router.push('/app');
     } else {
-      errorMessage.value = message; // Show error message
+      errorMessage.value = message;
     }
   } catch (error) {
     errorMessage.value = 'Login failed. Please try again.';

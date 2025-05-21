@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
@@ -10,6 +10,13 @@ import Message from 'primevue/message';
 import ProgressBar from 'primevue/progressbar';
 import Dialog from 'primevue/dialog';
 import Divider from 'primevue/divider';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import { useQuery } from '@vue/apollo-composable';
+import gql from 'graphql-tag';
+import Toolbar from 'primevue/toolbar';
+import Chip from 'primevue/chip';
+import Select from 'primevue/select'; // Add this import
 
 const router = useRouter();
 const toast = useToast();
@@ -28,7 +35,7 @@ const errors = reactive({
   nom: '',
   email: '',
   password: '',
-  confirmPassword: ''
+  confirmPassword: '' 
 });
 
 // Component state
@@ -36,6 +43,64 @@ const isSubmitting = ref(false);
 const showSuccess = ref(false);
 const passwordStrength = ref(0);
 const confirmDialogVisible = ref(false);
+const projectDialog = ref(false);
+const selectedSupervisor = ref(null);
+const selectedProject = ref(null);
+const assigningProject = ref(false);
+const availableProjects = ref([]);
+
+// Add query to get supervisors
+const GET_SUPERVISORS = gql`
+  query {
+    allAdministrateurs {
+      idAdministrateur
+      nom_administrateur 
+      email_administrateur
+      role
+      projets {
+        idProjet
+        nom_projet
+        description_projet
+        statut_projet
+      }
+    }
+  }
+`;
+
+// Add query to get available projects
+const GET_AVAILABLE_PROJECTS = gql`
+  query {
+    getAvailableProjects {
+      idProjet
+      nom_projet
+      description_projet
+      statut_projet
+    }
+  }
+`;
+
+// Add reactive refs for supervisors
+const supervisors = ref([]);
+const loading = ref(true);
+
+// Query supervisors
+const { result: supervisorsResult } = useQuery(GET_SUPERVISORS);
+
+// Watch for query results
+watch(supervisorsResult, (newResult) => {
+  console.log('Raw supervisor data:', newResult); // Debug log
+  if (newResult?.allAdministrateurs) {
+    supervisors.value = newResult.allAdministrateurs
+      .filter(admin => admin.role.toLowerCase() === 'supervisor')
+      .map(supervisor => ({
+        ...supervisor,
+        // Ensure projets is always an array
+        projets: Array.isArray(supervisor.projets) ? supervisor.projets : []
+      }));
+    console.log('Processed supervisors:', supervisors.value); // Debug log
+    loading.value = false;
+  }
+});
 
 // Form validation functions
 const validateForm = () => {
@@ -236,148 +301,467 @@ onMounted(() => {
   // Any initialization logic can go here
   document.title = 'ImbusFlow';
 });
+
+// Add these refs
+const dt = ref(null);
+const selectedSupervisors = ref(null);
+const filters = ref({});
+const supervisorDialog = ref(false);
+const deleteSupervisorDialog = ref(false);
+const addSupervisorDialog = ref(false);
+const submitted = ref(false);
+
+// Add these methods
+const exportCSV = () => {
+  dt.value?.exportCSV();
+};
+
+const deleteSupervisor = async (supervisor) => {
+  // Implementation for delete
+};
+
+const openNew = () => {
+  form.nom = '';
+  form.email = '';
+  form.password = '';
+  form.confirmPassword = '';
+  form.role = 'SUPERVISOR';
+  submitted.value = false;
+  addSupervisorDialog.value = true;
+};
+
+const hideDialog = () => {
+  addSupervisorDialog.value = false;
+  submitted.value = false;
+};
+
+// Project assignment methods
+const openProjectDialog = () => {
+  if (!selectedSupervisors.value || selectedSupervisors.value.length === 0) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Warning',
+      detail: 'Please select at least one supervisor',
+      life: 3000
+    });
+    return;
+  }
+  
+  // If only one supervisor is selected, set it as the selected supervisor
+  if (selectedSupervisors.value.length === 1) {
+    selectedSupervisor.value = selectedSupervisors.value[0];
+  }
+  
+  projectDialog.value = true;
+  fetchAvailableProjects();
+};
+
+const hideProjectDialog = () => {
+  projectDialog.value = false;
+  selectedSupervisor.value = null;
+  selectedProject.value = null;
+};
+
+const fetchAvailableProjects = async () => {
+  try {
+    const response = await axios.post(
+      import.meta.env.VITE_API_URL || 'http://localhost:3000/graphql',
+      {
+        query: `
+          query {
+            getAvailableProjects {
+              idProjet
+              nom_projet
+              description_projet
+              statut_projet
+            }
+          }
+        `
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
+
+    if (response.data.data?.getAvailableProjects) {
+      availableProjects.value = response.data.data.getAvailableProjects;
+    } else {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to fetch projects',
+        life: 3000
+      });
+    }
+  } catch (error) {
+    console.error('Error fetching projects:', error);
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to fetch projects',
+      life: 3000
+    });
+  }
+};
+
+const assignProject = async () => {
+  if (!selectedProject.value) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Warning',
+      detail: 'Please select a project',
+      life: 3000
+    });
+    return;
+  }
+
+  assigningProject.value = true;
+  try {
+    for (const supervisor of selectedSupervisors.value) {
+      const mutation = `
+        mutation AssignProject($supervisorId: ID!, $projectId: ID!) {
+          assignProjetToSupervisor(
+            idAdministrateur: $supervisorId,
+            idProjet: $projectId
+          ) {
+            idSupervisorProjet
+          }
+        }
+      `;
+
+      const variables = {
+        supervisorId: supervisor.idAdministrateur,
+        projectId: selectedProject.value.idProjet
+      };
+
+      await axios.post(
+        import.meta.env.VITE_API_URL || 'http://localhost:3000/graphql',
+        { query: mutation, variables },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+    }
+
+    // Force refetch of supervisors data
+    await refetch();
+    
+    // Clear selection and update UI
+    selectedProject.value = null;
+    selectedSupervisors.value = null;
+    
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Project assigned successfully',
+      life: 3000
+    });
+
+    hideProjectDialog();
+  } catch (error) {
+    console.error('Error assigning project:', error);
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to assign project',
+      life: 3000
+    });
+  } finally {
+    assigningProject.value = false;
+  }
+};
+
+// Add the refetch function using Apollo Client
+const { refetch } = useQuery(GET_SUPERVISORS);
+
+// Add this method in the script section
+const getProjectStatusClass = (status) => {
+  switch (status?.toLowerCase()) {
+    case 'todo':
+      return 'bg-blue-100 text-blue-700';
+    case 'in_progress':
+      return 'bg-orange-100 text-orange-700';
+    case 'end':
+      return 'bg-green-100 text-green-700';
+    default:
+      return 'bg-gray-100 text-gray-700';
+  }
+};
 </script>
 
 <template>
-  <transition name="fade" appear>
-    <div class="max-w-2xl mx-auto my-10 bg-white shadow-lg rounded-xl p-8">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-semibold text-gray-800">Add a New Supervisor</h2>
-       
-      </div>
-      
-      <Divider />
+  <div class="supervisor-page p-4">
+    <div class="card">
+      <Toolbar class="mb-4">
+        <template #start>
+          <div class="flex gap-2">
+            <Button label="New" icon="pi pi-plus" class="mr-2" @click="openNew" />
+            <Button label="Assign Project" icon="pi pi-briefcase" severity="info" @click="openProjectDialog" />
+          </div>
+        </template>
+        <template #end>
+          <Button label="Export" icon="pi pi-upload" @click="exportCSV" />
+        </template>
+      </Toolbar>
 
-      <div class="space-y-5">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div>
-            <label for="nom" class="block text-gray-700 font-medium mb-1">Name <span class="text-red-500">*</span></label>
-            <InputText
-              id="nom"
-              v-model="form.nom"
-              placeholder="Enter supervisor name"
-              class="w-full"
+      <DataTable 
+        ref="dt"
+        :value="supervisors"
+        v-model:selection="selectedSupervisors"
+        dataKey="idAdministrateur"
+        :paginator="true"
+        :rows="10"
+        :filters="filters"
+        :loading="loading"
+        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+        :rowsPerPageOptions="[5, 10, 25]"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} supervisors"
+        responsiveLayout="scroll"
+      >
+        <Column selectionMode="multiple" headerStyle="width: 3rem" />
+        <Column field="nom_administrateur" header="Name" sortable style="min-width: 14rem">
+          <template #header>
+            <div class="flex justify-content-between align-items-center">
+            </div>
+          </template>
+        </Column>
+        <Column field="email_administrateur" header="Email" sortable style="min-width: 14rem">
+          <template #header>
+            <div class="flex justify-content-between align-items-center">
+            </div>
+          </template>
+        </Column>
+        <Column field="role" header="Role" sortable style="min-width: 10rem" />
+        <Column field="projets" header="Projects" style="min-width: 14rem">
+          <template #body="slotProps">
+            <div class="flex flex-wrap gap-1">
+              <template v-if="slotProps.data.projets && slotProps.data.projets.length > 0">
+                <Chip
+                  v-for="projet in slotProps.data.projets"
+                  :key="projet.idProjet"
+                  :label="projet.nom_projet"
+                  :class="getProjectStatusClass(projet.statut_projet)"
+                >
+                  <template #footer>
+                    <small class="text-xs opacity-75">{{ projet.statut_projet }}</small>
+                  </template>
+                </Chip>
+              </template>
+              <span v-else class="text-gray-500">No projects assigned</span>
+            </div>
+          </template>
+        </Column>
+        
+      </DataTable>
+
+      <!-- Add Supervisor Dialog -->
+      <Dialog 
+        v-model:visible="addSupervisorDialog" 
+        header="Add New Supervisor" 
+        modal 
+        class="p-fluid" 
+        :style="{ width: '50%' }"
+      >
+        <div class="p-fluid">
+          <div class="field">
+            <label for="nom">Name</label>
+            <InputText 
+              id="nom" 
+              v-model="form.nom" 
+              required 
+              class="p-inputtext-lg"
               :class="{'p-invalid': errors.nom}"
-              aria-describedby="nom-error"
             />
-            <small id="nom-error" class="text-red-500">{{ errors.nom }}</small>
+            <small class="p-error">{{ errors.nom }}</small>
           </div>
 
-          <div>
-            <label for="email" class="block text-gray-700 font-medium mb-1">Email <span class="text-red-500">*</span></label>
-            <InputText
-              id="email"
-              v-model="form.email"
-              placeholder="email@example.com"
-              type="email"
-              class="w-full"
+          <div class="field">
+            <label for="email">Email</label>
+            <InputText 
+              id="email" 
+              v-model="form.email" 
+              required 
+              type="email" 
+              class="p-inputtext-lg"
               :class="{'p-invalid': errors.email}"
-              aria-describedby="email-error"
             />
-            <small id="email-error" class="text-red-500">{{ errors.email }}</small>
+            <small class="p-error">{{ errors.email }}</small>
           </div>
-        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div>
-            <label for="password" class="block text-gray-700 font-medium mb-1">Password <span class="text-red-500">*</span></label>
-            <Password
-              id="password"
-              v-model="form.password"
-              placeholder="Create a secure password"
-              toggleMask
-              class="w-full"
-              :class="{'p-invalid': errors.password}"
-              aria-describedby="password-error"
-              @input="handlePasswordChange"
-            />
-            <div class="mt-2">
-              <ProgressBar :value="passwordStrength" :class="getPasswordClass()" />
-              <div class="text-xs mt-1 text-gray-600">
-                Password strength: {{ passwordStrength >= 80 ? 'Strong' : passwordStrength >= 40 ? 'Medium' : 'Weak' }}
+          <div class="grid">
+            <div class="col-12 md:col-6">
+              <div class="field">
+                <label for="password">Password</label>
+                <Password
+                  id="password"
+                  v-model="form.password"
+                  required
+                  toggleMask
+                  class="w-full"
+                  :class="{'p-invalid': errors.password}"
+                  @input="handlePasswordChange"
+                />
+                <div class="mt-2">
+                  <ProgressBar :value="passwordStrength" :class="getPasswordClass()" />
+                  <div class="text-xs mt-1 text-gray-600">
+                    Password strength: {{ passwordStrength >= 80 ? 'Strong' : passwordStrength >= 40 ? 'Medium' : 'Weak' }}
+                  </div>
+                </div>
+                <small class="p-error">{{ errors.password }}</small>
               </div>
             </div>
-            <small id="password-error" class="text-red-500">{{ errors.password }}</small>
-          </div>
 
-          <div>
-            <label for="confirmPassword" class="block text-gray-700 font-medium mb-1">Confirm Password <span class="text-red-500">*</span></label>
-            <Password
-              id="confirmPassword"
-              v-model="form.confirmPassword"
-              placeholder="Confirm password"
-              toggleMask
-              class="w-full"
-              :class="{'p-invalid': errors.confirmPassword}"
-              aria-describedby="confirm-password-error"
-              feedback="false"
-            />
-            <small id="confirm-password-error" class="text-red-500">{{ errors.confirmPassword }}</small>
-          </div>
-        </div>
-
-        <div class="flex justify-center gap-3 pt-6">
-          <Button
-            label="Cancel"
-            icon="pi pi-times"
-            class="p-button-outlined"
-            @click="$router.push('/app')"
-          />
-          <Button
-            label="Create Supervisor"
-            icon="pi pi-user-plus"
-            class="p-button-lg"
-            :loading="isSubmitting"
-            @click="showConfirmDialog"
-          />
-        </div>
-
-        <div v-if="showSuccess" class="pt-4">
-          <Message severity="success" class="w-full">
-            <div class="flex items-center">
-              <i class="pi pi-check-circle mr-2 text-xl"></i>
-              <span>Supervisor created successfully! Redirecting to supervisor list...</span>
+            <div class="col-12 md:col-6">
+              <div class="field">
+                <label for="confirmPassword">Confirm Password</label>
+                <Password
+                  id="confirmPassword"
+                  v-model="form.confirmPassword"
+                  required
+                  toggleMask
+                  class="w-full"
+                  :class="{'p-invalid': errors.confirmPassword}"
+                  :feedback="false"
+                />
+                <small class="p-error">{{ errors.confirmPassword }}</small>
+              </div>
             </div>
-          </Message>
+          </div>
         </div>
-      </div>
-    </div>
-  </transition>
-  
-  <!-- Confirmation Dialog -->
-  <Dialog 
-    v-model:visible="confirmDialogVisible" 
-    header="Confirm Supervisor Creation" 
-    :modal="true" 
-    :closable="false"
-    class="w-full max-w-lg"
-  >
-    <div class="p-4">
-      <p class="mb-4">Are you sure you want to create a new supervisor with the following information?</p>
-      <div class="bg-gray-50 p-4 rounded-lg">
-        <div class="grid grid-cols-2 gap-2">
-          <div class="font-semibold">Name:</div>
-          <div>{{ form.nom }}</div>
-          <div class="font-semibold">Email:</div>
-          <div>{{ form.email }}</div>
-          <div class="font-semibold">Role:</div>
-          <div>Supervisor</div>
+
+        <template #footer>
+          <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
+          <Button label="Save" icon="pi pi-check" class="p-button-text" @click="showConfirmDialog" />
+        </template>
+      </Dialog>
+
+      <!-- Confirm Supervisor Creation Dialog -->
+      <Dialog v-model:visible="confirmDialogVisible" header="Confirm Supervisor Creation" :modal="true" :closable="false">
+        <div class="p-4">
+          <p class="mb-4">Are you sure you want to create a new supervisor with the following information?</p>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="grid grid-cols-2 gap-2">
+              <div class="font-semibold">Name:</div>
+              <div>{{ form.nom }}</div>
+              <div class="font-semibold">Email:</div>
+              <div>{{ form.email }}</div>
+              <div class="font-semibold">Role:</div>
+              <div>Supervisor</div>
+            </div>
+          </div>
         </div>
-      </div>
+        <template #footer>
+          <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="cancelCreation" />
+          <Button label="Confirm" icon="pi pi-check" class="p-button-primary" @click="createSupervisor" :loading="isSubmitting" />
+        </template>
+      </Dialog>
+
+      <!-- Project Assignment Dialog -->
+      <Dialog 
+        v-model:visible="projectDialog" 
+        header="Assign Project to Supervisor" 
+        :modal="true"
+        class="p-fluid" 
+        :style="{ width: '50%' }"
+      >
+        <!-- Show selected supervisors -->
+        <div class="field">
+          <label>Selected Supervisors</label>
+          <div class="flex flex-wrap gap-2 p-2 bg-gray-50 rounded">
+            <Chip 
+              v-for="supervisor in selectedSupervisors" 
+              :key="supervisor.idAdministrateur"
+              :label="supervisor.nom_administrateur"
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="project">Project</label>
+          <Select
+            id="project"
+            v-model="selectedProject"
+            :options="availableProjects"
+            optionLabel="nom_projet"
+            placeholder="Select a Project"
+            class="w-full"
+          >
+            <template #option="slotProps">
+              <div class="flex flex-column">
+                <span>{{ slotProps.option.nom_projet }}</span>
+                <small class="text-gray-500">{{ slotProps.option.description_projet }}</small>
+              </div>
+            </template>
+          </Select>
+        </div>
+
+        <template #footer>
+          <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideProjectDialog" />
+          <Button 
+            label="Assign" 
+            icon="pi pi-check" 
+            @click="assignProject" 
+            :loading="assigningProject"
+            :disabled="!selectedProject"
+          />
+        </template>
+      </Dialog>
     </div>
-    <template #footer>
-      <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="cancelCreation" />
-      <Button label="Confirm" icon="pi pi-check" class="p-button-primary" @click="createSupervisor" :loading="isSubmitting" />
-    </template>
-  </Dialog>
+  </div>
 </template>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.5s ease;
+.supervisor-page {
+  max-width: 1200px;
+  margin: 0 auto;
 }
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
+
+.card {
+  background: var(--surface-card);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.p-fluid .field label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.p-fluid .field .p-inputtext-lg {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 5px;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -0.5rem;
+}
+
+.col-12 {
+  flex: 0 0 100%;
+  padding: 0.5rem;
+}
+
+@media screen and (min-width: 768px) {
+  .md\:col-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
 }
 
 /* Custom progress bar colors */
@@ -391,5 +775,92 @@ onMounted(() => {
 
 :deep(.p-progressbar-success) .p-progressbar-value {
   background-color: #10b981;
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.card {
+  background: var(--surface-card);
+  padding: 2rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+h5 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+:deep(.p-datatable) {
+  margin-top: 1rem;
+}
+
+:deep(.p-button-sm) {
+  padding: 0.4rem;
+}
+
+.p-dialog .p-fluid {
+  padding: 0 1rem;
+}
+
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+/* Add to existing styles */
+.bg-blue-100 {
+  background-color: #dbeafe;
+}
+.text-blue-700 {
+  color: #1d4ed8;
+}
+
+.bg-orange-100 {
+  background-color: #ffedd5;
+}
+.text-orange-700 {
+  color: #c2410c;
+}
+
+.bg-green-100 {
+  background-color: #dcfce7;
+}
+.text-green-700 {
+  color: #15803d;
+}
+
+.bg-gray-100 {
+  background-color: #f3f4f6;
+}
+.text-gray-700 {
+  color: #374151;
+}
+
+:deep(.p-chip) {
+  border-radius: 4px;
+  padding: 0 8px;
+}
+
+:deep(.p-chip-text) {
+  font-size: 0.875rem;
 }
 </style>

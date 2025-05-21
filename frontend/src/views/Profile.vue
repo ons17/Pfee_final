@@ -41,13 +41,14 @@ onMounted(() => {
         const adminData = JSON.parse(administrateur);
         profile.value.name = adminData.nom_administrateur;
         profile.value.email = adminData.email_administrateur;
-        profile.value.role = 'Admin';
-        userType.value = 'admin';
+        profile.value.role = adminData.role;
+        // Set userType based on role
+        userType.value = adminData.role?.toLowerCase() === 'supervisor' ? 'supervisor' : 'admin';
     } else if (employee) {
         const employeeData = JSON.parse(employee);
         profile.value.name = employeeData.nomEmployee;
         profile.value.email = employeeData.emailEmployee;
-        profile.value.role = 'Employee';
+        profile.value.role = employeeData.role;
         userType.value = 'employee';
     } else {
         // Redirect to login if no user is found
@@ -99,17 +100,18 @@ const avatarBackgroundColor = computed(() => {
         </div>
 
         <!-- Conditional Content Based on User Type -->
-        <div v-if="userType === 'admin'" class="admin-section">
-            <h2>Admin Dashboard</h2>
-            <p>Welcome, Admin! Manage your platform here.</p>
+        <div v-if="userType === 'admin' || userType === 'supervisor'" class="admin-section">
+            <h2>{{ userType === 'admin' ? 'Admin' : 'Supervisor' }} Dashboard</h2>
+            <p>Welcome, {{ userType === 'admin' ? 'Admin' : 'Supervisor' }}! Manage your platform here.</p>
             <div class="dashboard-cards">
                 <div class="card" @click="router.push('/app/Reports')">
                     <h3>📊 View Reports</h3>
                     <p>Access detailed reports and analytics.</p>
                 </div>
-                <div class="card" @click="router.push('/app/AddAdmin')">
-                    <h3>➕ Add New Admin</h3>
-                    <p>Manage and add new administrators.</p>
+                <!-- Only show Add New Supervisors card for admin role -->
+                <div v-if="userType === 'admin'" class="card" @click="router.push('/app/AddAdmin')">
+                    <h3>➕ Add New Supervisors</h3>
+                    <p>Manage and add new Supervisors.</p>
                 </div>
                 <div class="card" @click="router.push('/app/Teams')">
                     <h3>👥 Manage Teams</h3>
@@ -136,6 +138,7 @@ const avatarBackgroundColor = computed(() => {
                 </div>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -205,7 +208,8 @@ const avatarBackgroundColor = computed(() => {
 }
 
 .admin-section,
-.employee-section {
+.employee-section,
+.supervisor-section {
     margin-top: 20px;
     padding: 20px;
     background-color: white;
