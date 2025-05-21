@@ -1,16 +1,18 @@
 *** Settings ***
-Documentation     Common resources and keywords for testing
+Documentation     Common resources for time tracking tests
 Library           Browser
 Library           BuiltIn
 
 *** Variables ***
 # Browser configuration
-${BROWSER}              chromium    # Changed to chromium for better stability
-${HEADLESS}             ${False}   # Run tests in headless mode if True
+${BROWSER}              chromium
+${HEADLESS}             ${True}
 ${SITE_URL}             http://localhost:5173
-${VALID_EMAIL}          onssbenamara3@gmail.com
-${VALID_PASSWORD}       ons123
-${TIMEOUT}             20s          # Increased timeout for better reliability
+${TIMEOUT}              10s
+
+# Test data
+${EMPLOYEE_EMAIL}       zeidimohamedtaher13@gmail.com
+${EMPLOYEE_PASSWORD}    mohamed
 
 # UI Elements
 ${LOGO_IMG}            img[alt="Logo"]    # Logo image selector
@@ -75,6 +77,11 @@ Clear Local Storage
     [Documentation]    Clears browser localStorage
     Evaluate JavaScript    null    localStorage.clear()
 
+Clear Browser Storage
+    [Documentation]    Clears browser localStorage and sessionStorage
+    LocalStorage Clear
+    SessionStorage Clear
+
 Get Active Element Properties
     [Documentation]    Gets properties of the currently active element
     ${active}=    Get Active Element
@@ -97,3 +104,22 @@ Get Focused Element
     [Arguments]    ${expected_selector}
     ${focused}=    Get Page State    state=focused
     Should Be Equal    ${focused}    ${expected_selector}
+
+Wait For Toast Message
+    [Documentation]    Waits for a toast message with specific severity
+    [Arguments]    ${severity}    ${timeout}=${TIMEOUT}
+    Wait For Elements State    .p-toast-message-${severity}    visible    timeout=${timeout}
+
+Wait For Loading To Complete
+    [Documentation]    Waits for loading indicator to disappear
+    Wait For Elements State    .loading-overlay    detached    timeout=${TIMEOUT}
+
+Verify Page Title
+    [Documentation]    Verifies the page title
+    [Arguments]    ${expected_title}
+    Get Text    h1    ==    ${expected_title}
+
+Get Current Timer Value
+    [Documentation]    Gets the current timer display value
+    ${timer_text}=    Get Text    [data-test="timer-display"]
+    RETURN    ${timer_text}

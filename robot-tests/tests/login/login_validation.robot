@@ -66,7 +66,7 @@ SQL Injection Prevention Test
     @{sql_injections}=    Create List
     ...    ' OR '1'='1
     ...    ' OR 1=1;--
-    ...    '; DROP TABLE users;--
+    ...    '; DROP TABLE Administrateur;--
     FOR    ${injection}    IN    @{sql_injections}
         Fill Text    input#email1    ${injection}
         Fill Text    .p-password input    ${VALID_PASSWORD}
