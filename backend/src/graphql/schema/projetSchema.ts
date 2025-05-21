@@ -35,6 +35,7 @@ export const projetTypeDefs = gql`
     projet(id: String!): Projet
     searchProjets(filters: ProjetFilterInput): [Projet!]!
     getProjetsForEmployee(idEmploye: ID!): [Projet!]! # Updated type
+    getAvailableProjects: [Projet]!
   }
 
   extend type Mutation {

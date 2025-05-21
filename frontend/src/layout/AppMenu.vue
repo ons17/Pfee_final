@@ -2,20 +2,21 @@
 import { ref, computed, onMounted } from 'vue';
 import AppMenuItem from './AppMenuItem.vue';
 
-// Determine user role
+// Update role determination
 const admin = JSON.parse(localStorage.getItem('administrateur'));
 const employee = JSON.parse(localStorage.getItem('employee'));
 const userRole = ref('');
 
 onMounted(() => {
     if (admin) {
-        userRole.value = 'admin';
+        // Check if the admin is actually a supervisor
+        userRole.value = admin.role?.toLowerCase() === 'supervisor' ? 'supervisor' : 'admin';
     } else if (employee) {
         userRole.value = 'employee';
     }
 });
 
-// Menu model with role-based filtering
+// Update the menu model to explicitly specify admin (not supervisor)
 const model = ref([
     {
         label: 'HOME',
@@ -50,16 +51,28 @@ const model = ref([
     {
         label: 'ADMINISTRATION',
         items: [
-            { label: 'Add Superviseur', icon: 'pi pi-fw pi-user-plus', to: '/app/AddAdmin', roles: ['admin'] }
+            { 
+                label: 'Add Superviseur', 
+                icon: 'pi pi-fw pi-user-plus', 
+                to: '/app/AddAdmin', 
+                roles: ['admin'], // Only admin, not supervisor
+                requiresAdmin: true // Add this flag to explicitly require admin role
+            }
         ]
     }
 ]);
 
-// Filter menu items based on user role
+// Update the filtered model computation
 const filteredModel = computed(() => {
     return model.value.map(section => ({
         ...section,
-        items: section.items.filter(item => item.roles.includes(userRole.value))
+        items: section.items.filter(item => {
+            // Check if item requires admin role
+            if (item.requiresAdmin) {
+                return userRole.value === 'admin';
+            }
+            return item.roles.includes(userRole.value);
+        })
     })).filter(section => section.items.length > 0);
 });
 

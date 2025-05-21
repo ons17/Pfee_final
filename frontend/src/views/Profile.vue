@@ -41,13 +41,13 @@ onMounted(() => {
         const adminData = JSON.parse(administrateur);
         profile.value.name = adminData.nom_administrateur;
         profile.value.email = adminData.email_administrateur;
-        profile.value.role = 'Admin';
+        profile.value.role = adminData.role; // Use the actual role from database
         userType.value = 'admin';
     } else if (employee) {
         const employeeData = JSON.parse(employee);
         profile.value.name = employeeData.nomEmployee;
         profile.value.email = employeeData.emailEmployee;
-        profile.value.role = 'Employee';
+        profile.value.role = employeeData.role;
         userType.value = 'employee';
     } else {
         // Redirect to login if no user is found
@@ -108,8 +108,8 @@ const avatarBackgroundColor = computed(() => {
                     <p>Access detailed reports and analytics.</p>
                 </div>
                 <div class="card" @click="router.push('/app/AddAdmin')">
-                    <h3>➕ Add New Admin</h3>
-                    <p>Manage and add new administrators.</p>
+                    <h3>➕ Add New Supervisors</h3>
+                    <p>Manage and add new Supervisors.</p>
                 </div>
                 <div class="card" @click="router.push('/app/Teams')">
                     <h3>👥 Manage Teams</h3>
