@@ -502,7 +502,6 @@ const getProjectStatusClass = (status) => {
         <template #start>
           <div class="flex gap-2">
             <Button label="New" icon="pi pi-plus" class="mr-2" @click="openNew" />
-            <Button label="Assign Project" icon="pi pi-briefcase" severity="info" @click="openProjectDialog" />
           </div>
         </template>
         <template #end>
@@ -524,7 +523,6 @@ const getProjectStatusClass = (status) => {
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} supervisors"
         responsiveLayout="scroll"
       >
-        <Column selectionMode="multiple" headerStyle="width: 3rem" />
         <Column field="nom_administrateur" header="Name" sortable style="min-width: 14rem">
           <template #header>
             <div class="flex justify-content-between align-items-center">
@@ -538,25 +536,7 @@ const getProjectStatusClass = (status) => {
           </template>
         </Column>
         <Column field="role" header="Role" sortable style="min-width: 10rem" />
-        <Column field="projets" header="Projects" style="min-width: 14rem">
-          <template #body="slotProps">
-            <div class="flex flex-wrap gap-1">
-              <template v-if="slotProps.data.projets && slotProps.data.projets.length > 0">
-                <Chip
-                  v-for="projet in slotProps.data.projets"
-                  :key="projet.idProjet"
-                  :label="projet.nom_projet"
-                  :class="getProjectStatusClass(projet.statut_projet)"
-                >
-                  <template #footer>
-                    <small class="text-xs opacity-75">{{ projet.statut_projet }}</small>
-                  </template>
-                </Chip>
-              </template>
-              <span v-else class="text-gray-500">No projects assigned</span>
-            </div>
-          </template>
-        </Column>
+        
         
       </DataTable>
 
