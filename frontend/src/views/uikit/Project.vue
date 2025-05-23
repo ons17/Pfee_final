@@ -72,18 +72,35 @@ const { result: tasksResult } = useQuery(GET_TACHES);
 // Mutations
 const { mutate: createProject } = useMutation(CREATE_PROJECT, {
     update(cache, { data: { createProjet } }) {
-        const existingData = cache.readQuery({ query: GET_PROJECTS });
-        const newProject = {
-            ...createProjet,
-            equipes: createProjet.equipes || []
-        };
-        cache.writeQuery({
-            query: GET_PROJECTS,
-            data: {
-                projets: [...(existingData?.projets || []), newProject]
+        try {
+            // Read existing projects from cache
+            const existingData = cache.readQuery({ 
+                query: GET_PROJECTS 
+            });
+
+            // Check if project already exists in cache
+            const projectExists = existingData?.projets?.some(
+                p => p.idProjet === createProjet.idProjet
+            );
+
+            if (!projectExists) {
+                // Write updated data to cache only if project doesn't exist
+                cache.writeQuery({
+                    query: GET_PROJECTS,
+                    data: {
+                        projets: [...(existingData?.projets || []), {
+                            ...createProjet,
+                            equipes: createProjet.equipes || []
+                        }]
+                    }
+                });
             }
-        });
-    }
+        } catch (error) {
+            console.error('Error updating cache:', error);
+        }
+    },
+    // Add this option to ensure fresh data
+    refetchQueries: [{ query: GET_PROJECTS }]
 });
 
 const { mutate: updateProject } = useMutation(UPDATE_PROJECT, {
@@ -263,82 +280,86 @@ const editProject = async (proj) => {
 };
 
 const hideDialog = () => {
-    projectDialog.value = false;
-    submitted.value = false;
-    selectedTeam.value = null;
+  projectDialog.value = false;
+  submitted.value = false;
+  selectedTeam.value = null;
+  project.value = {
+    nom_projet: '',
+    description_projet: '',
+    date_debut_projet: null,
+    date_fin_projet: null,
+    statut_projet: 'todo',
+    equipes: []
+  };
 };
 
 const saveProject = async () => {
-    submitted.value = true;
-    if (!validateForm()) return;
+  submitted.value = true;
+  if (!validateForm()) return;
 
-    loading.value = true;
+  loading.value = true;
 
-    try {
-        const projectData = {
-            nom_projet: project.value.nom_projet.trim(),
-            description_projet: project.value.description_projet?.trim() || null, // Allow null or empty description
-            date_debut_projet: isEditMode.value
-                ? formatDateForDB(project.value.originalDateDebutProjet)
-                : formatDateForDB(project.value.date_debut_projet),
-            date_fin_projet: isEditMode.value
-                ? formatDateForDB(project.value.originalDateFinProjet)
-                : formatDateForDB(project.value.date_fin_projet),
-            statut_projet: project.value.statut_projet
-        };
+  try {
+    const projectData = {
+      nom_projet: project.value.nom_projet.trim(),
+      description_projet: project.value.description_projet?.trim() || null,
+      date_debut_projet: isEditMode.value
+        ? formatDateForDB(project.value.originalDateDebutProjet)
+        : formatDateForDB(project.value.date_debut_projet),
+      date_fin_projet: isEditMode.value
+        ? formatDateForDB(project.value.originalDateFinProjet)
+        : formatDateForDB(project.value.date_fin_projet),
+      statut_projet: project.value.statut_projet
+    };
 
-        if (project.value.idProjet) {
-            await updateProject({
-                id: project.value.idProjet,
-                ...projectData,
-                equipes: project.value.equipes.map((team) => ({ idEquipe: team.idEquipe }))
-            });
-            toast.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: 'Project updated successfully',
-                life: 3000
-            });
-        } else {
-            const result = await createProject(projectData);
+    if (project.value.idProjet) {
+      // Update existing project
+      await updateProject({
+        id: project.value.idProjet,
+        ...projectData
+      });
+    } else {
+      // Create new project
+      const { data } = await createProject(projectData);
 
-            if (result?.data?.createProjet) {
-                const newProjectId = result.data.createProjet.idProjet;
-                project.value.idProjet = newProjectId;
-
-                if (project.value.equipes.length > 0) {
-                    const addTeamPromises = project.value.equipes.map((team) =>
-                        addTeamToProject({
-                            idProjet: newProjectId,
-                            idEquipe: team.idEquipe
-                        })
-                    );
-
-                    await Promise.all(addTeamPromises);
-                }
-
-                toast.add({
-                    severity: 'success',
-                    summary: 'Success',
-                    detail: 'Project created successfully',
-                    life: 3000
-                });
-            }
+      if (data?.createProjet) {
+        const newProjectId = data.createProjet.idProjet;
+        
+        // Only add teams if there are any selected
+        if (project.value.equipes.length > 0) {
+          const addTeamPromises = project.value.equipes.map(team =>
+            addTeamToProject({
+              idProjet: newProjectId,
+              idEquipe: team.idEquipe
+            })
+          );
+          await Promise.all(addTeamPromises);
         }
-
-        await refetchProjects();
-        projectDialog.value = false;
-    } catch (error) {
-        console.error('Error saving project:', error);
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to save project: ' + (error.graphQLErrors?.[0]?.message || error.message),
-            life: 5000
-        });
-    } finally {
-        loading.value = false;
+      }
     }
+
+    // Explicitly refetch projects to ensure fresh data
+    await refetchProjects();
+    
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: project.value.idProjet ? 'Project updated successfully' : 'Project created successfully',
+      life: 3000
+    });
+
+    projectDialog.value = false;
+  } catch (error) {
+    console.error('Error saving project:', error);
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to save project: ' + (error.graphQLErrors?.[0]?.message || error.message),
+      life: 5000
+    });
+  } finally {
+    loading.value = false;
+  }
 };
 
 const confirmDeleteProject = (proj) => {
@@ -549,6 +570,45 @@ const getProgressClass = (percentage) => {
   if (percentage >= 70) return 'progress-high';         // Blue - Good Progress
   if (percentage >= 30) return 'progress-medium';       // Orange - Medium Progress
   return 'progress-low';                               // Red - Low Progress
+};
+
+// Add this ref at the top with other refs
+const statusUpdateLoading = ref({});
+
+// Add this method to handle status updates
+const updateProjectStatus = async (projectId, newStatus) => {
+  // If already updating this project's status, prevent another update
+  if (statusUpdateLoading.value[projectId]) return;
+
+  try {
+    // Set loading state for this specific project
+    statusUpdateLoading.value[projectId] = true;
+
+    await updateProject({
+      id: projectId,
+      statut_projet: newStatus
+    });
+
+    await refetchProjects();
+    
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Project status updated successfully',
+      life: 3000
+    });
+  } catch (error) {
+    console.error('Error updating project status:', error);
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to update project status',
+      life: 3000
+    });
+  } finally {
+    // Clear loading state for this project
+    statusUpdateLoading.value[projectId] = false;
+  }
 };
 </script>
 
@@ -955,4 +1015,4 @@ const getProgressClass = (percentage) => {
 .task-counts {
   color: var(--text-color-secondary);
 }
-</style>
+</style>z
