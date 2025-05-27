@@ -41,14 +41,13 @@ onMounted(() => {
         const adminData = JSON.parse(administrateur);
         profile.value.name = adminData.nom_administrateur;
         profile.value.email = adminData.email_administrateur;
-        profile.value.role = adminData.role;
-        // Set userType based on role
-        userType.value = adminData.role?.toLowerCase() === 'supervisor' ? 'supervisor' : 'admin';
+        profile.value.role = 'Admin';
+        userType.value = 'admin';
     } else if (employee) {
         const employeeData = JSON.parse(employee);
         profile.value.name = employeeData.nomEmployee;
         profile.value.email = employeeData.emailEmployee;
-        profile.value.role = employeeData.role;
+        profile.value.role = 'Employee';
         userType.value = 'employee';
     } else {
         // Redirect to login if no user is found
@@ -100,16 +99,14 @@ const avatarBackgroundColor = computed(() => {
         </div>
 
         <!-- Conditional Content Based on User Type -->
-        <div v-if="userType === 'admin' || userType === 'supervisor'" class="admin-section">
-            <h2>{{ userType === 'admin' ? 'Admin' : 'Supervisor' }} Dashboard</h2>
-            <p>Welcome, {{ userType === 'admin' ? 'Admin' : 'Supervisor' }}! Manage your platform here.</p>
+        <div v-if="userType === 'admin'" class="admin-section">
+            <h2>Admin Dashboard</h2>
             <div class="dashboard-cards">
                 <div class="card" @click="router.push('/app/Reports')">
                     <h3>📊 View Reports</h3>
                     <p>Access detailed reports and analytics.</p>
                 </div>
-                <!-- Only show Add New Supervisors card for admin role -->
-                <div v-if="userType === 'admin'" class="card" @click="router.push('/app/AddAdmin')">
+                <div class="card" @click="router.push('/app/AddAdmin')">
                     <h3>➕ Add New Supervisors</h3>
                     <p>Manage and add new Supervisors.</p>
                 </div>
@@ -122,7 +119,6 @@ const avatarBackgroundColor = computed(() => {
 
         <div v-else-if="userType === 'employee'" class="employee-section">
             <h2>Employee Dashboard</h2>
-            <p>Welcome, Employee! View your tasks and projects here.</p>
             <div class="dashboard-cards">
                 <div class="card" @click="router.push('/app/Task')">
                     <h3>📝 View Tasks</h3>
@@ -138,7 +134,6 @@ const avatarBackgroundColor = computed(() => {
                 </div>
             </div>
         </div>
-
     </div>
 </template>
 
@@ -208,8 +203,7 @@ const avatarBackgroundColor = computed(() => {
 }
 
 .admin-section,
-.employee-section,
-.supervisor-section {
+.employee-section {
     margin-top: 20px;
     padding: 20px;
     background-color: white;
