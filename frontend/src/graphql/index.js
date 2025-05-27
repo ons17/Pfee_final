@@ -153,6 +153,7 @@ export const GET_EMPLOYEES = gql`
         nomEmployee
         role
         emailEmployee
+        disabledUntil
       }
     }
   }
