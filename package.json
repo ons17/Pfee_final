@@ -1,4 +1,7 @@
 {
+  "dependencies": {
+    "node-cron": "^3.0.3"
+  },
   "devDependencies": {
     "@types/jest": "^29.5.14",
     "jest": "^29.7.0",
