@@ -53,6 +53,11 @@ export const tacheTypeDefs = gql`
       idProjet: String
     ): Tache
 
-    deleteTache(id: String!): String
+    deleteTache(id: String!): DeleteTacheResponse
+  }
+
+  type DeleteTacheResponse {
+    success: Boolean!
+    message: String!
   }
 `;

@@ -372,12 +372,12 @@ const confirmDeleteTask = (t) => {
 const deleteTask = async () => {
     try {
         const { data } = await deleteTaskMutation({ id: task.value.idTache });
-        if (data?.deleteTache?.success) {
+        if (data?.deleteTache?.success || data?.deleteTache === true) {
             await refetchTasks();
             toast.add({
                 severity: 'success',
                 summary: 'Success',
-                detail: data.deleteTache.message || 'Task deleted successfully',
+                detail: data?.deleteTache?.message || 'Task deleted successfully',
                 life: 3000
             });
         } else {
@@ -480,9 +480,51 @@ const getProgressClass = (percentage) => {
 
 // Add role detection
 const admin = JSON.parse(localStorage.getItem('administrateur'));
+const storedAdminPassword = localStorage.getItem('password') || '';
+
 const employee = JSON.parse(localStorage.getItem('employee'));
 const isAdmin = ref(!!admin);
 
+const adminPassword = ref('');
+const adminPasswordError = ref('');
+
+// New variables for bulk delete password
+const adminPasswordBulk = ref('');
+const adminPasswordBulkError = ref('');
+
+// New method for deleting task with password confirmation
+const deleteTaskWithPassword = async () => {
+    adminPasswordError.value = '';
+    if (
+        !adminPassword.value ||
+        adminPassword.value.trim() !== storedAdminPassword.trim()
+    ) {
+        adminPasswordError.value = 'Incorrect admin password!';
+        return;
+    }
+    await deleteTask();
+    adminPassword.value = '';
+};
+
+// New method for deleting selected tasks with password confirmation
+const deleteSelectedTasksWithPassword = async () => {
+    adminPasswordBulkError.value = '';
+    if (
+        !adminPasswordBulk.value ||
+        adminPasswordBulk.value.trim() !== storedAdminPassword.trim()
+    ) {
+        adminPasswordBulkError.value = 'Incorrect admin password!';
+        return;
+    }
+    await deleteSelectedTasks();
+    adminPasswordBulk.value = '';
+};
+
+// Store the password in localStorage (for demo purposes only, not secure!)
+const password = ref('');
+const savePassword = () => {
+    localStorage.setItem('password', password.value);
+};
 </script>
 
 <template>
@@ -751,9 +793,14 @@ const isAdmin = ref(!!admin);
                     Are you sure you want to delete task <b>{{ task.titreTache }}</b>?
                 </span>
             </div>
+            <div class="mt-3">
+                <label for="admin-password" class="block mb-1 font-semibold">Admin Password</label>
+                <InputText id="admin-password" v-model="adminPassword" type="password" class="w-full" />
+                <small v-if="adminPasswordError" class="p-error">{{ adminPasswordError }}</small>
+            </div>
             <template #footer>
                 <Button label="No" icon="pi pi-times" @click="deleteTaskDialog = false" class="p-button-text" />
-                <Button label="Yes" icon="pi pi-check" @click="deleteTask" :loading="loading" class="p-button-danger" />
+                <Button label="Yes" icon="pi pi-check" @click="deleteTaskWithPassword" :loading="loading" class="p-button-danger" />
             </template>
         </Dialog>
 
@@ -762,9 +809,14 @@ const isAdmin = ref(!!admin);
                 <i class="pi pi-exclamation-triangle text-3xl text-red-500" />
                 <span>Are you sure you want to delete the selected tasks?</span>
             </div>
+            <div class="mt-3">
+                <label for="admin-password-bulk" class="block mb-1 font-semibold">Admin Password</label>
+                <InputText id="admin-password-bulk" v-model="adminPasswordBulk" type="password" class="w-full" />
+                <small v-if="adminPasswordBulkError" class="p-error">{{ adminPasswordBulkError }}</small>
+            </div>
             <template #footer>
                 <Button label="No" icon="pi pi-times" @click="deleteTasksDialog = false" class="p-button-text" />
-                <Button label="Yes" icon="pi pi-check" @click="deleteSelectedTasks" :loading="loading" class="p-button-danger" />
+                <Button label="Yes" icon="pi pi-check" @click="deleteSelectedTasksWithPassword" :loading="loading" class="p-button-danger" />
             </template>
         </Dialog>
     </div>

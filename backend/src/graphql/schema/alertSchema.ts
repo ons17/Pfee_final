@@ -5,6 +5,7 @@ export const alertTypeDefs = gql`
     idAlert: String!
     message_alert: String!
     date_creer_alert: String!
+    alert_type: String       
     employee: Employee
   }
 

@@ -1,5 +1,11 @@
 import { gql } from '@apollo/client/core';
 
+export const DELETE_ALERT = gql`
+  mutation DeleteAlert($id: String!) {
+    deleteAlert(id: $id)
+  }
+`;
+
 export * from './projects/projectMutations';
 export * from './projects/projectQueries';
 export * from './teams/teamQueries';
