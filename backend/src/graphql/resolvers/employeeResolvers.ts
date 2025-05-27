@@ -137,11 +137,14 @@ export const employeeResolvers = {
 
         const idEmployee = uuidv4();
 
+        // HASH THE PASSWORD HERE
+        const hashedPassword = await bcrypt.hash(passwordEmployee, 10);
+
         await pool.request()
           .input('id', sql.UniqueIdentifier, idEmployee)
           .input('nom', sql.VarChar, nomEmployee)
           .input('email', sql.VarChar, emailEmployee)
-          .input('password', sql.VarChar, passwordEmployee)
+          .input('password', sql.VarChar, hashedPassword) // Use hashed password
           .input('equipe', sql.UniqueIdentifier, idEquipe || null)
           .input('role', sql.VarChar, role)
           .input('disabledUntil', sql.DateTime, disabledUntil ? new Date(disabledUntil) : null)
@@ -154,7 +157,7 @@ export const employeeResolvers = {
           idEmployee,
           nomEmployee,
           emailEmployee,
-          passwordEmployee,
+          passwordEmployee: hashedPassword, // Return hashed password
           idEquipe,
           role,
           disabledUntil: disabledUntil ? new Date(disabledUntil).toISOString() : null

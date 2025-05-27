@@ -2,8 +2,26 @@ import { projetResolvers } from '../graphql/resolvers/projetResolvers';
 import { v4 as uuidv4 } from 'uuid';
 import * as sql from 'mssql';
 
-jest.mock('mssql');
 jest.mock('uuid');
+
+jest.mock('mssql', () => {
+  const actual = jest.requireActual('mssql');
+  return {
+    ...actual,
+    Transaction: jest.fn().mockImplementation(() => ({
+      begin: jest.fn().mockResolvedValue(undefined),
+      commit: jest.fn().mockResolvedValue(undefined),
+      rollback: jest.fn().mockResolvedValue(undefined),
+      request: jest.fn().mockReturnThis(),
+      input: jest.fn().mockReturnThis(),
+      query: jest.fn().mockResolvedValue({ recordset: [{ pending_tasks: 0, total_tasks: 0 }] }),
+    })),
+    Request: jest.fn().mockImplementation(() => ({
+      input: jest.fn().mockReturnThis(),
+      query: jest.fn().mockResolvedValue({ recordset: [] }),
+    })),
+  };
+});
 
 describe('projetResolvers', () => {
   const mockPool = {
