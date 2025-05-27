@@ -44,7 +44,8 @@ const login = async () => {
         role: administrateur.role // Store the exact role from database
       }));
       localStorage.setItem('userType', administrateur.role.toLowerCase());
-      
+      localStorage.setItem('password', password.value); // <-- Add this line
+
       // Navigate based on role
       router.push('/app');
     } else {

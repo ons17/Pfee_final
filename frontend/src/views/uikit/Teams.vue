@@ -31,6 +31,10 @@ const removingProject = ref(false);
 const projectToRemove = ref({ id: null, name: '' });
 const dropdownKey = ref(0);
 const adminPassword = ref('');
+const adminPasswordError = ref('');
+const adminPasswordBulk = ref('');
+const adminPasswordBulkError = ref('');
+const storedAdminPassword = localStorage.getItem('password') || '';
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS }
@@ -262,18 +266,18 @@ const confirmDeleteTeam = (t) => {
 };
 
 const deleteTeam = async () => {
+    adminPasswordError.value = '';
+
+    // Check if the user is an admin
     if (!isAdmin.value) {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Only admins can delete teams.', life: 3000 });
         return;
     }
 
-    if (!adminPassword.value) {
-        toast.add({ severity: 'warn', summary: 'Warning', detail: 'Please enter your password.', life: 3000 });
-        return;
-    }
-
-    if (!validatePassword(adminPassword.value)) {
-        toast.add({ severity: 'error', summary: 'Error', detail: 'Invalid password. Please try again.', life: 3000 });
+    // Validate admin password
+    if (!adminPassword.value || adminPassword.value.trim() !== storedAdminPassword.trim()) {
+        adminPasswordError.value = 'Incorrect admin password!';
+        toast.add({ severity: 'error', summary: 'Error', detail: adminPasswordError.value, life: 3000 });
         return;
     }
 
@@ -284,7 +288,7 @@ const deleteTeam = async () => {
             toast.add({
                 severity: 'success',
                 summary: 'Success',
-                detail: 'Team deleted successfully.',
+                detail: data.deleteEquipe.message || 'Team deleted successfully.',
                 life: 3000
             });
         } else {
@@ -327,6 +331,16 @@ const deleteSelectedTeams = async () => {
         deleteTeamsDialog.value = false;
         selectedTeams.value = [];
     }
+};
+
+const deleteSelectedTeamsWithPassword = async () => {
+    adminPasswordBulkError.value = '';
+    if (!adminPasswordBulk.value || adminPasswordBulk.value.trim() !== storedAdminPassword.trim()) {
+        adminPasswordBulkError.value = 'Incorrect admin password!';
+        return;
+    }
+    await deleteSelectedTeams();
+    adminPasswordBulk.value = '';
 };
 
 const exportCSV = () => {
@@ -596,13 +610,20 @@ const handleRemoveProject = async (projectId) => {
             <div class="flex flex-col gap-4">
                 <div class="field">
                     <label for="adminPassword" class="font-bold block mb-2">Admin Password *</label>
-                    <InputText id="adminPassword" v-model.trim="adminPassword" type="password" required :class="{ 'p-invalid': !adminPassword }" class="w-full" />
+                    <InputText
+                        id="adminPassword"
+                        v-model.trim="adminPassword"
+                        type="password"
+                        required
+                        :class="{ 'p-invalid': adminPasswordError.value }"
+                        class="w-full"
+                    />
+                    <small v-if="adminPasswordError.value" class="p-error">{{ adminPasswordError.value }}</small>
                 </div>
                 <div class="flex align-items-center gap-3">
                     <i class="pi pi-exclamation-triangle text-3xl text-red-500" />
                     <span v-if="team">
-                        Are you sure you want to delete team <b>{{ team.nom_equipe }}</b
-                        >?
+                        Are you sure you want to delete team <b>{{ team.nom_equipe }}</b>?
                     </span>
                 </div>
             </div>
@@ -613,13 +634,27 @@ const handleRemoveProject = async (projectId) => {
         </Dialog>
 
         <Dialog v-model:visible="deleteTeamsDialog" :style="{ width: '450px' }" header="Confirm Deletion" :modal="true">
-            <div class="flex align-items-center gap-3">
-                <i class="pi pi-exclamation-triangle text-3xl text-red-500" />
-                <span>Are you sure you want to delete the selected teams?</span>
+            <div class="flex flex-col gap-4">
+                <div class="field">
+                    <label for="adminPasswordBulk" class="font-bold block mb-2">Admin Password *</label>
+                    <InputText
+                        id="adminPasswordBulk"
+                        v-model.trim="adminPasswordBulk"
+                        type="password"
+                        required
+                        :class="{ 'p-invalid': adminPasswordBulkError }"
+                        class="w-full"
+                    />
+                    <small v-if="adminPasswordBulkError" class="p-error">{{ adminPasswordBulkError }}</small>
+                </div>
+                <div class="flex align-items-center gap-3">
+                    <i class="pi pi-exclamation-triangle text-3xl text-red-500" />
+                    <span>Are you sure you want to delete the selected teams?</span>
+                </div>
             </div>
             <template #footer>
                 <Button label="No" icon="pi pi-times" @click="deleteTeamsDialog = false" class="p-button-text" />
-                <Button label="Yes" icon="pi pi-check" @click="deleteSelectedTeams" :loading="loading" class="p-button-danger" />
+                <Button label="Yes" icon="pi pi-check" @click="deleteSelectedTeamsWithPassword" :loading="loading" class="p-button-danger" />
             </template>
         </Dialog>
 

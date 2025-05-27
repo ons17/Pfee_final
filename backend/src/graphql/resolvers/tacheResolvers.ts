@@ -401,10 +401,16 @@ export const tacheResolvers = {
           await checkAndUpdateProjectStatus(pool, projectId);
         }
 
-        return `Tache with ID ${id} deleted successfully`;
+        return {
+          success: true,
+          message: `Tache deleted successfully`
+        };
       } catch (error) {
         console.error("Error deleting tache:", error);
-        throw new Error("Error deleting tache");
+        return {
+          success: false,
+          message: "Error deleting tache"
+        };
       }
     },
   },

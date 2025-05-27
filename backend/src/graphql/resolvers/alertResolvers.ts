@@ -6,8 +6,8 @@ export const alertResolvers = {
     alerts: async (_: any, __: any, { pool }: { pool: sql.ConnectionPool }) => {
       try {
         const result = await pool.request().query(`
-          SELECT A.idAlert, A.message_alert, A.date_creer_alert, A.idEmployee, 
-                 E.nom_employee, E.email_employee
+          SELECT A.idAlert, A.message_alert, A.date_creer_alert, A.alert_type, A.idEmployee, 
+                 E.nom_employee, E.email_employee, E.role, E.password_employee, E.idEquipe, E.disabledUntil
           FROM Alert A
           LEFT JOIN Employee E ON A.idEmployee = E.idEmployee;
         `);
@@ -16,8 +16,12 @@ export const alertResolvers = {
           ...alert,
           employee: alert.nom_employee ? {
             idEmployee: alert.idEmployee,
-            nom_employee: alert.nom_employee,
-            email_employee: alert.email_employee
+            nomEmployee: alert.nom_employee,      // <-- camelCase
+            emailEmployee: alert.email_employee,   // <-- camelCase
+            passwordEmployee: alert.password_employee,
+            idEquipe: alert.idEquipe,
+            role: alert.role,
+            disabledUntil: alert.disabledUntil
           } : null
         }));
       } catch (error) {
@@ -32,7 +36,7 @@ export const alertResolvers = {
           .input('id', sql.UniqueIdentifier, id)
           .query(`
             SELECT A.idAlert, A.message_alert, A.date_creer_alert, A.idEmployee, 
-                   E.nom_employee, E.email_employee
+                   E.nom_employee, E.email_employee, E.role, E.password_employee, E.idEquipe, E.disabledUntil
             FROM Alert A
             LEFT JOIN Employee E ON A.idEmployee = E.idEmployee
             WHERE A.idAlert = @id;
@@ -47,8 +51,12 @@ export const alertResolvers = {
           ...alert,
           employee: alert.nom_employee ? {
             idEmployee: alert.idEmployee,
-            nom_employee: alert.nom_employee,
-            email_employee: alert.email_employee
+            nomEmployee: alert.nom_employee,      // <-- camelCase
+            emailEmployee: alert.email_employee,   // <-- camelCase
+            passwordEmployee: alert.password_employee,
+            idEquipe: alert.idEquipe,
+            role: alert.role,
+            disabledUntil: alert.disabledUntil
           } : null
         };
       } catch (error) {
@@ -60,7 +68,7 @@ export const alertResolvers = {
     searchAlerts: async (_: any, { filters }: { filters?: { message_alert?: string } }, { pool }: { pool: sql.ConnectionPool }) => {
       try {
         let query = `SELECT A.idAlert, A.message_alert, A.date_creer_alert, A.idEmployee, 
-                            E.nom_employee, E.email_employee
+                            E.nom_employee, E.email_employee, E.role, E.password_employee, E.idEquipe, E.disabledUntil
                      FROM Alert A
                      LEFT JOIN Employee E ON A.idEmployee = E.idEmployee`;
         const conditions = [];
@@ -81,8 +89,12 @@ export const alertResolvers = {
           ...alert,
           employee: alert.nom_employee ? {
             idEmployee: alert.idEmployee,
-            nom_employee: alert.nom_employee,
-            email_employee: alert.email_employee
+            nomEmployee: alert.nom_employee,      // <-- camelCase
+            emailEmployee: alert.email_employee,   // <-- camelCase
+            passwordEmployee: alert.password_employee,
+            idEquipe: alert.idEquipe,
+            role: alert.role,
+            disabledUntil: alert.disabledUntil
           } : null
         }));
       } catch (error) {
@@ -110,7 +122,7 @@ export const alertResolvers = {
           .input('idAlert', sql.UniqueIdentifier, idAlert)
           .query(`
             SELECT A.idAlert, A.message_alert, A.date_creer_alert, A.idEmployee, 
-                   E.nom_employee, E.email_employee
+                   E.nom_employee, E.email_employee, E.role, E.password_employee, E.idEquipe, E.disabledUntil
             FROM Alert A
             LEFT JOIN Employee E ON A.idEmployee = E.idEmployee
             WHERE A.idAlert = @idAlert;
@@ -121,8 +133,12 @@ export const alertResolvers = {
           ...newAlert,
           employee: newAlert.nom_employee ? {
             idEmployee: newAlert.idEmployee,
-            nom_employee: newAlert.nom_employee,
-            email_employee: newAlert.email_employee
+            nomEmployee: newAlert.nom_employee,      // <-- camelCase
+            emailEmployee: newAlert.email_employee,   // <-- camelCase
+            passwordEmployee: newAlert.password_employee,
+            idEquipe: newAlert.idEquipe,
+            role: newAlert.role,
+            disabledUntil: newAlert.disabledUntil
           } : null
         };
       } catch (error) {
@@ -133,9 +149,12 @@ export const alertResolvers = {
 
     deleteAlert: async (_: any, { id }: { id: string }, { pool }: { pool: sql.ConnectionPool }) => {
       try {
+        console.log('Deleting alert with id:', id); // Add this line
         const result = await pool.request()
           .input('id', sql.UniqueIdentifier, id)
           .query(`DELETE FROM Alert WHERE idAlert = @id;`);
+
+        console.log('Rows affected:', result.rowsAffected); // Add this line
 
         if (result.rowsAffected[0] === 0) {
           throw new Error('Alert not found');
@@ -143,7 +162,7 @@ export const alertResolvers = {
         return 'Alert deleted successfully';
       } catch (error) {
         console.error('Error deleting alert:', error);
-        throw new Error('Error deleting alert');
+        throw new Error((error as Error).message || 'Error deleting alert');
       }
     },
   },

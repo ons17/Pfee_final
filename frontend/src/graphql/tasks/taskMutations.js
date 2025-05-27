@@ -32,6 +32,9 @@ export const UPDATE_TACHE = gql`
 
 export const DELETE_TACHE = gql`
     mutation DeleteTache($id: String!) {
-        deleteTache(id: $id)
+        deleteTache(id: $id) {
+            success
+            message
+        }
     }
 `;
