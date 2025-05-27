@@ -123,7 +123,6 @@ export const projetResolvers = {
         let query = `
           SELECT p.idProjet, p.nom_projet, p.description_projet, p.date_debut_projet, p.date_fin_projet, p.statut_projet
           FROM Projet p
-          LEFT JOIN ProjetEquipe pe ON p.idProjet = pe.idProjet
         `;
         const conditions: string[] = [];
         const inputs: { name: string; type: any; value: any }[] = [];

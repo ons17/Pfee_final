@@ -201,6 +201,60 @@ const handleViewAllTasks = () => navigateTo('Task');
 const handleViewAllReports = () => navigateTo('Reports');
 const handleViewAllPerformance = () => navigateTo('Performance');
 const handleViewAllCalendar = () => navigateTo('Calendar');
+
+// Add this computed property
+const workloadDistribution = computed(() => {
+  const total = employeeData.value.length;
+  if (total === 0) return [];
+  
+  const distribution = {
+    under: 0,
+    optimal: 0, 
+    high: 0,
+    over: 0
+  };
+
+  timeTrackingData.value.forEach(entry => {
+    const hours = entry.duree_suivi ? Number(entry.duree_suivi) / 3600 : 0;
+    const utilization = (hours / 40) * 100; // Assuming 40h work week
+
+    if (utilization < 50) distribution.under++;
+    else if (utilization < 80) distribution.optimal++;
+    else if (utilization < 100) distribution.high++;
+    else distribution.over++;
+  });
+
+  // Convert to percentages
+  return [
+    {
+      label: 'Under Utilized',
+      percentage: Math.round((distribution.under / total) * 100),
+      class: 'under'
+    },
+    {
+      label: 'Optimal',
+      percentage: Math.round((distribution.optimal / total) * 100),
+      class: 'optimal'
+    },
+    {
+      label: 'High',
+      percentage: Math.round((distribution.high / total) * 100),
+      class: 'high'
+    },
+    {
+      label: 'Over Utilized',
+      percentage: Math.round((distribution.over / total) * 100), 
+      class: 'over'
+    }
+  ];
+});
+
+// Add this after your queries
+const refreshDashboardData = () => {
+  employeesResult.refetch && employeesResult.refetch();
+  timeEntriesResult.refetch && timeEntriesResult.refetch();
+  // Add other refetches if you have more queries (e.g., projects, tasks)
+};
 </script>
 
 <template>
@@ -403,20 +457,96 @@ const handleViewAllCalendar = () => navigateTo('Calendar');
           </Timeline>
         </template>
       </Card>
-      <Card>
+      <Card class="insights-dashboard">
         <template #title>
           <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold">Quick Navigation</h2>
+            <h2 class="text-xl font-semibold">Team Analytics & Insights</h2>
+            <Button icon="pi pi-sync" class="p-button-text p-button-sm" tooltip="Refresh Data" @click="refreshDashboardData" />
           </div>
         </template>
         <template #content>
-          <div class="flex flex-wrap gap-3">
-            <Button label="Projects" icon="pi pi-briefcase" class="p-button-info" @click="handleViewAllProjects" />
-            <Button label="Teams" icon="pi pi-users" class="p-button-success" @click="handleViewAllTeams" />
-            <Button label="Tasks" icon="pi pi-list" class="p-button-warning" @click="handleViewAllTasks" />
-            <Button label="Calendar" icon="pi pi-calendar" class="p-button-help" @click="handleViewAllCalendar" />
-            <Button label="Reports" icon="pi pi-chart-bar" class="p-button-secondary" @click="handleViewAllReports" />
-            <Button label="Performance" icon="pi pi-chart-line" class="p-button-primary" @click="handleViewAllPerformance" />
+          <div class="insights-grid">
+            <!-- Key Performance Stats -->
+            <div class="performance-stats">
+              <div class="metric-circle" :style="{ '--percentage': (totalActive/totalEmployees) * 100 + '%' }">
+                <div class="metric-value">
+                  <h4>{{ Math.round((totalActive/totalEmployees) * 100) }}%</h4>
+                  <p>Team Active</p>
+                </div>
+              </div>
+              <div class="metric-details">
+                <div class="metric-item">
+                  <i class="pi pi-users text-blue-500"></i>
+                  <div>
+                    <h5>{{ totalActive }}/{{ totalEmployees }}</h5>
+                    <p>Active Members</p>
+                  </div>
+                </div>
+                <div class="metric-item">
+                  <i class="pi pi-clock text-green-500"></i>
+                  <div>
+                    <h5>{{ averageHoursPerDay }}h</h5>
+                    <p>Avg. Daily Hours</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Workload Distribution -->
+            <div class="workload-chart">
+              <h3>Workload Distribution</h3>
+              <div class="workload-bars">
+                <div v-for="item in workloadDistribution" 
+                     :key="item.class"
+                     class="workload-bar"
+                     :class="item.class"
+                     :style="{ width: item.percentage + '%' }">
+                  {{ item.percentage }}%
+                </div>
+              </div>
+              <div class="workload-legend">
+                <span v-for="item in workloadDistribution" :key="item.class">
+                  <i :class="['dot', item.class]"></i>
+                  {{ item.label }} ({{ item.percentage }}%)
+                </span>
+              </div>
+            </div>
+
+            <!-- Project Health -->
+            <div class="project-health">
+              <h3>Project Health</h3>
+              <div class="health-metrics">
+                <div class="health-item success">
+                  <span class="health-number">{{ projectStats.filter(p => p.status === 'completed').length }}</span>
+                  <span class="health-label">On Track</span>
+                </div>
+                <div class="health-item warning">
+                  <span class="health-number">{{ overtimeCount }}</span>
+                  <span class="health-label">At Risk</span>
+                </div>
+                <div class="health-item danger">
+                  <span class="health-number">{{ absenceCount }}</span>
+                  <span class="health-label">Delayed</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Team Productivity Trend -->
+            <div class="productivity-trend">
+              <h3>Productivity Trend</h3>
+              <div class="trend-chart">
+                <div
+                  v-for="(value, idx) in productivityTrend.datasets[0].data"
+                  :key="idx"
+                  class="trend-bar"
+                  :style="{ height: (value * 10) + 'px' }"
+                  :title="`${productivityTrend.labels[idx]}: ${value}h`"
+                ></div>
+              </div>
+              <div class="trend-labels">
+                <span v-for="label in productivityTrend.labels" :key="label">{{ label }}</span>
+              </div>
+            </div>
           </div>
         </template>
       </Card>
@@ -454,6 +584,144 @@ const handleViewAllCalendar = () => navigateTo('Calendar');
 }
 .activity-timeline {
   --timeline-color: #6366f1;
+}
+.insights-dashboard {
+  margin-top: 2rem;
+}
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  padding: 1rem;
+}
+.performance-stats {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(145deg, #ffffff, #f3f4f6);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.metric-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #4f46e5 var(--percentage),
+    #e5e7eb var(--percentage)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.metric-circle::before {
+  content: '';
+  width: 90px;
+  height: 90px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+}
+.metric-value {
+  position: relative;
+  text-align: center;
+  z-index: 1;
+}
+.workload-chart {
+  padding: 1.5rem;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.workload-bars {
+  display: flex;
+  height: 30px;
+  border-radius: 15px;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+.workload-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.workload-bar:nth-child(1) { background: #ef4444; }
+.workload-bar:nth-child(2) { background: #22c55e; }
+.workload-bar:nth-child(3) { background: #eab308; }
+.workload-bar:nth-child(4) { background: #f97316; }
+.workload-legend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #666;
+}
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+.dot.under { background: #ef4444; }
+.dot.optimal { background: #22c55e; }
+.dot.high { background: #eab308; }
+.dot.over { background: #f97316; }
+.project-health {
+  padding: 1.5rem;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.health-metrics {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+.health-item {
+  text-align: center;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+.health-number {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+.health-item.success { background: #dcfce7; color: #166534; }
+.health-item.warning { background: #fef3c7; color: #92400e; }
+.health-item.danger { background: #fee2e2; color: #991b1b; }
+.productivity-trend {
+  padding: 1.5rem;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.trend-chart {
+  height: 150px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 1rem 0;
+  gap: 0.5rem;
+}
+.trend-bar {
+  width: 12px;
+  background: linear-gradient(to top, #4f46e5, #818cf8);
+  border-radius: 6px;
+  transition: height 0.3s ease;
+}
+.trend-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  color: #666;
+  font-size: 0.75rem;
 }
 @media (max-width: 768px) {
   .dashboard-header {
