@@ -116,6 +116,11 @@ describe('Employee Resolvers', () => {
 
     expect(result.nomEmployee).toBe('Charlie');
     expect(result.emailEmployee).toBe('charlie@example.com');
+    expect(result.idEquipe).toBe('T3');
+    expect(result.role).toBe('user');
+    expect(result.passwordEmployee).not.toBe('secret');
+    expect(typeof result.passwordEmployee).toBe('string');
+    expect(await bcrypt.compare('secret', result.passwordEmployee)).toBe(true);
     expect(mockPool.query).toHaveBeenCalledTimes(2);
   });
 

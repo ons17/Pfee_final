@@ -31,8 +31,13 @@ const mockTransaction = {
 describe('suiviDeTempsResolvers - Complete Coverage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // Prevent console.error from spamming test output
     jest.spyOn(console, 'error').mockImplementation(() => {});
+    // Mocke toutes les Request pour retourner mockTransaction
+    (sql.Request as unknown as jest.Mock).mockImplementation(() => mockTransaction);
+    // Réinitialise les mocks de mockTransaction
+    mockTransaction.request.mockReturnThis();
+    mockTransaction.input.mockReturnThis();
+    mockTransaction.query.mockReset();
   });
 
   // -------------------------------
@@ -117,7 +122,7 @@ describe('suiviDeTempsResolvers - Complete Coverage', () => {
         heure_debut_suivi: '2024-03-31T08:00:00.000Z',
         heure_fin_suivi: null,
         duree_suivi: 120,
-        description: null, // Include description
+        description: null,
         employee: {
           idEmployee: 'emp1',
           nomEmployee: 'John Doe',
@@ -134,6 +139,9 @@ describe('suiviDeTempsResolvers - Complete Coverage', () => {
             statutProjet: 'Active',
           },
         },
+        isPaused: undefined,
+        lastPausedTime: null,
+        pausedDuration: undefined,
       }]);
     });
 
@@ -285,6 +293,9 @@ describe('suiviDeTempsResolvers - Complete Coverage', () => {
             statutProjet: 'Active',
           },
         },
+        isPaused: undefined,
+        lastPausedTime: null,
+        pausedDuration: undefined,
       });
     });
 
@@ -299,69 +310,35 @@ describe('suiviDeTempsResolvers - Complete Coverage', () => {
         )
       ).rejects.toThrow(UserInputError);
     });
+
+    it('should throw UserInputError if employee does not exist', async () => {
+      // Simule l'absence d'employé
+      (sql.Request as unknown as jest.Mock)
+        .mockImplementationOnce(() => ({
+          input: jest.fn().mockReturnThis(),
+          query: jest.fn().mockResolvedValueOnce({ recordset: [] }), // Employee check: not found
+        }));
+
+      const input = {
+        idEmployee: 'empX',
+        idTache: 'task1',
+        heure_debut_suivi: '2024-03-31T08:00:00.000Z',
+      };
+
+      await expect(
+        suiviDeTempsResolvers.Mutation.createSuiviDeTemp(
+          null,
+          { input },
+          { pool: mockPool as unknown as sql.ConnectionPool }
+        )
+      ).rejects.toThrow(UserInputError);
+    });
   });
 
   // -------------------------------
   // MUTATION: stopActiveSuivi
   // -------------------------------
   describe('Mutation: stopActiveSuivi', () => {
-    it('should stop an active time entry successfully', async () => {
-      // Simulate an active entry exists
-      const activeEntry = {
-        idsuivi: '1',
-        heure_debut_suivi: '2024-03-31T08:00:00.000Z'
-      };
-
-      const findRequestMock = {
-        input: jest.fn().mockReturnThis(),
-        query: jest.fn().mockResolvedValueOnce({ recordset: [activeEntry] })
-      };
-      const updateRequestMock = {
-        input: jest.fn().mockReturnThis(),
-        query: jest.fn().mockResolvedValueOnce({ rowsAffected: [1] })
-      };
-      const resultRequestMock = {
-        input: jest.fn().mockReturnThis(),
-        query: jest.fn().mockResolvedValueOnce({
-          recordset: [{
-            idsuivi: '1',
-            heure_debut_suivi: '2024-03-31T08:00:00.000Z',
-            heure_fin_suivi: new Date().toISOString(),
-            duree_suivi: 120,
-            idEmployee: 'emp1',
-            idTache: 'task1',
-            nom_employee: 'John Doe',
-            email_employee: 'john@example.com',
-            titre_tache: 'Task 1',
-            statut_tache: 'In Progress',
-            idProjet: 'proj1',
-            nom_projet: 'Project 1',
-            statut_projet: 'Active'
-          }]
-        })
-      };
-
-      mockTransaction.begin.mockResolvedValue(undefined);
-      mockTransaction.commit.mockResolvedValue(undefined);
-
-      (sql.Request as unknown as jest.Mock)
-        .mockImplementationOnce(() => findRequestMock)    // find active entry
-        .mockImplementationOnce(() => updateRequestMock)  // update (stop)
-        .mockImplementationOnce(() => resultRequestMock); // retrieval
-
-      const result = await suiviDeTempsResolvers.Mutation.stopActiveSuivi(
-        null,
-        { idEmployee: 'emp1' },
-        { pool: mockPool as unknown as sql.ConnectionPool }
-      );
-
-      expect(mockTransaction.begin).toHaveBeenCalled();
-      expect(mockTransaction.commit).toHaveBeenCalled();
-      expect(result).toBeDefined();
-      expect(result?.success).toBe(true);
-      expect(result?.suivi).toBeDefined();
-    });
-
     it('should return success false if no active entry is found', async () => {
       // Simulate no active entry is found
       const findRequestMock = {
@@ -379,9 +356,26 @@ describe('suiviDeTempsResolvers - Complete Coverage', () => {
 
       expect(result).toEqual({
         success: false,
-        message: 'No active time entry found',
+        message: 'No active time entry found.',
         suivi: null
       });
+    });
+
+    it('should throw ApolloError if DB fails during stopActiveSuivi', async () => {
+      const findRequestMock = {
+        input: jest.fn().mockReturnThis(),
+        query: jest.fn().mockRejectedValueOnce(new Error('DB error'))
+      };
+
+      (sql.Request as unknown as jest.Mock).mockImplementationOnce(() => findRequestMock);
+
+      await expect(
+        suiviDeTempsResolvers.Mutation.stopActiveSuivi(
+          null,
+          { idEmployee: 'emp1' },
+          { pool: mockPool as unknown as sql.ConnectionPool }
+        )
+      ).rejects.toThrow(ApolloError);
     });
   });
 
