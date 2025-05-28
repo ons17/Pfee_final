@@ -417,6 +417,20 @@ const confirmDeleteSelected = () => {
 };
 
 const deleteSelectedProjects = async () => {
+    // Security checks
+    if (!isAdmin()) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Only admins can delete projects.', life: 3000 });
+        return;
+    }
+    if (!adminPassword.value) {
+        toast.add({ severity: 'warn', summary: 'Warning', detail: 'Please enter your password.', life: 3000 });
+        return;
+    }
+    if (!validatePassword(adminPassword.value)) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Invalid password. Please try again.', life: 3000 });
+        return;
+    }
+
     try {
         const deletePromises = selectedProjects.value.map((proj) => deleteProjetMutation({ id: proj.idProjet }));
         await Promise.all(deletePromises);
@@ -438,6 +452,7 @@ const deleteSelectedProjects = async () => {
     } finally {
         deleteProjectsDialog.value = false;
         selectedProjects.value = [];
+        adminPassword.value = ''; // Clear password after action
     }
 };
 
@@ -841,10 +856,10 @@ const updateProjectStatus = async (projectId, newStatus) => {
                         Are you sure you want to delete project <b>{{ project.nom_projet }}</b>?
                     </span>
                 </div>
-                <div class="field">
-                    <label for="adminPassword" class="font-bold block mb-2">Admin Password *</label>
-                    <Password id="adminPassword" v-model="adminPassword" toggleMask class="w-full" />
-                    
+                <div class="mt-3">
+                    <label for="adminPassword" class="block mb-1 font-semibold">Admin Password</label>
+                    <InputText id="adminPassword" v-model="adminPassword" type="password" class="w-full" />
+                    <!-- Optionally show an error message here if you want -->
                 </div>
             </div>
             <template #footer>
@@ -854,9 +869,16 @@ const updateProjectStatus = async (projectId, newStatus) => {
         </Dialog>
 
         <Dialog v-model:visible="deleteProjectsDialog" :style="{ width: '450px' }" header="Confirm Deletion" :modal="true" :closable="false">
-            <div class="flex align-items-center gap-3">
-                <i class="pi pi-exclamation-triangle text-3xl text-red-500" />
-                <span>Are you sure you want to delete the selected projects?</span>
+            <div class="flex flex-col gap-3">
+                <div class="flex align-items-center gap-3">
+                    <i class="pi pi-exclamation-triangle text-3xl text-red-500" />
+                    <span>Are you sure you want to delete the selected projects?</span>
+                </div>
+                <div class="mt-3">
+                    <label for="adminPasswordBulk" class="block mb-1 font-semibold">Admin Password</label>
+                    <InputText id="adminPasswordBulk" v-model="adminPassword" type="password" class="w-full" />
+                    <!-- Optionally show an error message here if you want -->
+                </div>
             </div>
             <template #footer>
                 <Button label="No" icon="pi pi-times" @click="deleteProjectsDialog = false" class="p-button-text" />
@@ -1015,4 +1037,4 @@ const updateProjectStatus = async (projectId, newStatus) => {
 .task-counts {
   color: var(--text-color-secondary);
 }
-</style>z
+</style>
