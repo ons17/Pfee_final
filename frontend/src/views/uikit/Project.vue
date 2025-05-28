@@ -297,6 +297,21 @@ const saveProject = async () => {
   submitted.value = true;
   if (!validateForm()) return;
 
+  // Prevent duplicate project names (case-insensitive)
+  const duplicate = projects.value.some(
+    p => p.nom_projet.trim().toLowerCase() === project.value.nom_projet.trim().toLowerCase()
+  );
+  if (!isEditMode.value && duplicate) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Warning',
+      detail: 'A project with this name already exists.',
+      life: 4000
+    });
+    loading.value = false;
+    return;
+  }
+
   loading.value = true;
 
   try {
