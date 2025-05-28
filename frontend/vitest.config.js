@@ -13,7 +13,8 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     deps: {
-      inline: ['primevue']
-    }
+      inline: ['primevue'],
+    },
+    setupFiles: ['./vitest.setup.js']
   },
 });
