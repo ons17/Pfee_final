@@ -196,6 +196,21 @@ const saveTeam = async () => {
     submitted.value = true;
     if (!validateForm()) return;
 
+    // Prevent duplicate team names (case-insensitive)
+    const duplicate = teams.value.some(
+        t => t.nom_equipe.trim().toLowerCase() === team.value.nom_equipe.trim().toLowerCase()
+    );
+    if (!team.value.idEquipe && duplicate) {
+        toast.add({
+            severity: 'warn',
+            summary: 'Warning',
+            detail: 'A team with this name already exists.',
+            life: 4000
+        });
+        loading.value = false;
+        return;
+    }
+
     loading.value = true;
 
     try {
@@ -344,7 +359,23 @@ const deleteSelectedTeamsWithPassword = async () => {
 };
 
 const exportCSV = () => {
-    dt.value.exportCSV();
+    const header = ['Name', 'Description', 'Projects'];
+    const rows = teams.value.map(team => [
+        team.nom_equipe,
+        team.description_equipe,
+        (team.projets || []).map(p => p.nom_projet).join(' | ')
+    ]);
+    const csvContent = [header, ...rows]
+        .map(row => row.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(','))
+        .join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', 'teams_export.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 };
 
 const handleError = (error, defaultMessage) => {
