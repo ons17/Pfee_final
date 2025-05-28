@@ -472,7 +472,26 @@ const deleteSelectedProjects = async () => {
 };
 
 const exportCSV = () => {
-    dt.value.exportCSV();
+    const header = ['Name', 'Description', 'Start Date', 'End Date', 'Status', 'Teams'];
+    const rows = projects.value.map(project => [
+        project.nom_projet,
+        project.description_projet,
+        formatDBDate(project.date_debut_projet),
+        formatDBDate(project.date_fin_projet),
+        project.statut_projet,
+        (project.equipes || []).map(t => t.nom_equipe).join(' | ')
+    ]);
+    const csvContent = [header, ...rows]
+        .map(row => row.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(','))
+        .join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', 'projects_export.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 };
 
 const getStatusLabel = (status) => {
