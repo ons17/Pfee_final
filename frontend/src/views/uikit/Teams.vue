@@ -198,9 +198,11 @@ const saveTeam = async () => {
 
     // Prevent duplicate team names (case-insensitive)
     const duplicate = teams.value.some(
-        t => t.nom_equipe.trim().toLowerCase() === team.value.nom_equipe.trim().toLowerCase()
+        t =>
+            t.nom_equipe.trim().toLowerCase() === team.value.nom_equipe.trim().toLowerCase() &&
+            (!team.value.idEquipe ? true : t.idEquipe !== team.value.idEquipe)
     );
-    if (!team.value.idEquipe && duplicate) {
+    if (duplicate) {
         toast.add({
             severity: 'warn',
             summary: 'Warning',

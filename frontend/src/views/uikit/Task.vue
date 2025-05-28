@@ -280,6 +280,23 @@ const saveTask = async () => {
         submitted.value = true;
         if (!validateForm()) return;
 
+        // Prevent duplicate task titles in the same project (case-insensitive)
+        const duplicate = tasks.value.some(
+            t =>
+                t.titreTache.trim().toLowerCase() === task.value.titreTache.trim().toLowerCase() &&
+                t.idProjet === task.value.idProjet
+        );
+        if (duplicate) {
+            toast.add({
+                severity: 'warn',
+                summary: 'Warning',
+                detail: 'A task with this title already exists in the selected project.',
+                life: 4000
+            });
+            loading.value = false;
+            return;
+        }
+
         loading.value = true;
 
         try {
@@ -294,6 +311,7 @@ const saveTask = async () => {
             };
 
             await createTask(taskData);
+            await refetchTasks();
 
             toast.add({
                 severity: 'success',
@@ -320,6 +338,24 @@ const saveTask = async () => {
 
 const updateTaskDetails = async () => {
     submitted.value = true;
+
+    // Prevent duplicate task titles in the same project (case-insensitive), excluding the current task
+    const duplicate = tasks.value.some(
+        t =>
+            t.idTache !== task.value.idTache &&
+            t.titreTache.trim().toLowerCase() === task.value.titreTache.trim().toLowerCase() &&
+            t.idProjet === task.value.idProjet
+    );
+    if (duplicate) {
+        toast.add({
+            severity: 'warn',
+            summary: 'Warning',
+            detail: 'A task with this title already exists in the selected project.',
+            life: 4000
+        });
+        loading.value = false;
+        return;
+    }
 
     // Validate the form before proceeding
     if (!validateForm()) return;

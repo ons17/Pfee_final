@@ -299,9 +299,11 @@ const saveProject = async () => {
 
   // Prevent duplicate project names (case-insensitive)
   const duplicate = projects.value.some(
-    p => p.nom_projet.trim().toLowerCase() === project.value.nom_projet.trim().toLowerCase()
+    p =>
+      p.nom_projet.trim().toLowerCase() === project.value.nom_projet.trim().toLowerCase() &&
+      (!isEditMode.value ? true : p.idProjet !== project.value.idProjet)
   );
-  if (!isEditMode.value && duplicate) {
+  if (duplicate) {
     toast.add({
       severity: 'warn',
       summary: 'Warning',
