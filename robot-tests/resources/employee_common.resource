@@ -9,8 +9,8 @@ Resource          common.resource
 ${BROWSER}              chromium
 ${HEADLESS}             ${False}
 ${SITE_URL}             http://localhost:5173
-${EMPLOYEE_EMAIL}       zeidimohamedtaher13@gmail.com
-${EMPLOYEE_PASSWORD}    mohamed
+${EMPLOYEE_EMAIL}       zeidimohamedtaher@gmail.com
+${EMPLOYEE_PASSWORD}    Test1234!
 ${TIMEOUT}             6s
 
 # UI Elements

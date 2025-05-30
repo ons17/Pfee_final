@@ -5,8 +5,8 @@ Resource          ../resources/locators/employee_login_locators.resource
 Resource          ../resources/employee_common.resource
 
 *** Variables ***
-${EMPLOYEE_EMAIL}         zeidimohamedtaher13@gmail.com
-${EMPLOYEE_PASSWORD}      mohamed
+${EMPLOYEE_EMAIL}         zeidimohamedtaher@gmail.com
+${EMPLOYEE_PASSWORD}      Test1234!
 ${EMPLOYEE_LOGIN_URL}     ${SITE_URL}/EmployeeLogin
 
 *** Keywords ***

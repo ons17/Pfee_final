@@ -11,8 +11,8 @@ ${SITE_URL}             http://localhost:5173
 ${TIMEOUT}              10s
 
 # Test data
-${EMPLOYEE_EMAIL}       zeidimohamedtaher13@gmail.com
-${EMPLOYEE_PASSWORD}    mohamed
+${EMPLOYEE_EMAIL}       zeidimohamedtaher@gmail.com
+${EMPLOYEE_PASSWORD}    Test1234!
 
 
 ${VALID_EMAIL}          onssbenamara3@gmail.com
@@ -25,7 +25,7 @@ Open Browser To Login Page
     [Documentation]    Opens browser and navigates to the login page
     New Browser    browser=${BROWSER}    headless=${HEADLESS}
     New Context    viewport={'width': 1920, 'height': 1080}
-    New Page    ${SITE_URL}
+    New Page    ${SITE_URL}/login 
     Wait For Elements State    ${LOGO_IMG}    visible    timeout=${TIMEOUT}
 
 Login With Credentials

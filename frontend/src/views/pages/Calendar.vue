@@ -1300,7 +1300,7 @@ class="ml-2"
 :class="getProgressClass(getCurrentPeriodHours() / 3600)" 
 />
 <div class="stat-footer">
-Target: {{ formatDuration(getTargetHours() * 3600) }}
+<!--Target: {{ formatDuration(getTargetHours() * 3600) }}-->
 </div>
 </div>
 
