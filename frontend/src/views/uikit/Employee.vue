@@ -151,12 +151,16 @@ const doPasswordsMatch = computed(() => {
 
 const saveEmployee = async () => {
   submitted.value = true;
-
-  if (!employee.value.nomEmployee || !employee.value.emailEmployee || !employee.value.role || !employee.value.passwordEmployee || !confirmPassword.value) {
-    toast.add({ severity: 'warn', summary: 'Warning', detail: 'Please fill in all fields', life: 3000 });
+  if (
+    !employee.value.nomEmployee ||
+    !employee.value.emailEmployee ||
+    !employee.value.role ||
+    !employee.value.passwordEmployee ||
+    !confirmPassword.value
+  ) {
+    toast.add({ severity: 'warn', summary: 'Warning', detail: 'Please fill in all required fields', life: 3000 });
     return;
   }
-
   if (!doPasswordsMatch.value) {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Passwords do not match', life: 3000 });
     return;
@@ -881,7 +885,7 @@ onMounted(() => {
               class="mr-2"
               @click="openSendEmailDialog(data.idEmployee)"
               :disabled="isDisabled(data)"
-              :tooltip="isDisabled(data) ? 'Cannot send email to disabled employee' : ''"
+              :tooltip="isDisabled(data) ? 'Cannzot send email to disabled employee' : ''"
             />
           </template>
         </Column>
@@ -892,53 +896,63 @@ onMounted(() => {
     <Dialog v-model:visible="addEmployeeDialog" header="Add New Employee" modal class="p-dialog-responsive" :style="{ width: '50%' }">
       <div class="p-fluid">
         <div class="field">
-          <label for="name">Name</label>
-          <InputText id="name" v-model="employee.nomEmployee" required class="p-inputtext-lg" />
+          <label for="name">Name *</label>
+          <InputText
+            id="name"
+            v-model="employee.nomEmployee"
+            required
+            class="p-inputtext-lg"
+            :class="{ 'p-invalid': submitted && !employee.nomEmployee }"
+          />
+          <small v-if="submitted && !employee.nomEmployee" class="p-error">Name is required.</small>
         </div>
         <div class="field">
-          <label for="email">Email</label>
-          <InputText id="email" v-model="employee.emailEmployee" required type="email" class="p-inputtext-lg" />
+          <label for="email">Email *</label>
+          <InputText
+            id="email"
+            v-model="employee.emailEmployee"
+            required
+            type="email"
+            class="p-inputtext-lg"
+            :class="{ 'p-invalid': submitted && !employee.emailEmployee }"
+          />
+          <small v-if="submitted && !employee.emailEmployee" class="p-error">Email is required.</small>
         </div>
         <div class="field">
-          <label for="role">Role</label>
-          <InputText id="role" v-model="employee.role" required class="p-inputtext-lg" />
+          <label for="role">Role *</label>
+          <InputText
+            id="role"
+            v-model="employee.role"
+            required
+            class="p-inputtext-lg"
+            :class="{ 'p-invalid': submitted && !employee.role }"
+          />
+          <small v-if="submitted && !employee.role" class="p-error">Role is required.</small>
         </div>
-        <div class="grid">
-          <div class="col-12 md:col-6">
-            <div class="field">
-              <label for="password" class="font-bold block mb-2">Password *</label>
-              <Password
-                id="password"
-                v-model="employee.passwordEmployee"
-                required
-                toggleMask
-                :class="{ 'p-invalid': submitted && !employee.passwordEmployee }"
-                class="w-full"
-              />
-              <small v-if="submitted && !employee.passwordEmployee" class="p-error">Password is required.</small>
-              <small :style="{ color: passwordStrengthColor }">
-                Password Strength: {{ passwordStrength }}
-              </small>
-            </div>
-          </div>
-          
-          <div class="col-12 md:col-6">
-            <div class="field">
-              <label for="confirmPassword" class="font-bold block mb-2">Confirm Password *</label>
-              <Password
-                id="confirmPassword"
-                v-model="confirmPassword"
-                required
-                toggleMask
-                :class="{ 'p-invalid': submitted && (!confirmPassword || !doPasswordsMatch) }"
-                class="w-full"
-              />
-              <small v-if="submitted && !confirmPassword" class="p-error">Confirm password is required.</small>
-              <small v-if="submitted && confirmPassword && !doPasswordsMatch" class="p-error">Passwords do not match.</small>
-            </div>
-          </div>
+        <div class="field">
+          <label for="password" class="font-bold block mb-2">Password *</label>
+          <Password
+            v-model="employee.passwordEmployee"
+            required
+            :feedback="false"
+            toggleMask
+            :class="{ 'p-invalid': submitted && !employee.passwordEmployee }"
+          />
+          <small v-if="submitted && !employee.passwordEmployee" class="p-error">Password is required.</small>
         </div>
-
+        <div class="field">
+          <label for="confirmPassword" class="font-bold block mb-2">Confirm Password *</label>
+          <Password
+            v-model="confirmPassword"
+            required
+            :feedback="false"
+            toggleMask
+            :class="{ 'p-invalid': submitted && !confirmPassword }"
+          />
+          <small v-if="submitted && !confirmPassword" class="p-error">Confirm password is required.</small>
+          <small v-if="submitted && confirmPassword && !doPasswordsMatch" class="p-error">Passwords do not match.</small>
+        </div>
+        <!-- Equipe Management (optional) -->
         <div class="field">
           <label class="font-bold block mb-2">Equipe Management</label>
           <div class="flex gap-2">
@@ -970,7 +984,6 @@ onMounted(() => {
           </div>
         </div>
       </div>
-
       <template #footer>
         <Button label="Cancel" icon="pi pi-times" severity="secondary" class="p-button-text" @click="hideDialog" />
         <Button label="Save" icon="pi pi-check" severity="success" class="p-button-text" @click="saveEmployee" />
@@ -1213,5 +1226,9 @@ small {
     flex: 0 0 50%;
     max-width: 50%;
   }
+}
+
+.p-invalid {
+  border-color: #f44336 !important;
 }
 </style>

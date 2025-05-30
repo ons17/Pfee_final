@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@apollo/server": "^4.11.3",
+    "@sendgrid/mail": "^8.1.5",
     "apollo-server-express": "^3.13.0",
     "axios": "^1.8.3",
     "backend": "file:",
