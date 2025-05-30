@@ -31,6 +31,11 @@ const routes = [
   },
   {
     path: '/',
+    name: 'Welcome',
+    component: () => import('@/views/pages/auth/Welcome.vue'),
+  },
+  {
+    path: '/',
     redirect: '/login', // Redirect root path to the Login page
   },
   {

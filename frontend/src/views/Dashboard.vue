@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { useQuery } from '@vue/apollo-composable';
-import { GET_EMPLOYEES, SUIVIS_DE_TEMP } from '@/graphql';
-import { format, startOfMonth, endOfMonth, differenceInDays } from 'date-fns';
+import { useQuery, useMutation } from '@vue/apollo-composable';
+import { GET_EMPLOYEES,GET_PROJECTS, GET_TACHES,  SUIVIS_DE_TEMP, CREATE_TEAM, CREATE_PROJECT, CREATE_TACHE, CREATE_SUIVI, ADD_TEAM_TO_PROJECT, STOP_ACTIVE_SUIVI, UPDATE_SUIVI } from '@/graphql';
+import { format, startOfMonth, endOfMonth, differenceInDays, startOfWeek, endOfWeek, addWeeks, differenceInBusinessDays } from 'date-fns';
 import Card from 'primevue/card';
 import Chart from 'primevue/chart';
 import DataTable from 'primevue/datatable';
@@ -14,10 +14,17 @@ import Calendar from 'primevue/calendar';
 import Avatar from 'primevue/avatar';
 import Timeline from 'primevue/timeline';
 import { useRouter } from 'vue-router';
+import { faker } from '@faker-js/faker';
+import axios from 'axios';
+import { useToast } from 'primevue/usetoast';
+
+const toast = useToast();
 
 // Data Fetching
 const { result: employeesResult, loading: employeesLoading } = useQuery(GET_EMPLOYEES);
 const { result: timeEntriesResult, loading: timeEntriesLoading } = useQuery(SUIVIS_DE_TEMP, { filters: {} });
+const { result: tasksResult } = useQuery(GET_TACHES);
+const { result: projectsResult } = useQuery(GET_PROJECTS);
 
 // Date Range Selection
 const dateRange = ref([startOfMonth(new Date()), endOfMonth(new Date())]);
@@ -26,20 +33,47 @@ const dateRange = ref([startOfMonth(new Date()), endOfMonth(new Date())]);
 const employeeData = computed(() => employeesResult.value?.employees?.employees || []);
 const timeTrackingData = computed(() => timeEntriesResult.value?.suivisDeTemp || []);
 
+// Filtered Time Entries based on Date Range
+const filteredTimeEntries = computed(() => {
+  if (!dateRange.value || !dateRange.value[0] || !dateRange.value[1]) return timeTrackingData.value;
+  const start = new Date(dateRange.value[0]);
+  const end = new Date(dateRange.value[1]);
+  return timeTrackingData.value.filter(e => {
+    const d = new Date(e.heure_debut_suivi);
+    return d >= start && d <= end;
+  });
+});
+
 // KPI Stats
 const totalEmployees = computed(() => employeeData.value.length);
 const totalActive = computed(() => employeeData.value.filter(e => !e.disabledUntil).length);
 const totalInactive = computed(() => employeeData.value.filter(e => e.disabledUntil).length);
 const totalTrackedHours = computed(() =>
-  timeTrackingData.value.reduce((sum, e) => sum + (e.duree_suivi ? Number(e.duree_suivi) / 3600 : 0), 0).toFixed(1)
+  filteredTimeEntries.value.reduce((sum, e) => sum + (e.duree_suivi ? Number(e.duree_suivi) / 3600 : 0), 0).toFixed(1)
 );
-const overtimeCount = computed(() =>
-  timeTrackingData.value.filter(e => (e.duree_suivi ? Number(e.duree_suivi) / 3600 : 0) > 8).length
-);
+const overtimeCount = computed(() => {
+  // Map: { employeeId: { 'yyyy-MM-dd': totalHours } }
+  const dailyHours = {};
+  filteredTimeEntries.value.forEach(e => {
+    const empId = e.employee?.idEmployee;
+    if (!empId) return;
+    const day = format(new Date(e.heure_debut_suivi), 'yyyy-MM-dd');
+    if (!dailyHours[empId]) dailyHours[empId] = {};
+    if (!dailyHours[empId][day]) dailyHours[empId][day] = 0;
+    dailyHours[empId][day] += e.duree_suivi ? Number(e.duree_suivi) / 3600 : 0;
+  });
+  // Count how many days (across all employees) are over 8h
+  let count = 0;
+  Object.values(dailyHours).forEach(days =>
+    Object.values(days).forEach(hours => {
+      if (hours > 8) count++;
+    })
+  );
+  return count;
+});
 const absenceCount = computed(() => {
-  // Count employees with 0 hours in period
-  const ids = new Set(timeTrackingData.value.map(e => e.employee?.idEmployee));
-  return employeeData.value.filter(e => !ids.has(e.idEmployee)).length;
+  const ids = new Set(filteredTimeEntries.value.map(e => e.employee?.idEmployee));
+  return employeeData.value.filter(e => !e.disabledUntil && !ids.has(e.idEmployee)).length;
 });
 
 // Trends
@@ -48,17 +82,28 @@ const averageHoursPerDay = computed(() => {
   return (Number(totalTrackedHours.value) / days).toFixed(1);
 });
 const productivityTrend = computed(() => {
-  const data = new Array(7).fill(0);
+  const data = [];
   const labels = [];
-  let date = new Date();
-  for(let i = 6; i >= 0; i--) {
-    const day = format(date.setDate(date.getDate() - (i === 6 ? 0 : 1)), 'MMM dd');
-    labels.push(day);
-    const hours = timeTrackingData.value
-      .filter(e => format(new Date(e.heure_debut_suivi), 'MMM dd') === day)
+  const today = new Date();
+
+  // Get last 7 days (including today)
+  for (let i = 6; i >= 0; i--) {
+    // Create a new date object for each day
+    const currentDate = new Date(today);
+    currentDate.setDate(today.getDate() - i);
+    
+    // Format the label
+    const label = format(currentDate, 'MMM dd');
+    labels.push(label);
+
+    // Calculate hours for this day
+    const hours = filteredTimeEntries.value
+      .filter(e => format(new Date(e.heure_debut_suivi), 'yyyy-MM-dd') === format(currentDate, 'yyyy-MM-dd'))
       .reduce((sum, e) => sum + (e.duree_suivi ? Number(e.duree_suivi) / 3600 : 0), 0);
-    data[6-i] = Number(hours.toFixed(1));
+
+    data.push(Number(hours.toFixed(1)));
   }
+
   return {
     labels,
     datasets: [{
@@ -74,40 +119,56 @@ const productivityTrend = computed(() => {
 
 // Project Stats (top 5 by hours)
 const projectStats = computed(() => {
-  const stats = {};
-  timeTrackingData.value.forEach(entry => {
-    const project = entry.tache?.projet?.nom_projet || 'Unassigned';
-    if (!stats[project]) {
-      stats[project] = {
-        hours: 0,
-        tasks: new Set(),
-        employees: new Set(),
-        status: entry.tache?.projet?.statut_projet || 'in_progress',
-        deadline: entry.tache?.projet?.date_fin_projet || null
+  const allProjects = projectsResult.value?.projets || [];
+  const allTasks = tasksResult.value?.taches || [];
+  const timeEntries = filteredTimeEntries.value;
+
+  return allProjects
+    .filter(p => p.statut_projet === 'in_progress')
+    .map(project => {
+      // All tasks for this project
+      const projectTasks = allTasks.filter(
+        t => String(t.idProjet) === String(project.idProjet)
+      );
+      const totalTasks = projectTasks.length;
+      const completedTasks = projectTasks.filter(
+        t => t.statutTache === 'END'
+      ).length;
+
+      // All time entries for this project (use e.tache.idProjet)
+      const projectEntries = timeEntries.filter(
+        e =>
+          e.tache &&
+          String(e.tache.idProjet) === String(project.idProjet)
+      );
+      const hours = projectEntries.reduce(
+        (sum, e) => sum + (e.duree_suivi ? Number(e.duree_suivi) / 3600 : 0),
+        0
+      );
+      // Only count employees with time tracked on this project
+      const employees = new Set(
+        projectEntries.map(e => e.employee?.idEmployee).filter(Boolean)
+      ).size;
+
+      return {
+        name: project.nom_projet,
+        hours: Number(hours.toFixed(1)),
+        tasks: totalTasks,
+        employees,
+        progress: totalTasks
+          ? Math.round((completedTasks / totalTasks) * 100)
+          : 0,
+        status: project.statut_projet,
+        deadline: project.date_fin_projet
       };
-    }
-    stats[project].hours += entry.duree_suivi ? Number(entry.duree_suivi) / 3600 : 0;
-    stats[project].tasks.add(entry.tache?.idTache);
-    stats[project].employees.add(entry.employee?.idEmployee);
-  });
-  return Object.entries(stats)
-    .map(([name, data]) => ({
-      name,
-      hours: Number(data.hours.toFixed(1)),
-      tasks: data.tasks.size,
-      employees: data.employees.size,
-      progress: Number(((data.tasks.size / totalEmployees.value) * 100).toFixed(0)),
-      status: data.status,
-      deadline: data.deadline
-    }))
-    .sort((a, b) => b.hours - a.hours)
-    .slice(0, 5);
+    })
+    .sort((a, b) => b.hours - a.hours);
 });
 
 // Team Performance Table
 const teamPerformance = computed(() => {
   return employeeData.value.map(emp => {
-    const entries = timeTrackingData.value.filter(e => e.employee?.idEmployee === emp.idEmployee);
+    const entries = filteredTimeEntries.value.filter(e => e.employee?.idEmployee === emp.idEmployee);
     const totalHours = entries.reduce((sum, e) => sum + (e.duree_suivi ? Number(e.duree_suivi) / 3600 : 0), 0);
     const projects = new Set(entries.map(e => e.tache?.projet?.nom_projet)).size;
     return {
@@ -116,7 +177,7 @@ const teamPerformance = computed(() => {
       role: emp.role,
       hours: Number(totalHours.toFixed(1)),
       projects,
-      utilization: Number(((totalHours / 40) * 100).toFixed(0)), // 40h week
+      utilization: expectedHours.value ? Number(((totalHours / expectedHours.value) * 100).toFixed(0)) : 0,
       status: emp.disabledUntil ? 'Inactive' : 'Active',
       trend: entries.map(e => e.duree_suivi ? Number(e.duree_suivi) / 3600 : 0)
     };
@@ -125,7 +186,7 @@ const teamPerformance = computed(() => {
 
 // Recent Activity Timeline
 const recentActivity = computed(() =>
-  timeTrackingData.value
+  filteredTimeEntries.value
     .slice()
     .sort((a, b) => new Date(b.heure_debut_suivi) - new Date(a.heure_debut_suivi))
     .slice(0, 10)
@@ -202,29 +263,55 @@ const handleViewAllReports = () => navigateTo('Reports');
 const handleViewAllPerformance = () => navigateTo('Performance');
 const handleViewAllCalendar = () => navigateTo('Calendar');
 
-// Add this computed property
+// Workload Distribution
 const workloadDistribution = computed(() => {
-  const total = employeeData.value.length;
-  if (total === 0) return [];
+  // Get all employees with their total hours
+  const employeeHours = {};
   
+  // Calculate working days (excluding weekends)
+  const start = new Date(new Date().getFullYear(), 4, 19); // May 19
+  const end = new Date(new Date().getFullYear(), 4, 29);   // May 29
+  let workingDays = 0;
+  
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    // Skip weekends (0 = Sunday, 6 = Saturday)
+    if (d.getDay() !== 0 && d.getDay() !== 6) {
+      workingDays++;
+    }
+  }
+
+  const expectedDailyHours = 8; // Standard 8-hour workday
+  const expectedTotalHours = workingDays * expectedDailyHours;
+
+  // Calculate total hours per employee
+  filteredTimeEntries.value.forEach(entry => {
+    const employeeId = entry.employee?.idEmployee;
+    if (!employeeId) return;
+    
+    if (!employeeHours[employeeId]) {
+      employeeHours[employeeId] = 0;
+    }
+    employeeHours[employeeId] += entry.duree_suivi ? Number(entry.duree_suivi) / 3600 : 0;
+  });
+
+  // Calculate utilization categories based on actual working days
   const distribution = {
-    under: 0,
-    optimal: 0, 
-    high: 0,
-    over: 0
+    under: 0,    // < 70% of expected hours
+    optimal: 0,  // 70-90% of expected hours
+    high: 0,     // 90-110% of expected hours
+    over: 0      // > 110% of expected hours
   };
 
-  timeTrackingData.value.forEach(entry => {
-    const hours = entry.duree_suivi ? Number(entry.duree_suivi) / 3600 : 0;
-    const utilization = (hours / 40) * 100; // Assuming 40h work week
-
-    if (utilization < 50) distribution.under++;
-    else if (utilization < 80) distribution.optimal++;
-    else if (utilization < 100) distribution.high++;
+  Object.values(employeeHours).forEach(hours => {
+    const utilization = (hours / expectedTotalHours) * 100;
+    if (utilization < 70) distribution.under++;
+    else if (utilization < 90) distribution.optimal++;
+    else if (utilization <= 110) distribution.high++;
     else distribution.over++;
   });
 
-  // Convert to percentages
+  const total = Object.values(distribution).reduce((sum, val) => sum + val, 0) || 1;
+
   return [
     {
       label: 'Under Utilized',
@@ -243,18 +330,68 @@ const workloadDistribution = computed(() => {
     },
     {
       label: 'Over Utilized',
-      percentage: Math.round((distribution.over / total) * 100), 
+      percentage: Math.round((distribution.over / total) * 100),
       class: 'over'
     }
-  ];
+  ].filter(item => item.percentage > 0);
 });
 
-// Add this after your queries
+// Refresh Data
 const refreshDashboardData = () => {
   employeesResult.refetch && employeesResult.refetch();
   timeEntriesResult.refetch && timeEntriesResult.refetch();
-  // Add other refetches if you have more queries (e.g., projects, tasks)
 };
+
+// Add these constants and function
+const MAX_BAR_HEIGHT = 120; // Maximum height in pixels for the tallest bar
+
+const normalizeHeight = (value) => {
+  const maxValue = Math.max(...productivityTrend.value.datasets[0].data, 1); // Avoid division by zero
+  return (value / maxValue) * MAX_BAR_HEIGHT;
+};
+
+// Add these computed properties after your existing ones
+const onTrackProjects = computed(() => 
+  projectStats.value.filter(p => p.status === 'in_progress' && isOnTrack(p)).length
+);
+
+const atRiskProjects = computed(() => 
+  projectStats.value.filter(p => p.status === 'in_progress' && isAtRisk(p)).length
+);
+
+const delayedProjects = computed(() => 
+  projectStats.value.filter(p => p.status === 'in_progress' && isDelayed(p)).length
+);
+
+// Helper function to determine project status
+const isOnTrack = (project) => {
+  if (!project.deadline) return true;
+  const deadline = new Date(project.deadline);
+  const today = new Date();
+  const daysUntilDeadline = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+  return daysUntilDeadline > 14; // More than 2 weeks until deadline
+};
+
+const isAtRisk = (project) => {
+  if (!project.deadline) return false;
+  const deadline = new Date(project.deadline);
+  const today = new Date();
+  const daysUntilDeadline = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+  return daysUntilDeadline <= 14 && daysUntilDeadline > 0; // Less than 2 weeks until deadline
+};
+
+const isDelayed = (project) => {
+  if (!project.deadline) return false;
+  const deadline = new Date(project.deadline);
+  const today = new Date();
+  return deadline < today; // Past deadline
+};
+
+// expectedHours computed property
+const expectedHours = computed(() => {
+  if (!dateRange.value || !dateRange.value[0] || !dateRange.value[1]) return 40;
+  return differenceInBusinessDays(dateRange.value[1], dateRange.value[0]) * 8;
+});
 </script>
 
 <template>
@@ -266,8 +403,10 @@ const refreshDashboardData = () => {
         <p class="text-gray-500">Monitor your teams, projects, and productivity at a glance.</p>
       </div>
       <div class="header-actions">
+       <!-- <Button label="Seed All Data" icon="pi pi-database" @click="seedAllData" class="mb-4" />  -->
         <Calendar v-model="dateRange" selectionMode="range" :showIcon="true" inputClass="p-inputtext-sm" />
         <Button label="Export CSV" icon="pi pi-download" class="p-button-outlined" @click="handleDownloadReport" />
+        <!-- <Button label="Generate SuiviDeTemp (19-28 May)" icon="pi pi-clock" @click="generateSuiviDeTempForRange" class="mb-4" /> -->
         <div class="quick-nav-header flex gap-2 ml-4">
           <Button icon="pi pi-briefcase" class="p-button-info" @click="handleViewAllProjects" tooltip="Projects" />
           <Button icon="pi pi-users" class="p-button-success" @click="handleViewAllTeams" tooltip="Teams" />
@@ -363,15 +502,15 @@ const refreshDashboardData = () => {
               <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
                   <span class="font-medium text-gray-700">{{ project.name }}</span>
-                  <Tag :value="project.status" />
+                  <Tag :value="project.status" class="ml-2" />
                 </div>
                 <Tag :value="`${project.hours}h`" severity="info" />
               </div>
               <ProgressBar :value="project.progress" class="project-progress" />
               <div class="flex justify-between mt-2 text-sm text-gray-500">
-                <span>{{ project.tasks }} tasks</span>
-                <span>{{ project.employees }} members</span>
-                <span>Deadline: {{ formatDate(project.deadline) }}</span>
+                <span>{{ project.tasks }} {{ project.tasks === 1 ? 'task' : 'tasks' }}</span>
+                <span>{{ project.employees }} {{ project.employees === 1 ? 'member' : 'members' }}</span>
+                <span>{{ project.deadline ? formatDate(project.deadline) : 'No deadline' }}</span>
               </div>
             </div>
           </div>
@@ -517,15 +656,15 @@ const refreshDashboardData = () => {
               <h3>Project Health</h3>
               <div class="health-metrics">
                 <div class="health-item success">
-                  <span class="health-number">{{ projectStats.filter(p => p.status === 'completed').length }}</span>
+                  <span class="health-number">{{ onTrackProjects }}</span>
                   <span class="health-label">On Track</span>
                 </div>
                 <div class="health-item warning">
-                  <span class="health-number">{{ overtimeCount }}</span>
+                  <span class="health-number">{{ atRiskProjects }}</span>
                   <span class="health-label">At Risk</span>
                 </div>
                 <div class="health-item danger">
-                  <span class="health-number">{{ absenceCount }}</span>
+                  <span class="health-number">{{ delayedProjects }}</span>
                   <span class="health-label">Delayed</span>
                 </div>
               </div>
@@ -539,7 +678,7 @@ const refreshDashboardData = () => {
                   v-for="(value, idx) in productivityTrend.datasets[0].data"
                   :key="idx"
                   class="trend-bar"
-                  :style="{ height: (value * 10) + 'px' }"
+                  :style="{ height: normalizeHeight(value) + 'px' }"
                   :title="`${productivityTrend.labels[idx]}: ${value}h`"
                 ></div>
               </div>
@@ -734,4 +873,3 @@ const refreshDashboardData = () => {
   }
 }
 </style>
-
