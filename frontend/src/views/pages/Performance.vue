@@ -77,13 +77,15 @@ const periodRange = computed(() => {
 const filteredEmployees = computed(() =>
   employeeData.value.filter(emp => selectedRole.value === 'all' || emp.role === selectedRole.value)
 );
-const filteredTimeEntries = computed(() =>
-  timeTrackingData.value.filter(e =>
-    (selectedRole.value === 'all' || e.employee.role === selectedRole.value) &&
+
+const filteredTimeEntries = computed(() => {
+  const allowedEmployeeIds = new Set(filteredEmployees.value.map(emp => emp.idEmployee));
+  return timeTrackingData.value.filter(e =>
+    allowedEmployeeIds.has(e.employee.idEmployee) &&
     (selectedProject.value === 'all' || (e.tache?.projet?.nom_projet || 'N/A') === selectedProject.value) &&
     isWithinInterval(new Date(e.heure_debut_suivi), { start: periodRange.value.start, end: periodRange.value.end })
-  )
-);
+  );
+});
 
 // Productivity metrics
 const productivityByEmployee = computed(() => {
