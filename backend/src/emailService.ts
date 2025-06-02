@@ -4,11 +4,14 @@ export const sendResetPasswordEmail = async (email: string, resetToken: string) 
   const resetLink = `http://localhost:3000/reset-password?token=${resetToken}`; // Lien vers la page de réinitialisation
 
   const transporter = nodemailer.createTransport({
-    service: 'Gmail', // Ou un autre service
+    service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER, // Votre email
-      pass: process.env.EMAIL_PASS, // Votre mot de passe ou token d'application
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
     },
+    tls: {
+      rejectUnauthorized: false
+    }
   });
 
   const mailOptions = {

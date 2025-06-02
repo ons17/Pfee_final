@@ -245,8 +245,11 @@ export const employeeResolvers = {
         const transporter = nodemailer.createTransport({
           service: 'gmail',
           auth: {
-            user: 'onssbenamara3@gmail.com',
-            pass: 'gnxj idgf trax kliq'
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+          },
+          tls: {
+            rejectUnauthorized: false
           }
         });
 
