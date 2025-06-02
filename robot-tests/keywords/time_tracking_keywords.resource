@@ -8,8 +8,8 @@ Library           DateTime
 *** Variables ***
 ${DESCRIPTION}          Test time entry
 ${INVALID_PASSWORD}     wrongpassword123
-${TEST_PROJECT}         Frozen Concrete Ball
-${TEST_TASK}           calculate system
+${TEST_PROJECT}         Fantastic Gold Shirt
+${TEST_TASK}           hack monitor
 ${DROPDOWN_TIMEOUT}    20s
 
 *** Keywords ***
