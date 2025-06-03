@@ -162,21 +162,90 @@ const validateProject = (projectId) => {
     return null;
 };
 
+// Enhanced date rules for task date handling
+const dateRules = {
+    canModifyDates(task, project) {
+        // Can't modify dates for completed tasks
+        if (task.statutTache === 'END') {
+            return false;
+        }
+
+        // Can't modify dates if task has time entries
+        if (task.suiviDeTemps?.length > 0) {
+            return false;
+        }
+
+        // Can't modify dates if the project is completed
+        if (project?.statut_projet === 'END') {
+            return false;
+        }
+
+        // Can modify dates if:
+        // 1. It's a new task
+        // 2. Task is in TODO state with no time entries
+        return !task.idTache || task.statutTache === 'TODO';
+    },
+
+    getDateRestrictionReason(task, project) {
+        if (task.statutTache === 'END') {
+            return 'Dates cannot be modified for completed tasks';
+        }
+
+        if (task.suiviDeTemps?.length > 0) {
+            return 'Dates cannot be modified after time tracking has begun';
+        }
+
+        if (project?.statut_projet === 'END') {
+            return 'Cannot modify dates in a completed project';
+        }
+
+        return null;
+    }
+};
+
+// Enhanced date validation
 const validateTaskDates = (task, project) => {
     if (!project) return 'Project is required to validate dates';
+    if (!task.dateDebutTache) return 'Start date is required';
+    if (!task.dateFinTache) return 'End date is required';
 
-    const projectStartDate = new Date(project.date_debut_projet);
-    const projectEndDate = new Date(project.date_fin_projet);
+    const taskStart = new Date(task.dateDebutTache);
+    const taskEnd = new Date(task.dateFinTache);
+    const projectStart = new Date(project.date_debut_projet);
+    const projectEnd = new Date(project.date_fin_projet);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    if (task.dateDebutTache && new Date(task.dateDebutTache) < projectStartDate) {
-        return 'Task start date cannot be before the project start date';
+    // For new tasks
+    if (!task.idTache && taskStart < today) {
+        return 'Start date cannot be in the past for new tasks';
     }
-    if (task.dateFinTache && new Date(task.dateFinTache) > projectEndDate) {
-        return 'Task end date cannot be after the project end date';
+
+    // Task dates must be within project dates
+    if (taskStart < projectStart) {
+        return 'Task cannot start before the project start date';
     }
-    if (task.dateDebutTache && task.dateFinTache && new Date(task.dateFinTache) < new Date(task.dateDebutTache)) {
-        return 'Task end date must be after the start date';
+
+    if (taskEnd > projectEnd) {
+        return 'Task cannot end after the project end date';
     }
+
+    if (taskEnd < taskStart) {
+        return 'End date must be after start date';
+    }
+
+    // If task has time entries, validate against them
+    if (task.suiviDeTemps?.length > 0) {
+        const hasTimeEntryConflict = task.suiviDeTemps.some(entry => {
+            const entryDate = new Date(entry.date_suivi);
+            return entryDate < taskStart || entryDate > taskEnd;
+        });
+
+        if (hasTimeEntryConflict) {
+            return 'Task dates conflict with existing time entries';
+        }
+    }
+
     return null;
 };
 
@@ -561,6 +630,8 @@ const password = ref('');
 const savePassword = () => {
     localStorage.setItem('password', password.value);
 };
+
+// Update the Calendar components in the template to use the new date rules
 </script>
 
 <template>
@@ -722,50 +793,72 @@ const savePassword = () => {
 
                 <div class="grid grid-cols-2 gap-4">
                     <div class="field">
-                        <label for="dateDebutTache" class="font-bold block mb-2">Start Date </label>
+                        <label for="dateDebutTache" class="font-bold block mb-2">
+                            Start Date
+                            <InfoTooltip v-if="isEditMode && !dateRules.canModifyDates(task, selectedProject)" 
+                                        text="Date cannot be modified after time entries are added or task is started" />
+                        </label>
                         <Calendar 
                             id="dateDebutTache" 
                             v-model="task.dateDebutTache" 
                             :showIcon="true" 
-                            dateFormat="yy-mm-dd" 
-                            placeholder="Select a Start Date" 
-                            class="w-full"
+                            dateFormat="dd/mm/yy"
                             :minDate="new Date()"
-                            @date-select="handleDateSelect($event, 'dateDebutTache')"
-                            :class="{ 'p-invalid': submitted && (validateDate(task.dateDebutTache, true) || !task.dateDebutTache) }"
-                            :disabled="isEditMode"
-                            required
-                        />
-                        <small v-if="isEditMode" class="text-gray-500">Start date cannot be modified</small>
-                        <small v-else-if="submitted && validateDate(task.dateDebutTache, true)" class="p-error">
-                            {{ validateDate(task.dateDebutTache, true) }}
-                        </small>
-                        <small v-else-if="submitted && !task.dateDebutTache" class="p-error">
-                            Start date is required
-                        </small>
+                            :disabled="isEditMode && !dateRules.canModifyDates(task, selectedProject)"
+                            :class="{ 'p-invalid': submitted && validateTaskDates(task, selectedProject) }"
+                            class="w-full"
+                        >
+                            <template #footer>
+                                <div class="calendar-footer">
+                                    <small class="text-gray-500">
+                                        {{ dateRules.getDateRestrictionReason(task, selectedProject) || 'Select start date' }}
+                                    </small>
+                                </div>
+                            </template>
+                        </Calendar>
+                        <div class="field-feedback">
+                            <small v-if="submitted && !task.dateDebutTache" class="p-error">
+                                Start date is required
+                            </small>
+                            <small v-else-if="dateError" class="p-error">
+                                {{ dateError }}
+                            </small>
+                        </div>
                     </div>
+
                     <div class="field">
-                        <label for="dateFinTache" class="font-bold block mb-2">End Date </label>
+                        <label for="dateFinTache" class="font-bold block mb-2">
+                            End Date
+                            <InfoTooltip v-if="isEditMode && !dateRules.canModifyDates(task, selectedProject)"
+                                        text="Date cannot be modified after time entries are added or task is started" />
+                        </label>
                         <Calendar
                             id="dateFinTache"
                             v-model="task.dateFinTache"
                             :showIcon="true"
-                            dateFormat="yy-mm-dd"
-                            placeholder="Select an End Date"
+                            dateFormat="dd/mm/yy"
                             :minDate="task.dateDebutTache || new Date()"
+                            :disabled="isEditMode && !dateRules.canModifyDates(task, selectedProject) || !task.dateDebutTache"
+                            :class="{ 'p-invalid': submitted && !task.dateFinTache }"
                             class="w-full"
-                            @date-select="handleDateSelect($event, 'dateFinTache')"
-                            :disabled="isEditMode || !task.dateDebutTache"
-                            :class="{ 'p-invalid': submitted && (validateEndDate(task.dateDebutTache, task.dateFinTache) || !task.dateFinTache) }"
-                            required
-                        />
-                        <small v-if="isEditMode" class="text-gray-500">End date cannot be modified</small>
-                        <small v-else-if="submitted && validateEndDate(task.dateDebutTache, task.dateFinTache)" class="p-error">
-                            {{ validateEndDate(task.dateDebutTache, task.dateFinTache) }}
-                        </small>
-                        <small v-else-if="submitted && !task.dateFinTache" class="p-error">
-                            End date is required
-                        </small>
+                        >
+                            <template #footer>
+                                <div class="calendar-footer">
+                                    <small class="text-gray-500">
+                                        {{ !task.dateDebutTache 
+                                            ? 'Set start date first'
+                                            : dateRules.canModifyDates(task, selectedProject)
+                                                ? 'Select end date'
+                                                : 'Date locked - Task in progress' }}
+                                    </small>
+                                </div>
+                            </template>
+                        </Calendar>
+                        <div class="field-feedback">
+                            <small v-if="submitted && !task.dateFinTache" class="p-error">
+                                End date is required
+                            </small>
+                        </div>
                     </div>
                 </div>
 
@@ -806,6 +899,12 @@ const savePassword = () => {
                     <small v-if="projects.find((p) => p.idProjet === task.idProjet)?.statut_projet === 'END'" class="p-error">
                         Cannot add tasks to an ended project.
                     </small>
+                </div>
+
+                <!-- Status transition warning -->
+                <div v-if="isEditMode && task.statutTache !== originalStatus" class="status-change-warning">
+                    <i class="pi pi-exclamation-triangle"></i>
+                    <span>Changing status from {{ originalStatus }} to {{ task.statutTache }}</span>
                 </div>
             </div>
 
@@ -982,5 +1081,38 @@ const savePassword = () => {
 .employee-center-badge:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(44, 81, 74, 0.2);
+}
+
+.status-change-warning {
+    padding: 0.75rem;
+    border-radius: 6px;
+    background-color: #fff3cd;
+    color: #856404;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.calendar-footer {
+    padding: 0.5rem;
+    border-top: 1px solid var(--surface-200);
+    font-size: 0.875rem;
+}
+
+.date-locked {
+    background-color: var(--surface-100);
+    cursor: not-allowed;
+}
+
+.date-warning {
+    color: var(--yellow-700);
+    background-color: var(--yellow-50);
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 </style>
