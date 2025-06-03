@@ -251,9 +251,9 @@ async function sendDailyEmailAlerts(pool: { request: () => { (): any; new(): any
     });
 
     // Initial test run
-    /*console.log(`[${new Date().toISOString()}] Running initial check`);
+    console.log(`[${new Date().toISOString()}] Running initial check`);
     await autoStopForgottenTimers(pool);
-    await sendDailyEmailAlerts(pool);*/
+    await sendDailyEmailAlerts(pool);
   } catch (error) {
     console.error(`[${new Date().toISOString()}] Startup error:`, error);
     process.exit(1);
